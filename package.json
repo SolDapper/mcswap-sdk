@@ -1,0 +1,33 @@
+{
+  "name": "mcswap-sdk",
+  "version": "0.3.0",
+  "description": "A javascript sdk for the mcswap protocol (v2)",
+  "main": "mcswap.js",
+  "type": "module",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SolDapper/mcswap-sdk.git"
+  },
+  "keywords": [
+    "solana",
+    "trustless",
+    "otc"
+  ],
+  "author": "@SolDapper",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SolDapper/mcswap-sdk/issues"
+  },
+  "homepage": "https://github.com/SolDapper/mcswap-sdk#readme",
+  "dependencies": {
+    "@solana/buffer-layout": "^4.0.1",
+    "@solana/spl-account-compression": "^0.2.1",
+    "@solana/spl-token": "^0.3.11",
+    "@solana/web3.js": "^1.89.0",
+    "bn.js": "^5.2.1",
+    "bs58": "^5.0.0"
+  }
+}
