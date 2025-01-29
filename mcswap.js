@@ -1,6 +1,6 @@
 // name: mcswap-sdk
 // author: @SolDapper
-// license: MIT https://github.com/SolDapper/mcswap-js/blob/main/LICENSE
+// license: MIT https://github.com/SolDapper/mcswap-sdk/blob/main/LICENSE
 'use strict';
 import { PublicKey, Keypair, Connection, TransactionInstruction, TransactionMessage, VersionedTransaction, ComputeBudgetProgram, SystemProgram, SYSVAR_INSTRUCTIONS_PUBKEY } from "@solana/web3.js";
 import * as solanaAccountCompression from "@solana/spl-account-compression";
@@ -10,6 +10,7 @@ import bs58 from 'bs58';
 import BN from "bn.js";
 const publicKey=(property="publicKey")=>{return BufferLayout.blob(32,property);}
 const uint64=(property="uint64")=>{return BufferLayout.blob(8,property);}
+
 class mcswap {
     
     constructor(){
