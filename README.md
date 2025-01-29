@@ -139,7 +139,7 @@ console.log(splSent);
 
 ### Supported Standards
 
-• SPL (+SuperTokens)
+• SPL (+SuperTokens) 
 
 # Methods
 ```javascript
