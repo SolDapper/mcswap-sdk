@@ -1,6 +1,6 @@
 // name: mcswap-sdk
 // author: @SolDapper
-// license: MIT https://github.com/SolDapper/mcswap-sdk/blob/main/LICENSE
+// license: MIT https://github.com/SolDapper/mcswap-sdk/blob/master/LICENSE
 'use strict';
 import { PublicKey, Keypair, Connection, TransactionInstruction, TransactionMessage, VersionedTransaction, ComputeBudgetProgram, SystemProgram, SYSVAR_INSTRUCTIONS_PUBKEY } from "@solana/web3.js";
 import * as solanaAccountCompression from "@solana/spl-account-compression";
