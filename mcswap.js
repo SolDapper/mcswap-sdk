@@ -21,7 +21,6 @@ class mcswap {
         
         this.SPL_MCSWAP_PROGRAM = "BG9YVprV4XeQR15puwwaWfBBPzamTtuMRJLkAa8pG5hz";
         this.SPL_STATIC_ALT = "HtWT9EbpaxrNfbTgjsMuk9dXYmkvJwyr7q7bQjCCRQHU";
-        this.SPL_ATA_PROGRAM_ID = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL";
         this.SPL_PROGRAM_STATE = BufferLayout.struct([
             BufferLayout.u8("is_initialized"),
             uint64("dev_lamports"),

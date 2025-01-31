@@ -11,7 +11,7 @@ npm i mcswap-sdk
 import mcswap from 'mcswap-sdk';
 ```
 
-### Create and Fetch SPL Contract
+### Create and Fetch SPL Escrow
 ```javascript
 import mcswap from 'mcswap-sdk';
 import { Keypair } from "@solana/web3.js";
@@ -52,19 +52,19 @@ else{
     if(status!="finalized"){console.log(status);}
     else{
         console.log(status);
-        const contract = await mcswap.fetch({
+        const escrow = await mcswap.fetch({
             "rpc": rpc,
             "display": true,
             "standard": "spl",
             "seller": "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere",
             "buyer": "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL",
         });
-        console.log(contract);
+        console.log(escrow);
     }
 }
 ```
 
-### Cancel SPL Contract
+### Cancel SPL Escrow
 ```javascript
 import mcswap from 'mcswap-sdk';
 import { Keypair } from "@solana/web3.js";
@@ -87,7 +87,7 @@ else{
 }
 ```
 
-### Execute SPL Contract
+### Execute SPL Escrow
 ```javascript
 import mcswap from 'mcswap-sdk';
 import { Keypair } from "@solana/web3.js";
@@ -113,7 +113,7 @@ else{
 }
 ```
 
-### Fetch Received SPL Contracts
+### Fetch Received SPL Escrow
 ```javascript
 import mcswap from 'mcswap-sdk';
 const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
@@ -125,7 +125,7 @@ const splReceived = await mcswap.splReceived({
 console.log(splReceived);
 ```
 
-### Fetch Sent SPL Contracts
+### Fetch Sent SPL Escrow
 ```javascript
 import mcswap from 'mcswap-sdk';
 const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
