@@ -199,7 +199,7 @@ else{
 
 
 
-### Supported Standards
+## Supported Standards
 
 • SPL (+SuperTokens) 
 • CORE
