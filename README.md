@@ -199,10 +199,11 @@ else{
 
 
 
-## Supported Standards
+## asset standards
 
-• SPL (+SuperTokens) 
-• CORE
+• SPL (+SuperToken Support) 
+
+• MPL CORE Assets
 
 # Methods
 ```javascript
