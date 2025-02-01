@@ -32,6 +32,7 @@ mcswap.fetch
 mcswap.fee
 
 ```
+# Examples
 
 ## mcswap-spl
 ### Create SPL Escrow
