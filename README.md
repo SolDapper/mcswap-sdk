@@ -202,6 +202,7 @@ else{
 ### Supported Standards
 
 • SPL (+SuperTokens) 
+• CORE
 
 # Methods
 ```javascript
