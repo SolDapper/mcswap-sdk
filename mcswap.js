@@ -1180,76 +1180,76 @@ class mcswap {
         }
     }
 
-    // async coreCancel(_data_){
-    //     try{
-    //         // ***************************************************************************
-    //         if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
-    //         if(typeof _data_.buyerMint=="undefined"||_data_.buyerMint===false){_data_.buyerMint="11111111111111111111111111111111";}
-    //         if(typeof _data_.sellerMint=="undefined"||_data_.sellerMint===false){
-    //             const _error_ = {}
-    //             _error_.status="error";
-    //             _error_.message="seller nft mint not defined";
-    //             return _error_;
-    //         }
-    //         const connection = new Connection(_data_.rpc, "confirmed");
-    //         const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],new PublicKey(this.CORE_MCSWAP_PROGRAM));
-    //         const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),new PublicKey(_data_.sellerMint).toBytes(),new PublicKey(_data_.buyerMint).toBytes()],new PublicKey(this.MCSWAP_CORE_PROGRAM));
-    //         let assetCollection = new PublicKey("11111111111111111111111111111111");
-    //         const response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
-    //         body:JSON.stringify({"jsonrpc":"2.0","id":"text","method":"getAsset","params":{"id":_data_.sellerMint}})});
-    //         const getAsset = await response.json();
-    //         if(typeof getAsset.result.grouping!="undefined"&&typeof getAsset.result.grouping[0]!="undefined"&&typeof getAsset.result.grouping[0].group_value!="undefined"){assetCollection = getAsset.result.grouping[0].group_value;}
-    //         const totalSize = 1 + 32;
-    //         let uarray = new Uint8Array(totalSize);    
-    //         let counter = 0;    
-    //         uarray[counter++] = 2;
-    //         const swapAssetb58 = bs58.decode(_data_.buyerMint);
-    //         const arr = Array.prototype.slice.call(Buffer.from(swapAssetb58), 0);
-    //         for(let i = 0; i < arr.length; i++) {uarray[counter++] = arr[i];}
-    //         const keys = [
-    //           { pubkey: new PublicKey(_data_.seller), isSigner: true, isWritable: true }, // 0
-    //           { pubkey: swapVaultPDA[0], isSigner: false, isWritable: true }, // 1
-    //           { pubkey: swapStatePDA[0], isSigner: false, isWritable: true }, // 2
-    //           { pubkey: new PublicKey(_data_.sellerMint), isSigner: false, isWritable: true }, // 3
-    //           { pubkey: new PublicKey(assetCollection), isSigner: false, isWritable: true }, // 4
-    //           { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // 5
-    //           { pubkey: new PublicKey(this.CORE_PROGRAM), isSigner: false, isWritable: false }, // 6
-    //         ];
-    //         const reverseSwapIx = new TransactionInstruction({programId:new PublicKey(this.CORE_MCSWAP_PROGRAM),data:Buffer.from(uarray),keys:keys});
-    //         const instructions = [reverseSwapIx];
-    //         // ***************************************************************************
-    //         const _tx_ = {};
-    //         if(typeof _data_.tolerance!="undefined"){
-    //             _tx_.tolerance = _data_.tolerance;              
-    //         }
-    //         if(typeof _data_.blink!="undefined"&&_data_.blink===true){
-    //             _tx_.serialize = true;              
-    //             _tx_.encode = true; 
-    //             _tx_.compute = false;
-    //             _tx_.fees = false;
-    //         }
-    //         else{
-    //             _tx_.serialize = false;              
-    //             _tx_.encode = false;
-    //             _tx_.compute = true;
-    //             _tx_.fees = true;
-    //         }
-    //         _tx_.rpc = _data_.rpc;                     
-    //         _tx_.account = _data_.seller;       
-    //         _tx_.instructions = instructions;
-    //         _tx_.signers = _data_.signers;
-    //         _tx_.table = lookupTableAccount;  
-    //         _tx_.priority = _data_.priority;
-    //         return await this.tx(_tx_);
-    //         // ***************************************************************************
-    //     }
-    //     catch(err){
-    //         const _error_ = {}
-    //         _error_.status="error";
-    //         _error_.message=err;
-    //         return _error_;
-    //     }
-    // }
+    async coreCancel(_data_){
+        try{
+            // ***************************************************************************
+            if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
+            if(typeof _data_.buyerMint=="undefined"||_data_.buyerMint===false||_data_.buyerMint==""){_data_.buyerMint="11111111111111111111111111111111";}
+            if(typeof _data_.sellerMint=="undefined"||_data_.sellerMint===false||_data_.sellerMint==""){
+                const _error_ = {}
+                _error_.status="error";
+                _error_.message="buyerMint not defined";
+                return _error_;
+            }
+            const connection = new Connection(_data_.rpc, "confirmed");
+            const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],new PublicKey(this.CORE_MCSWAP_PROGRAM));
+            const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),new PublicKey(_data_.sellerMint).toBytes(),new PublicKey(_data_.buyerMint).toBytes()],new PublicKey(this.CORE_MCSWAP_PROGRAM));
+            let assetCollection = new PublicKey("11111111111111111111111111111111");
+            const response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({"jsonrpc":"2.0","id":"text","method":"getAsset","params":{"id":_data_.sellerMint}})});
+            const getAsset = await response.json();
+            if(typeof getAsset.result.grouping!="undefined"&&typeof getAsset.result.grouping[0]!="undefined"&&typeof getAsset.result.grouping[0].group_value!="undefined"){assetCollection = getAsset.result.grouping[0].group_value;}
+            const totalSize = 1 + 32;
+            let uarray = new Uint8Array(totalSize);    
+            let counter = 0;    
+            uarray[counter++] = 2;
+            const swapAssetb58 = bs58.decode(_data_.buyerMint);
+            const arr = Array.prototype.slice.call(Buffer.from(swapAssetb58), 0);
+            for(let i = 0; i < arr.length; i++) {uarray[counter++] = arr[i];}
+            const keys = [
+              { pubkey: new PublicKey(_data_.seller), isSigner: true, isWritable: true }, // 0
+              { pubkey: swapVaultPDA[0], isSigner: false, isWritable: true }, // 1
+              { pubkey: swapStatePDA[0], isSigner: false, isWritable: true }, // 2
+              { pubkey: new PublicKey(_data_.sellerMint), isSigner: false, isWritable: true }, // 3
+              { pubkey: new PublicKey(assetCollection), isSigner: false, isWritable: true }, // 4
+              { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // 5
+              { pubkey: new PublicKey(this.CORE_PROGRAM), isSigner: false, isWritable: false }, // 6
+            ];
+            const reverseSwapIx = new TransactionInstruction({programId:new PublicKey(this.CORE_MCSWAP_PROGRAM),data:Buffer.from(uarray),keys:keys});
+            const instructions = [reverseSwapIx];
+            // ***************************************************************************
+            const _tx_ = {};
+            if(typeof _data_.tolerance!="undefined"){
+                _tx_.tolerance = _data_.tolerance;              
+            }
+            if(typeof _data_.blink!="undefined"&&_data_.blink===true){
+                _tx_.serialize = true;              
+                _tx_.encode = true; 
+                _tx_.compute = false;
+                _tx_.fees = false;
+            }
+            else{
+                _tx_.serialize = false;              
+                _tx_.encode = false;
+                _tx_.compute = true;
+                _tx_.fees = true;
+            }
+            _tx_.rpc = _data_.rpc;                     
+            _tx_.account = _data_.seller;       
+            _tx_.instructions = instructions;
+            _tx_.signers = _data_.signers;
+            _tx_.table = false;  
+            _tx_.priority = _data_.priority;
+            return await this.tx(_tx_);
+            // ***************************************************************************
+        }
+        catch(err){
+            const _error_ = {}
+            _error_.status="error";
+            _error_.message=err;
+            return _error_;
+        }
+    }
 
     // async coreExecute(_data_){
     //     try{
