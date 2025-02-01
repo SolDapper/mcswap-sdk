@@ -11,7 +11,7 @@ npm i mcswap-sdk
 import mcswap from 'mcswap-sdk';
 ```
 
-## mcswap-spl examples
+## mcswap-spl
 ### Create SPL Escrow
 ```javascript
 import mcswap from 'mcswap-sdk';
@@ -139,7 +139,7 @@ const splSent = await mcswap.splSent({
 console.log(splSent);
 ```
 
-## mcswap-core examples
+## mcswap-core
 ### Create CORE Escrow
 ```javascript
 import mcswap from 'mcswap-sdk';
