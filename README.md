@@ -194,16 +194,17 @@ else{
 # Methods
 ```javascript
 
-mcswap-spl
+// mcswap-spl
 mcswap.splCreate
 mcswap.splExecute
 mcswap.splCancel
 mcswap.splReceived
 mcswap.splSent
 
-mcswap-core
+// mcswap-core
 mcswap.coreCreate
 
+// utilities
 mcswap.tx
 mcswap.send
 mcswap.status
