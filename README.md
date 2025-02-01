@@ -191,20 +191,6 @@ else{
 }
 ```
 
-
-
-
-
-
-
-
-
-## asset standards
-
-• SPL (+SuperToken Support) 
-
-• MPL CORE Assets
-
 # Methods
 ```javascript
 
