@@ -24,6 +24,7 @@ mcswap.splSent
 // mcswap-core
 mcswap.coreCreate
 mcswap.coreCancel
+mcswap.coreExecute
 
 // utilities
 mcswap.tx
@@ -225,6 +226,36 @@ const signer = Keypair.fromSecretKey(new Uint8Array(secret)); // seller
 const tx = await mcswap.splCancel({
     "rpc": rpc,
     "seller": "5Aof1mNHY11PEiXKnCvHCL3nU478N5yHeXJft3Aatqhc",
+    "sellerMint": "56nFoG781ZksKWEyJF5vs5H8Fq3S491EJM3BAogCqRBi",
+    "buyerMint": "J8kHWEjGo4rH1rsVbLvL7idFiKdx3sJCrwd6yU8W3JyP", // false = public listing
+});
+if(typeof tx.status!="undefined"){console.log(tx);}
+else{
+    tx.sign([signer]);
+    const signature = await mcswap.send(rpc,tx);
+    console.log("signature", signature);
+    console.log("awaiting status...");
+    const status = await mcswap.status(rpc,signature);
+    console.log(status);
+}
+```
+
+### Execute CORE Escrow
+```javascript
+import mcswap from 'mcswap-sdk';
+import { Keypair } from "@solana/web3.js";
+const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
+const secret = [1,2,3,4,5,~];
+const signer = Keypair.fromSecretKey(new Uint8Array(secret)); // buyer
+const tx = await mcswap.coreExecute({
+    "rpc": rpc,
+    "blink": true,
+    "convert": true,
+    "tolerance": "1.2",
+    "priority": "Medium",
+    "affiliateWallet": "ACgZcmgmAnMDxXxZUo9Zwg2PS6WQLXy63JnnLmJFYxZZ",
+    "affiliateFee": "0.0009",
+    "buyer": "5Aof1mNHY11PEiXKnCvHCL3nU478N5yHeXJft3Aatqhc",
     "sellerMint": "56nFoG781ZksKWEyJF5vs5H8Fq3S491EJM3BAogCqRBi",
     "buyerMint": "J8kHWEjGo4rH1rsVbLvL7idFiKdx3sJCrwd6yU8W3JyP", // false = public listing
 });
