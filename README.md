@@ -12,7 +12,7 @@ import mcswap from 'mcswap-sdk';
 ```
 
 ## mcswap-spl examples
-### Create & Fetch SPL Escrow
+### Create/Fetch SPL Escrow
 ```javascript
 import mcswap from 'mcswap-sdk';
 import { Keypair } from "@solana/web3.js";
@@ -140,7 +140,7 @@ console.log(splSent);
 ```
 
 ## mcswap-core examples
-### Create & Fetch CORE Escrow
+### Create/Fetch CORE Escrow
 ```javascript
 import mcswap from 'mcswap-sdk';
 import { Keypair } from "@solana/web3.js";
