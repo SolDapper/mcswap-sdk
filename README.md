@@ -150,7 +150,7 @@ const signer = Keypair.fromSecretKey(new Uint8Array(secret));
 const base_fee = await mcswap.fee({
     "rpc": rpc, 
     "display":true,
-    "standard":"spl"
+    "standard":"core"
 });
 console.log("base fee", base_fee+" sol");
 let tx = await mcswap.coreCreate({
