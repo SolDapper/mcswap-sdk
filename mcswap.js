@@ -1464,7 +1464,7 @@ class mcswap {
                     STATE = this.PNFT_SWAP_STATE;
                     NAME = "swap-state";
                 }
-                if(typeof _data_.buyerMint=="undefined"||_data_.buyerMint==""||_data_.buyerMint==false){_data_.buyerMint="11111111111111111111111111111111"}
+                if(typeof _data_.buyerMint=="undefined"||_data_.buyerMint==""||_data_.buyerMint==false){_data_.buyerMint="11111111111111111111111111111111";}
                 const STATE_PDA=PublicKey.findProgramAddressSync([Buffer.from(NAME),new PublicKey(_data_.sellerMint).toBytes(),new PublicKey(_data_.buyerMint).toBytes()],new PublicKey(PROGRAM));
                 const SWAP_STATE=await connection.getAccountInfo(STATE_PDA[0]).catch(function(){});
                 const encoded=SWAP_STATE.data;

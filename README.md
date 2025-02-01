@@ -1,17 +1,17 @@
 # mcswap-sdk
 A Javascript SDK for the McSwap (v2) Solana Protocol
 
-# Install SDK
+# Install
 ```javascript
 npm i mcswap-sdk
 ```
 
-# Import SDK
+# Import
 ```javascript
 import mcswap from 'mcswap-sdk';
 ```
 
-## mcswap-spl
+## mcswap-spl examples
 ### Create and Fetch SPL Escrow
 ```javascript
 import mcswap from 'mcswap-sdk';
@@ -27,6 +27,7 @@ const base_fee = await mcswap.fee({
 console.log("base fee", base_fee+" sol");
 let tx = await mcswap.splCreate({
     "rpc": rpc,
+    "blink": false,
     "convert": true,
     "tolerance": "1.2",
     "priority": "Medium",
@@ -138,8 +139,8 @@ const splSent = await mcswap.splSent({
 console.log(splSent);
 ```
 
-## mcswap-core
-### Create and Fetch SPL Escrow
+## mcswap-core examples
+### Create and Fetch CORE Escrow
 ```javascript
 import mcswap from 'mcswap-sdk';
 import { Keypair } from "@solana/web3.js";
@@ -154,7 +155,7 @@ const base_fee = await mcswap.fee({
 console.log("base fee", base_fee+" sol");
 let tx = await mcswap.coreCreate({
     "rpc": rpc,
-    "blink": true,
+    "blink": false,
     "convert": true,
     "tolerance": "1.2",
     "priority": "Medium",
@@ -162,8 +163,8 @@ let tx = await mcswap.coreCreate({
     "affiliateFee": "0.0009",
     "seller": "5Aof1mNHY11PEiXKnCvHCL3nU478N5yHeXJft3Aatqhc",
     "sellerMint": "56nFoG781ZksKWEyJF5vs5H8Fq3S491EJM3BAogCqRBi",
-    "buyer": "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL",
-    "buyerMint": "J8kHWEjGo4rH1rsVbLvL7idFiKdx3sJCrwd6yU8W3JyP",
+    "buyer": "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL", // false = public listing
+    "buyerMint": "J8kHWEjGo4rH1rsVbLvL7idFiKdx3sJCrwd6yU8W3JyP", // false = public listing
     "lamports": "0.0001",
     "tokenMint": "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
     "units": "0.01",
@@ -180,10 +181,10 @@ else{
         console.log(status);
         const escrow = await mcswap.fetch({
             "rpc": rpc,
-            "display": true,
+            "display": true, // display amounts in decimal format
             "standard": "core",
             "sellerMint": "56nFoG781ZksKWEyJF5vs5H8Fq3S491EJM3BAogCqRBi",
-            "buyerMint": "J8kHWEjGo4rH1rsVbLvL7idFiKdx3sJCrwd6yU8W3JyP"
+            "buyerMint": "J8kHWEjGo4rH1rsVbLvL7idFiKdx3sJCrwd6yU8W3JyP", // false = public listing
         });
         console.log(escrow);
     }
@@ -205,11 +206,15 @@ else{
 # Methods
 ```javascript
 
+mcswap-spl
 mcswap.splCreate
 mcswap.splExecute
 mcswap.splCancel
 mcswap.splReceived
 mcswap.splSent
+
+mcswap-core
+mcswap.coreCreate
 
 mcswap.tx
 mcswap.send
