@@ -11,6 +11,28 @@ npm i mcswap-sdk
 import mcswap from 'mcswap-sdk';
 ```
 
+# Methods
+```javascript
+
+// mcswap-spl
+mcswap.splCreate
+mcswap.splExecute
+mcswap.splCancel
+mcswap.splReceived
+mcswap.splSent
+
+// mcswap-core
+mcswap.coreCreate
+
+// utilities
+mcswap.tx
+mcswap.send
+mcswap.status
+mcswap.fetch
+mcswap.fee
+
+```
+
 ## mcswap-spl
 ### Create SPL Escrow
 ```javascript
@@ -189,26 +211,4 @@ else{
         console.log(escrow);
     }
 }
-```
-
-# Methods
-```javascript
-
-// mcswap-spl
-mcswap.splCreate
-mcswap.splExecute
-mcswap.splCancel
-mcswap.splReceived
-mcswap.splSent
-
-// mcswap-core
-mcswap.coreCreate
-
-// utilities
-mcswap.tx
-mcswap.send
-mcswap.status
-mcswap.fetch
-mcswap.fee
-
 ```
