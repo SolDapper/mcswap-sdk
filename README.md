@@ -269,3 +269,38 @@ else{
     console.log(status);
 }
 ```
+
+### Fetch Sent CORE Escrows
+```javascript
+import mcswap from 'mcswap-sdk';
+const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
+const coreSent = await mcswap.coreSent({
+     "rpc": rpc,
+     "display": true,
+     "wallet": "5Aof1mNHY11PEiXKnCvHCL3nU478N5yHeXJft3Aatqhc"
+ });
+ console.log(coreSent);
+ ```
+
+### Fetch Received CORE Escrows
+```javascript
+import mcswap from 'mcswap-sdk';
+const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
+const coreReceived = await mcswap.coreReceived({
+     "rpc": rpc,
+     "display": true,
+     "wallet": "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL"
+ });
+ console.log(coreReceived);
+ ```
+
+### Fetch Public CORE Escrows
+```javascript
+import mcswap from 'mcswap-sdk';
+const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
+const escrows = await mcswap.corePublic({
+    "rpc": rpc,
+    "display": true,
+});
+console.log(escrows);
+```

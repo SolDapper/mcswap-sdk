@@ -1380,7 +1380,141 @@ class mcswap {
             return _error_;
         }
     }
-
+    async coreReceived(_data_){
+        try{
+            if(typeof _data_.wallet=="undefined"||_data_.wallet==false||_data_.wallet==""){_data_.wallet="11111111111111111111111111111111";}
+            const connection = new Connection(_data_.rpc,"confirmed");
+            const CORE_ProgramId = new PublicKey(this.CORE_MCSWAP_PROGRAM);
+            const _result_ = {}
+            let CORE_RECEIVED = [];
+            let accounts = null;
+            accounts = await connection.getParsedProgramAccounts(CORE_ProgramId,{filters:[{dataSize:186,},{memcmp:{offset:74,bytes:_data_.wallet,},},],}).catch(function(){});
+            if(accounts != null){for(let i=0;i<accounts.length;i++){
+                const account = accounts[i];
+                const resultStatePDA = account.pubkey;
+                let resultState = null;
+                const record = {};
+                resultState = await connection.getAccountInfo(resultStatePDA);
+                if(resultState != null){
+                    let decodedData = this.CORE_SWAP_STATE.decode(resultState.data);
+                    const acct = account.pubkey.toString();
+                    record.acct = acct;
+                    const initializer = new PublicKey(decodedData.initializer).toString();
+                    const initializer_mint = new PublicKey(decodedData.initializer_asset).toString();
+                    const taker = new PublicKey(decodedData.taker).toString();
+                    const is_swap = new PublicKey(decodedData.is_swap).toString();
+                    const swap_mint = new PublicKey(decodedData.swap_asset).toString();
+                    const swap_lamports = parseInt(new BN(decodedData.swap_lamports, 10, "le"));
+                    const swap_token_mint = new PublicKey(decodedData.swap_token_mint).toString();
+                    const swap_tokens = parseInt(new BN(decodedData.swap_tokens, 10, "le"));
+                    const utime = parseInt(new BN(decodedData.utime, 10, "le").toString());
+                    record.utime = utime;
+                    record.seller = initializer;
+                    record.buyer = taker;
+                    record.sellerMint = initializer_mint;
+                    record.buyerMint = swap_mint;
+                    record.lamports = swap_lamports;
+                    record.tokenMint = swap_token_mint;
+                    record.units = swap_tokens;
+                    if(typeof _data_.display!="undefined"&&_data_.display===true){
+                        const lamports = await this.convert({"rpc":_data_.rpc,"amount":record.lamports,"mint":"So11111111111111111111111111111111111111112","display":_data_.display});
+                        const units = await this.convert({"rpc":_data_.rpc,"amount":record.units,"mint":record.tokenMint,"display":_data_.display});
+                        record.lamports = lamports.data;
+                        record.units = units.data;
+                    }
+                    CORE_RECEIVED.push(record);
+                }
+                if(i==(accounts.length-1)){
+                    _result_.status="ok";
+                    _result_.message="success";
+                    _result_.data=CORE_RECEIVED;
+                    return _result_;
+                }
+            }
+            }
+            else{
+                _result_.status="ok";
+                _result_.message="no contracts found";
+                _result_.data=NFT_SENT;
+                return _result_;
+            }
+        }
+        catch(err){
+            const _error_ = {}
+            _error_.status="error";
+            _error_.message=err;
+            return _error_;
+        }
+    }
+    async coreSent(_data_){
+        try{
+            const connection = new Connection(_data_.rpc,"confirmed");
+            const CORE_ProgramId = new PublicKey(this.CORE_MCSWAP_PROGRAM);
+            const _result_ = {}
+            let CORE_SENT = [];
+            let accounts = null;
+            accounts = await connection.getParsedProgramAccounts(CORE_ProgramId,{filters:[{dataSize:186,},{memcmp:{offset:10,bytes:_data_.wallet,},},],}).catch(function(){});
+            if(accounts != null){for(let i=0;i<accounts.length;i++){
+                const account = accounts[i];
+                const resultStatePDA = account.pubkey;
+                let resultState = null;
+                const record = {};
+                resultState = await connection.getAccountInfo(resultStatePDA);
+                if(resultState != null){
+                    let decodedData = this.CORE_SWAP_STATE.decode(resultState.data);
+                    const acct = account.pubkey.toString();
+                    record.acct = acct;
+                    const initializer = new PublicKey(decodedData.initializer).toString();
+                    const initializer_mint = new PublicKey(decodedData.initializer_asset).toString();
+                    const taker = new PublicKey(decodedData.taker).toString();
+                    const is_swap = new PublicKey(decodedData.is_swap).toString();
+                    const swap_mint = new PublicKey(decodedData.swap_asset).toString();
+                    const swap_lamports = parseInt(new BN(decodedData.swap_lamports, 10, "le"));
+                    const swap_token_mint = new PublicKey(decodedData.swap_token_mint).toString();
+                    const swap_tokens = parseInt(new BN(decodedData.swap_tokens, 10, "le"));
+                    const utime = parseInt(new BN(decodedData.utime, 10, "le").toString());
+                    record.utime = utime;
+                    record.seller = initializer;
+                    record.buyer = taker;
+                    record.sellerMint = initializer_mint;
+                    record.buyerMint = swap_mint;
+                    record.lamports = swap_lamports;
+                    record.tokenMint = swap_token_mint;
+                    record.units = swap_tokens;
+                    if(typeof _data_.display!="undefined"&&_data_.display===true){
+                        const lamports = await this.convert({"rpc":_data_.rpc,"amount":record.lamports,"mint":"So11111111111111111111111111111111111111112","display":_data_.display});
+                        const units = await this.convert({"rpc":_data_.rpc,"amount":record.units,"mint":record.tokenMint,"display":_data_.display});
+                        record.lamports = lamports.data;
+                        record.units = units.data;
+                    }
+                    CORE_SENT.push(record);
+                }
+                if(i==(accounts.length-1)){
+                    _result_.status="ok";
+                    _result_.message="success";
+                    _result_.data=CORE_SENT;
+                    return _result_;
+                }
+            }
+            }
+            else{
+                _result_.status="ok";
+                _result_.message="no contracts found";
+                _result_.data=CORE_SENT;
+                return _result_;
+            }
+        }
+        catch(err){
+            const _error_ = {}
+            _error_.status="error";
+            _error_.message=err;
+            return _error_;
+        }
+    }
+    async corePublic(_data_){
+        return await this.coreReceived(_data_);
+    }
+    
     // utilities
     async fetch(_data_){
         try{
