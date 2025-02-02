@@ -115,8 +115,6 @@ class mcswap {
             const connection = new Connection(_data_.rpc,"confirmed");
             const seller = new PublicKey(_data_.seller);
             const buyer = new PublicKey(_data_.buyer);
-            // console.log("seller", seller.toString());
-            // console.log("buyer", buyer.toString());
             // ***************************************************************************
             let meta_data = null;
             let response = null;
@@ -154,16 +152,6 @@ class mcswap {
                 token4Mint=_data_.token4Mint;
                 token4Amount=_data_.token4Amount;
             }
-            // console.log("token1Mint", token1Mint);
-            // console.log("token1Amount", token1Amount);
-            // console.log("token2Mint", token2Mint);
-            // console.log("token2Amount", token2Amount);
-            // console.log("token3Mint", token3Mint);
-            // console.log("token3Amount", token3Amount);
-            // console.log("token4Mint", token4Mint);
-            // console.log("token4Amount", token4Amount);
-            // console.log("affiliateWallet", affiliateWallet);
-            // console.log("affiliateFee", affiliateFee);
             // ***************************************************************************
             meta_data = null;
             let is_22_1 = false;
@@ -213,14 +201,6 @@ class mcswap {
                     is_22_4 = true;
                 }
             }
-            // console.log("is_22_1", is_22_1);
-            // console.log("is_22_2", is_22_2);
-            // console.log("is_22_3", is_22_3);
-            // console.log("is_22_4", is_22_4);
-            // console.log("SPL_PROGRAM_1", SPL_PROGRAM_1.toString());
-            // console.log("SPL_PROGRAM_2", SPL_PROGRAM_2.toString());
-            // console.log("SPL_PROGRAM_3", SPL_PROGRAM_3.toString());
-            // console.log("SPL_PROGRAM_4", SPL_PROGRAM_4.toString());
             // ***************************************************************************
             const programStatePDA = PublicKey.findProgramAddressSync([Buffer.from("program-state")],new PublicKey(this.SPL_MCSWAP_PROGRAM));
             let programState = null;
@@ -240,14 +220,9 @@ class mcswap {
                 return _error_;
             }
             const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),seller.toBytes(),buyer.toBytes()],new PublicKey(this.SPL_MCSWAP_PROGRAM));
-            // console.log("devTreasury", devTreasury.toString());
-            // console.log("swapVaultPDA", swapVaultPDA.toString());
-            // console.log("swapStatePDA", swapStatePDA[0].toString());
             // ***************************************************************************
-            
             let token1Setting = false;
             let token2Setting = false;
-
             let extensionTypes_1 = [];
             let transferFeeBasisPoints_1 = null;
             let tempToken1 = new PublicKey("11111111111111111111111111111111");
@@ -270,7 +245,6 @@ class mcswap {
                     }
                 }
             }
-
             let extensionTypes_2 = [];
             let transferFeeBasisPoints_2 = null;
             let tempToken2 = new PublicKey("11111111111111111111111111111111");
@@ -293,7 +267,6 @@ class mcswap {
                     }
                 }
             }
-            
             // ***************************************************************************
             accountInfo = null;
             let createToken3ATA = false; 
@@ -323,29 +296,20 @@ class mcswap {
                 createToken4ATA = false;
             }
             }
-            // console.log("createToken3ATA", createToken3ATA);
-            // console.log("createToken4ATA", createToken4ATA);
             // ***************************************************************************
-            
             const totalSize = 1 + 32 + 8 + 8 + 32 + 8 + 32 + 8 + 8;
-            // console.log("totalSize", totalSize);
-        
             let uarray = new Uint8Array(totalSize);
             let counter = 0;    
             uarray[counter++] = 0; // 0 = token_swap InitializeSwap instruction
             let arr;
-
             let takerb58 = bs58.decode(_data_.buyer);
             arr = Array.prototype.slice.call(Buffer.from(takerb58), 0);
             for (let i = 0; i < arr.length; i++) {
                 uarray[counter++] = arr[i];
             }
-        
             let byteArray;
             let byte;
-
             if(extensionTypes_1.includes(1)){
-                // console.log("token 1 - super token extension fee");
                 let token1LessFee = token1Amount - (token1Amount * (transferFeeBasisPoints_1 / 100 / 100));
                 byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
                 for (let index = 0; index < byteArray.length; index ++ ) {
@@ -355,7 +319,6 @@ class mcswap {
                 }
             }
             else{
-                // console.log("token 1 - no extension");
                 byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
                 for (let index = 0; index < byteArray.length; index ++ ) {
                     byte = token1Amount & 0xff;
@@ -366,9 +329,7 @@ class mcswap {
             for (let i = 0; i < byteArray.length; i++) {
                 uarray[counter++] = byteArray[i];
             }
-
             if(extensionTypes_2.includes(1)){
-                // console.log("token 2 - super token extension fee");
                 let token2LessFee = token2Amount - (token2Amount * (transferFeeBasisPoints_2 / 100 / 100));
                 byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
                 for (let index = 0; index < byteArray.length; index ++ ) {
@@ -378,7 +339,6 @@ class mcswap {
                 }
             }
             else{
-                // console.log("token 2 - no extension");
                 byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
                 for (let index = 0; index < byteArray.length; index ++ ) {
                     byte = token2Amount & 0xff;
@@ -389,13 +349,11 @@ class mcswap {
             for (let i = 0; i < byteArray.length; i++) {
                 uarray[counter++] = byteArray[i];
             }
-
             const token3Mintb58 = bs58.decode(token3Mint);
             arr = Array.prototype.slice.call(Buffer.from(token3Mintb58), 0);
             for (let i = 0; i < arr.length; i++) {
                 uarray[counter++] = arr[i];
             }
-            
             byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
             for (let index = 0; index < byteArray.length; index ++ ) {
                 byte = token3Amount & 0xff;
@@ -405,13 +363,11 @@ class mcswap {
             for (let i = 0; i < byteArray.length; i++) {
                 uarray[counter++] = byteArray[i];
             }
-        
             const token4Mintb58 = bs58.decode(token4Mint);
             arr = Array.prototype.slice.call(Buffer.from(token4Mintb58), 0);
             for (let i = 0; i < arr.length; i++) {
                 uarray[counter++] = arr[i];
             }
-        
             byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
             for (let index = 0; index < byteArray.length; index ++ ) {
                 byte = token4Amount & 0xff;
@@ -421,7 +377,6 @@ class mcswap {
             for (let i = 0; i < byteArray.length; i++) {
                 uarray[counter++] = byteArray[i];
             }
-        
             byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
             for (let index = 0; index < byteArray.length; index ++ ) {
                 byte = affiliateFee & 0xff;
@@ -431,28 +386,7 @@ class mcswap {
             for (let i = 0; i < byteArray.length; i++) {
                 uarray[counter++] = byteArray[i];
             } 
-
-            // console.log("KEYS");
-            // console.log("seller:", seller.toString());
-            // console.log("programStatePDA:", programStatePDA[0].toString());
-            // console.log("swapVaultPDA:", swapVaultPDA.toString());
-            // console.log("swapStatePDA:", swapStatePDA[0].toString());
-            // console.log("token1Mint:", new PublicKey(token1Mint).toString());
-            // console.log("providerToken1ATA:", providerToken1ATA.toString());
-            // console.log("token2Mint:", new PublicKey(token2Mint).toString());
-            // console.log("providerToken2ATA:", providerToken2ATA.toString());
-            // console.log("SystemProgram:", SystemProgram.programId.toString());
-            // console.log("TOKEN_PROGRAM_ID:", splToken.TOKEN_PROGRAM_ID.toString());
-            // console.log("TOKEN_2022_PROGRAM_ID:", splToken.TOKEN_2022_PROGRAM_ID.toString());
-            // console.log("devTreasury:", devTreasury.toString());
-            // console.log("affiliateWallet:", new PublicKey(affiliateWallet).toString());
-
-            // console.log("tempToken1Account:", tempToken1Account);
-            // console.log("tempToken1:", tempToken1);
-
-            // console.log("tempToken2Account:", tempToken2Account);
-            // console.log("tempToken2:", tempToken2);
-
+            // ***************************************************************************
             const keys = [
                 { pubkey: seller, isSigner: true, isWritable: true }, // 0
                 { pubkey: programStatePDA[0], isSigner: false, isWritable: false }, // 1
@@ -480,15 +414,12 @@ class mcswap {
                 _error_.message="Could not fetch ALT!";
                 return _error_;
             }
-            // console.log("ALT");
-            // console.log("lookupTable", lookupTable.toString());
             // ***************************************************************************
             if(createToken3ATA==true && createToken4ATA==true){instructions=[createToken3ATAIx,createToken4ATAIx,initializeSwapIx];}
             else if(createToken3ATA==true){instructions=[createToken3ATAIx,initializeSwapIx];} 
             else if(createToken4ATA==true){instructions=[createToken4ATAIx,initializeSwapIx];} 
             else{instructions=[initializeSwapIx];}
             // ***************************************************************************
-            // build transaction
             const _tx_ = {};
             if(typeof _data_.tolerance!="undefined"){
                 _tx_.tolerance = _data_.tolerance;              
@@ -505,7 +436,6 @@ class mcswap {
                 _tx_.compute = true;
                 _tx_.fees = true;
             }
-
             let signers;
             if(token2Setting===true){
                 signers = [tempToken1Account,tempToken2Account];
@@ -513,13 +443,6 @@ class mcswap {
             else{
                 signers = [tempToken1Account];
             }
-
-            // console.log("_data_.rpc", _data_.rpc);
-            // console.log("_data_.seller", _data_.seller);
-            // console.log("signers", signers);
-            // console.log("lookupTableAccount", lookupTableAccount);
-            // console.log("_data_.priority", _data_.priority);
-
             _tx_.rpc = _data_.rpc;                     
             _tx_.account = _data_.seller;       
             _tx_.instructions = instructions;
@@ -527,7 +450,6 @@ class mcswap {
             _tx_.table = lookupTableAccount;                   
             _tx_.priority = _data_.priority;
             return await this.tx(_tx_);
-            // build transaction
             // ***************************************************************************
         }
         catch(err){
@@ -834,17 +756,16 @@ class mcswap {
                 { pubkey: devTreasury, isSigner: false, isWritable: true }, // 20
                 { pubkey: new PublicKey(affiliateWallet), isSigner: false, isWritable: true }, // 21
             ];
-            // console.log("keys: ", keys);
             const executeSwapIx = new TransactionInstruction({programId:new PublicKey(this.SPL_MCSWAP_PROGRAM),data:Buffer.from(uarray),keys:keys});
             const lookupTable = new PublicKey(this.SPL_STATIC_ALT);
             const lookupTableAccount = await connection.getAddressLookupTable(lookupTable).then((res)=>res.value);
             if(!lookupTableAccount){const _error_={};_error_.status="error";_error_.message="Could not fetch ALT!";return _error_;}
             // // ***************************************************************************
             let instructions = [];
-            if(createToken1ATA===true && createToken2ATA===true){console.log("ix 1");instructions=[createToken1ATAIx,createToken2ATAIx,executeSwapIx];}
-            else if(createToken1ATA===true){console.log("ix 2");instructions=[createToken1ATAIx,executeSwapIx];}
-            else if(createToken2ATA===true){console.log("ix 3");instructions=[createToken2ATAIx,executeSwapIx];}
-            else{console.log("ix 4");instructions=[executeSwapIx];}
+            if(createToken1ATA===true && createToken2ATA===true){instructions=[createToken1ATAIx,createToken2ATAIx,executeSwapIx];}
+            else if(createToken1ATA===true){instructions=[createToken1ATAIx,executeSwapIx];}
+            else if(createToken2ATA===true){instructions=[createToken2ATAIx,executeSwapIx];}
+            else{instructions=[executeSwapIx];}
             // // ***************************************************************************
             const _tx_ = {};
             if(typeof _data_.tolerance!="undefined"){
@@ -1779,7 +1700,6 @@ class mcswap {
         opti_msg = new TransactionMessage({payerKey:opti_payer.publicKey,recentBlockhash:blockhash,instructions:opti_ix,}).compileToV0Message(opti_table);
         const opti_tx = new VersionedTransaction(opti_msg);    
         const opti_cu_res = await connection.simulateTransaction(opti_tx,{replaceRecentBlockhash:true,sigVerify:false,});
-        // console.log("simulation", opti_cu_res);
         if(opti_cu_res.value.err != null){
             return {"status":"error","message":"simulation error","details":opti_cu_res.value.err,"logs":opti_cu_res.value.logs}
         }
