@@ -30,7 +30,12 @@ mcswap.coreSent
 mcswap.corePublic
 
 // mcswap-nft
-
+mcswap.nftCreate
+mcswap.nftCancel
+mcswap.nftExecute
+mcswap.nftReceived
+mcswap.nftSent
+mcswap.nftPublic
 
 // mcswap-pnft
 
