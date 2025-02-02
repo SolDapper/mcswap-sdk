@@ -29,6 +29,15 @@ mcswap.coreReceived
 mcswap.coreSent
 mcswap.corePublic
 
+// mcswap-nft
+
+
+// mcswap-pnft
+
+
+// mcswap-cnft
+
+
 // utilities
 mcswap.tx
 mcswap.send
