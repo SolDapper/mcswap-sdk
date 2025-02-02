@@ -25,6 +25,9 @@ mcswap.splSent
 mcswap.coreCreate
 mcswap.coreCancel
 mcswap.coreExecute
+mcswap.coreReceived
+mcswap.coreSent
+mcswap.corePublic
 
 // utilities
 mcswap.tx
