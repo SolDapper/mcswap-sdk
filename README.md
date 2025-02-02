@@ -456,7 +456,7 @@ const nftSent = await mcswap.nftSent({
 console.log(nftSent);
 ```
 
-### Public CORE Escrows
+### Public NFT Escrows
 ```javascript
 import mcswap from 'mcswap-sdk';
 const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
