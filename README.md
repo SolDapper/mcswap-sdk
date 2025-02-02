@@ -398,7 +398,34 @@ else{
 ```
 
 ### Execute NFT Escrow
-
+```javascript
+import mcswap from 'mcswap-sdk';
+import { Keypair } from "@solana/web3.js";
+const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
+const secret = [1,2,3,4,5,~];
+const signer = Keypair.fromSecretKey(new Uint8Array(secret)); // buyer
+const tx = await mcswap.nftExecute({
+    "rpc": rpc,
+    "blink": false,
+    "convert": true,
+    "tolerance": "1.2",
+    "priority": "Medium",
+    "affiliateWallet": "ACgZcmgmAnMDxXxZUo9Zwg2PS6WQLXy63JnnLmJFYxZZ",
+    "affiliateFee": "0.0009",
+    "buyer": "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL",
+    "sellerMint": "5Jk6hn3rR1DJjtDU4MzgDuN3SXH4nfHiYgqmEVhGyEUt",
+    "buyerMint": "Bdzry26srWQUvdRS1kSA3kXMndybBwP1j7cmcki8Rvru",
+});
+if(typeof tx.status!="undefined"){console.log(tx);}
+else{
+    tx.sign([signer]);
+    const signature = await mcswap.send(rpc,tx);
+    console.log("signature", signature);
+    console.log("awaiting status...");
+    const status = await mcswap.status(rpc,signature);
+    console.log(status);
+}
+```
 
 ### Received NFT Escrow
 
