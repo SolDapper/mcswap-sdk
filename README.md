@@ -1,5 +1,5 @@
 # mcswap-sdk
-A Javascript SDK for the McSwap (v2) Solana Protocol
+Javascript SDK for the McSwap (v2) Solana Protocol
 
 # Install
 ```javascript

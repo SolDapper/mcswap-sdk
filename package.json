@@ -14,7 +14,10 @@
   "keywords": [
     "solana",
     "trustless",
-    "otc"
+    "escrow",
+    "marketplace",
+    "otc",
+    "p2p"
   ],
   "author": "@SolDapper",
   "license": "MIT",
