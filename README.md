@@ -373,7 +373,29 @@ else{
 ```
 
 ### Cancel NFT Escrow
-
+```javascript
+import mcswap from 'mcswap-sdk';
+import { Keypair } from "@solana/web3.js";
+const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
+const secret = [1,2,3,4,5,~];
+const signer = Keypair.fromSecretKey(new Uint8Array(secret)); // seller
+let tx = await mcswap.nftCancel({
+    "rpc": rpc,
+    "blink": true,
+    "seller": "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere",
+    "sellerMint": "5Jk6hn3rR1DJjtDU4MzgDuN3SXH4nfHiYgqmEVhGyEUt",
+    "buyerMint": "Bdzry26srWQUvdRS1kSA3kXMndybBwP1j7cmcki8Rvru",
+});
+if(typeof tx.status!="undefined"){console.log(tx);}
+else{
+    tx.sign([signer]);
+    const signature = await mcswap.send(rpc,tx);
+    console.log("signature", signature);
+    console.log("awaiting status...");
+    const status = await mcswap.status(rpc,signature);
+    console.log(status);
+}
+```
 
 ### Execute NFT Escrow
 
