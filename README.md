@@ -152,7 +152,7 @@ else{
 }
 ```
 
-### Fetch Received SPL Escrows
+### Received SPL Escrows
 ```javascript
 import mcswap from 'mcswap-sdk';
 const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
@@ -164,7 +164,7 @@ const splReceived = await mcswap.splReceived({
 console.log(splReceived);
 ```
 
-### Fetch Sent SPL Escrows
+### Sent SPL Escrows
 ```javascript
 import mcswap from 'mcswap-sdk';
 const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
@@ -282,18 +282,6 @@ else{
 }
 ```
 
-### Sent CORE Escrows
-```javascript
-import mcswap from 'mcswap-sdk';
-const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
-const coreSent = await mcswap.coreSent({
-     "rpc": rpc,
-     "display": true,
-     "wallet": "5Aof1mNHY11PEiXKnCvHCL3nU478N5yHeXJft3Aatqhc"
- });
- console.log(coreSent);
- ```
-
 ### Received CORE Escrows
 ```javascript
 import mcswap from 'mcswap-sdk';
@@ -306,6 +294,18 @@ const coreReceived = await mcswap.coreReceived({
  console.log(coreReceived);
  ```
 
+### Sent CORE Escrows
+```javascript
+import mcswap from 'mcswap-sdk';
+const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
+const coreSent = await mcswap.coreSent({
+     "rpc": rpc,
+     "display": true,
+     "wallet": "5Aof1mNHY11PEiXKnCvHCL3nU478N5yHeXJft3Aatqhc"
+ });
+ console.log(coreSent);
+ ```
+
 ### Public CORE Escrows
 ```javascript
 import mcswap from 'mcswap-sdk';
@@ -316,3 +316,6 @@ const escrows = await mcswap.corePublic({
 });
 console.log(escrows);
 ```
+
+
+
