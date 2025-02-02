@@ -67,6 +67,29 @@ class mcswap {
             publicKey("swap_token_mint"),
             uint64("swap_tokens"),
         ]);
+
+        // mcswap-nft
+        this.NFT_TREASURY = "Fmu3MXN9oNkcJsgf9Y2X19tHyYJ4SsPxyrgVoou1iKke";
+        this.NFT_MCSWAP_PROGRAM = "34dUBGrhkvjGDPSuH3zgtpBdBwZ6QSag8JpvZAnXmXTR";
+        this.NFT_STATIC_ALT = "BT4AUPXSxvbDrzSt3LLkE3Jd5s8R3fBSxJuyicyEMYH3";
+        this.NFT_PROGRAM_STATE = BufferLayout.struct([
+            BufferLayout.u8("is_initialized"),
+            uint64("fee_lamports"),
+            publicKey("dev_treasury"),
+        ]);
+        this.NFT_SWAP_STATE = BufferLayout.struct([
+            BufferLayout.u8("is_initialized"),
+            uint64("utime"),
+            BufferLayout.u8("is_swap"),
+            publicKey("initializer"),
+            publicKey("initializer_mint"),
+            publicKey("temp_mint_account"),
+            publicKey("taker"),
+            publicKey("swap_mint"),
+            uint64("swap_lamports"),
+            publicKey("swap_token_mint"),
+            uint64("swap_tokens"),
+        ]);
         
     }
 
@@ -1434,6 +1457,257 @@ class mcswap {
     async corePublic(_data_){
         _data_.wallet = false;
         return await this.coreReceived(_data_);
+    }
+
+    // mcswap-nft
+    async nftCreate(_data_){
+        try{
+            // ***************************************************************************
+            if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
+            if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
+            let affiliateWallet = this.CORE_TREASURY;
+            let affiliateFee = 0;
+            if(typeof _data_.affiliateWallet!="undefined" && _data_.affiliateWallet!=false && 
+            typeof _data_.affiliateFee!="undefined" && _data_.affiliateFee!=false && _data_.affiliateFee>0){
+                affiliateWallet = _data_.affiliateWallet;
+                affiliateFee = _data_.affiliateFee;
+            }
+            if(typeof _data_.convert!="undefined"&&_data_.convert===true&&typeof _data_.affiliateFee!="undefined"&&_data_.affiliateFee!=false&&_data_.affiliateFee>0){
+                let affiliate_ = await this.convert({"rpc":_data_.rpc,"amount":_data_.affiliateFee,"mint":"So11111111111111111111111111111111111111112"});
+                affiliateFee = affiliate_.data;
+                _data_.affiliateFee = affiliate_.data;
+            }
+            if(typeof _data_.convert!="undefined"&&_data_.convert===true&&typeof _data_.lamports!="undefined"&&_data_.lamports!=false&&_data_.lamports>0){
+                let amount_a = await this.convert({"rpc":_data_.rpc,"amount":_data_.lamports,"mint":"So11111111111111111111111111111111111111112"});
+                _data_.lamports = amount_a.data;
+            }else{_data_.lamports=0;}
+            if(typeof _data_.convert!="undefined"&&_data_.convert===true&&typeof _data_.units!="undefined"&&_data_.units!=false&&_data_.units>0){
+                let amount_b = await this.convert({"rpc":_data_.rpc,"amount":_data_.units,"mint":_data_.tokenMint});
+                _data_.units = amount_b.data;
+            }else{_data_.units=0;}
+            if(_data_.seller==_data_.buyer){
+                const _error_ = {}
+                _error_.status="error";
+                _error_.message="buyer and seller can not be the same";
+                return _error_;
+            }
+            if(typeof _data_.sellerMint=="undefined"||_data_.sellerMint==false||_data_.sellerMint==""){
+                const _error_ = {}
+                _error_.status="error";
+                _error_.message="sellerMint not defined";
+                return _error_;
+            }
+            // ***************************************************************************
+            let connection = new Connection(_data_.rpc, "confirmed");
+            let isSwap = true;
+            const mint = _data_.sellerMint;
+            let swapMint = "11111111111111111111111111111111";
+            if(typeof _data_.buyerMint!="undefined"){swapMint=_data_.buyerMint;}else{isSwap=false;}
+            let taker = _data_.buyer;
+            const swapLamports=parseInt(_data_.lamports);
+            let swapTokens = 0;
+            let swapTokenMint = new PublicKey("11111111111111111111111111111111");
+            if(typeof _data_.units!="undefined" && _data_.units>0){swapTokens=parseInt(_data_.units);swapTokenMint=new PublicKey(_data_.tokenMint);}
+            const NFTSwapProgramId = new PublicKey(this.NFT_MCSWAP_PROGRAM);
+            const programStatePDA = PublicKey.findProgramAddressSync([Buffer.from("program-state")],NFTSwapProgramId);
+            let programState = null;
+            programState = await connection.getAccountInfo(programStatePDA[0]).catch(function(){});
+            const encodedProgramStateData = programState.data;
+            const decodedProgramStateData = this.NFT_PROGRAM_STATE.decode(encodedProgramStateData);
+            const devTreasury = new PublicKey(decodedProgramStateData.dev_treasury);
+            console.log("devTreasury", devTreasury.toString());
+            const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],NFTSwapProgramId);
+            const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"), new PublicKey(mint).toBytes(), new PublicKey(swapMint).toBytes()],NFTSwapProgramId);
+            let response = null;
+            let meta_data = null;
+            // ***************************************************************************
+            let PROGRAM_1 = splToken.TOKEN_PROGRAM_ID;
+            response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({"jsonrpc":"2.0","id":"text","method":"getAsset","params":{"id":mint}})});
+            meta_data = await response.json();
+            if(typeof meta_data.result.mint_extensions != "undefined"){
+                PROGRAM_1 = splToken.TOKEN_2022_PROGRAM_ID;
+            }
+            const swapVaultATA = await splToken.getAssociatedTokenAddress(new PublicKey(mint),swapVaultPDA[0],true,PROGRAM_1,splToken.ASSOCIATED_TOKEN_PROGRAM_ID,);        
+            const createSwapVaultATAIx = splToken.createAssociatedTokenAccountInstruction(new PublicKey(_data_.seller),swapVaultATA,swapVaultPDA[0],new PublicKey(mint),PROGRAM_1,splToken.ASSOCIATED_TOKEN_PROGRAM_ID,);
+            const providerMintATA = await splToken.getAssociatedTokenAddress(new PublicKey(mint),new PublicKey(_data_.seller),false,PROGRAM_1,splToken.ASSOCIATED_TOKEN_PROGRAM_ID,);
+            // ***************************************************************************
+            let PROGRAM_2 = splToken.TOKEN_PROGRAM_ID;
+            response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({"jsonrpc":"2.0","id":"text","method":"getAsset","params":{"id":swapMint}})});
+            meta_data = await response.json();
+            if(typeof meta_data.result.mint_extensions != "undefined"){
+                PROGRAM_2 = splToken.TOKEN_2022_PROGRAM_ID;
+            }
+            // ***************************************************************************
+            let createSwapMintATA = false;
+            let swapMintATA = null;
+            let createSwapMintATAIx = null;        
+            if (swapMint != "11111111111111111111111111111111") {
+              swapMintATA = await splToken.getAssociatedTokenAddress(new PublicKey(swapMint),new PublicKey(_data_.seller),false,PROGRAM_2,splToken.ASSOCIATED_TOKEN_PROGRAM_ID,);
+              let response_a = null;
+              response_a = await connection.getAccountInfo(swapMintATA).catch(function(){});
+              if (response_a == null) {
+                createSwapMintATA = true;
+                createSwapMintATAIx = splToken.createAssociatedTokenAccountInstruction(new PublicKey(_data_.seller),swapMintATA,
+                new PublicKey(_data_.seller),new PublicKey(swapMint),PROGRAM_2,splToken.ASSOCIATED_TOKEN_PROGRAM_ID,);
+              }
+            }
+            // ***************************************************************************
+            let createSwapTokenATA = false;
+            let swapTokenATA = null;
+            let createSwapTokenATAIx = null;        
+            if(swapTokenMint.toString() != "11111111111111111111111111111111"){
+                let PROGRAM_3 = splToken.TOKEN_PROGRAM_ID;
+                response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
+                body:JSON.stringify({"jsonrpc":"2.0","id":"text","method":"getAsset","params":{"id":swapTokenMint.toString()}})});
+                meta_data = await response.json();
+                if(typeof meta_data.result.mint_extensions != "undefined"){
+                    PROGRAM_3 = splToken.TOKEN_2022_PROGRAM_ID;
+                }
+                swapTokenATA = await splToken.getAssociatedTokenAddress(swapTokenMint,new PublicKey(_data_.seller),false,PROGRAM_3,splToken.ASSOCIATED_TOKEN_PROGRAM_ID,);
+                let response_b = null;
+                response_b = await connection.getAccountInfo(swapTokenATA).catch(function(error){});
+                if (response_b == null) {
+                    createSwapTokenATA = true;
+                    createSwapTokenATAIx = splToken.createAssociatedTokenAccountInstruction(new PublicKey(_data_.seller),swapTokenATA,new PublicKey(_data_.seller),swapTokenMint,PROGRAM_3,splToken.ASSOCIATED_TOKEN_PROGRAM_ID);
+                }
+            }
+            // ***************************************************************************
+    
+            
+
+
+            return "debug";
+
+            // const totalSize = 1 + 1 + 32 + 32 + 8 + 32 + 8; // HERE
+            // let uarray = new Uint8Array(totalSize);
+            // let counter = 0;    
+            // uarray[counter++] = 0; // 0 = nft_swap InitializeSwap instruction
+            // if(isSwap==true){uarray[counter++]=1;}else{uarray[counter++]=0;}
+    
+            // let arr;
+            // let takerb58 = bs58.decode(taker);
+            // arr = Array.prototype.slice.call(Buffer.from(takerb58),0);
+            // for(let i = 0; i < arr.length; i++){uarray[counter++]=arr[i];}
+    
+            // let swapMintb58 = bs58.decode(swapMint);
+            // arr = Array.prototype.slice.call(Buffer.from(swapMintb58), 0);
+            // for(let i = 0; i < arr.length; i++){uarray[counter++]=arr[i];}
+            
+            // let byte;
+            // let byteArray;
+            // let index;
+            
+            // byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
+            // for(index = 0; index < byteArray.length; index ++ ){byte=swapLamports & 0xff;byteArray[index]=byte;swapLamports=(swapLamports-byte)/256;}
+            // for(let i = 0; i < byteArray.length; i++) {uarray[counter++]=byteArray[i];}
+    
+            // let swapTokenMintb58 = bs58.decode(swapTokenMint.toString());
+            // arr = Array.prototype.slice.call(Buffer.from(swapTokenMintb58),0);
+            // for(let i = 0; i < arr.length; i++){uarray[counter++]=arr[i];}
+    
+            // byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
+            // for(index = 0; index < byteArray.length; index ++ ){byte=swapTokens & 0xff;byteArray[index]=byte;swapTokens=(swapTokens-byte)/256;}
+            // for(let i = 0; i < byteArray.length; i++){uarray[counter++]=byteArray[i];}
+    
+            // const initializeSwapIx = new TransactionInstruction({
+            //   programId: NFTSwapProgramId,
+            //   data: Buffer.from(uarray),
+            //   keys: [
+            //     { pubkey: new PublicKey(_data_.seller), isSigner: true, isWritable: true }, // 0
+            //     { pubkey: programStatePDA[0], isSigner: false, isWritable: false }, // 1
+            //     { pubkey: swapVaultATA, isSigner: false, isWritable: true }, // 2
+            //     { pubkey: swapStatePDA[0], isSigner: false, isWritable: true }, // 3
+            //     { pubkey: providerMintATA, isSigner: false, isWritable: true }, // 4
+            //     { pubkey: new PublicKey(mint), isSigner: false, isWritable: true }, // 5
+            //     { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // 6
+            //     { pubkey: splToken.TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }, // 7
+            //     { pubkey: splToken.TOKEN_2022_PROGRAM_ID, isSigner: false, isWritable: false }, // 8
+            //     { pubkey: devTreasury, isSigner: false, isWritable: true }, // 9
+            //     { pubkey: mcDegensTreasury, isSigner: false, isWritable: true }, // 10
+            //   ]
+            // });
+    
+            // const lookupTableAccount = await connection.getAddressLookupTable(new PublicKey(this.NFT_STATIC_ALT)).then((res) => res.value);
+    
+            // let instructions = null;
+            // if (isSwap == true) {
+            //   if (createSwapMintATA == true && createSwapTokenATA == true) {
+            //     instructions = [
+            //       createSwapVaultATAIx,
+            //       createSwapMintATAIx,
+            //       createSwapTokenATAIx,
+            //       initializeSwapIx
+            //     ];
+            //   } 
+            //   else if (createSwapMintATA == true) {
+            //     instructions = [
+            //       createSwapVaultATAIx,
+            //       createSwapMintATAIx,
+            //       initializeSwapIx
+            //     ];
+            //   }
+            //   else if (createSwapTokenATA == true) {
+            //     instructions = [
+            //       createSwapVaultATAIx,
+            //       createSwapTokenATAIx,
+            //       initializeSwapIx
+            //     ];
+            //   } 
+            //   else {
+            //     instructions = [
+            //       createSwapVaultATAIx,
+            //       initializeSwapIx
+            //     ];
+            //   }
+            // } 
+            // else {
+            //   if (createSwapTokenATA == true) {
+            //     instructions = [
+            //       createSwapVaultATAIx,
+            //       createSwapTokenATAIx,
+            //       initializeSwapIx
+            //     ];
+            //   }
+            //   else {
+            //     instructions = [
+            //       createSwapVaultATAIx,
+            //       initializeSwapIx
+            //     ];
+            //   }
+            // }
+    
+            // // build transaction
+            // const _tx_ = {};
+            // if(typeof _data_.blink!="undefined"&&_data_.blink===true){
+            //     _tx_.serialize = true;              
+            //     _tx_.encode = true; 
+            //     _tx_.fees = false;   
+            // }
+            // else{
+            //     _tx_.serialize = false;              
+            //     _tx_.encode = false;
+            //     _tx_.fees = true;   
+            // }
+            // if(typeof _data_.compute=="undefined"||_data_.compute===true){_tx_.compute=true;}else{_tx_.compute=false;} 
+            // _tx_.rpc = _data_.rpc;                     
+            // _tx_.account = _data_.seller;           
+            // _tx_.instructions = instructions;   
+            // _tx_.signers = false;                
+            // _tx_.table = [lookupTableAccount];  
+            // _tx_.tolerance = 1.2;                     
+            // _tx_.priority = _data_.priority;
+            // return await this.tx(_tx_);
+            // // build transaction
+    
+        }
+        catch(err){
+            const _error_ = {}
+            _error_.status="error";
+            _error_.message=err;
+            return _error_;
+        }
     }
 
     // utilities

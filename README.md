@@ -1,5 +1,5 @@
 # mcswap-sdk
-Javascript SDK for the McSwap (v2) Solana Protocol
+Javascript SDK for McSwap Solana Protocol (v2)
 
 # Install
 ```javascript
@@ -261,7 +261,7 @@ const secret = [1,2,3,4,5,~];
 const signer = Keypair.fromSecretKey(new Uint8Array(secret)); // buyer
 const tx = await mcswap.coreExecute({
     "rpc": rpc,
-    "blink": true,
+    "blink": false,
     "convert": true,
     "tolerance": "1.2",
     "priority": "Medium",
