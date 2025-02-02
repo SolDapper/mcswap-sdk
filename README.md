@@ -282,7 +282,7 @@ else{
 }
 ```
 
-### Fetch Sent CORE Escrows
+### Sent CORE Escrows
 ```javascript
 import mcswap from 'mcswap-sdk';
 const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
@@ -294,7 +294,7 @@ const coreSent = await mcswap.coreSent({
  console.log(coreSent);
  ```
 
-### Fetch Received CORE Escrows
+### Received CORE Escrows
 ```javascript
 import mcswap from 'mcswap-sdk';
 const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
@@ -306,7 +306,7 @@ const coreReceived = await mcswap.coreReceived({
  console.log(coreReceived);
  ```
 
-### Fetch Public CORE Escrows
+### Public CORE Escrows
 ```javascript
 import mcswap from 'mcswap-sdk';
 const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
