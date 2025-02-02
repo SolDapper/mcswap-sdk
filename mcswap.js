@@ -1016,7 +1016,6 @@ class mcswap {
     // mcswap-core
     async coreCreate(_data_){
         try{
-
             // ***************************************************************************
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
@@ -1512,9 +1511,10 @@ class mcswap {
         }
     }
     async corePublic(_data_){
+        _data_.wallet = false;
         return await this.coreReceived(_data_);
     }
-    
+
     // utilities
     async fetch(_data_){
         try{
