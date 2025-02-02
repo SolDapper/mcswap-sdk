@@ -319,3 +319,69 @@ console.log(escrows);
 
 
 
+
+## mcswap-nft
+### Create NFT Escrow
+```javascript
+import mcswap from 'mcswap-sdk';
+import { Keypair } from "@solana/web3.js";
+const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
+const secret = [1,2,3,4,5,~];
+const signer = Keypair.fromSecretKey(new Uint8Array(secret)); // seller
+const base_fee = await mcswap.fee({
+    "rpc": rpc, 
+    "display":true,
+    "standard":"nft"
+});
+console.log("base fee", base_fee+" sol");
+let tx = await mcswap.nftCreate({
+    "blink": false,
+    "rpc": rpc,
+    "convert": true,
+    "tolerance": "1.2",
+    "priority": "Medium",
+    "affiliateWallet": "ACgZcmgmAnMDxXxZUo9Zwg2PS6WQLXy63JnnLmJFYxZZ",
+    "affiliateFee": "0.0009",
+    "seller": "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere",
+    "sellerMint": "5Jk6hn3rR1DJjtDU4MzgDuN3SXH4nfHiYgqmEVhGyEUt",
+    "buyer": "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL",
+    "buyerMint": "Bdzry26srWQUvdRS1kSA3kXMndybBwP1j7cmcki8Rvru",
+    "lamports": "0.0001",
+    "tokenMint": "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
+    "units": "0.01",
+});
+if(typeof tx.status!="undefined"){console.log(tx);}
+else{
+    tx.sign([signer]);
+    const signature = await mcswap.send(rpc,tx);
+    console.log("signature", signature);
+    console.log("awaiting status...");
+    const status = await mcswap.status(rpc,signature);
+    if(status!="finalized"){console.log("status", status);}
+    else{
+        console.log(status);
+        const escrow = await mcswap.fetch({
+            "rpc": rpc,
+            "display": true,
+            "standard": "nft",
+            "sellerMint": "5Jk6hn3rR1DJjtDU4MzgDuN3SXH4nfHiYgqmEVhGyEUt",
+            "buyerMint": "Bdzry26srWQUvdRS1kSA3kXMndybBwP1j7cmcki8Rvru"
+        });
+        console.log(escrow);
+    }
+}
+```
+
+### Cancel NFT Escrow
+
+
+### Execute NFT Escrow
+
+
+### Received NFT Escrow
+
+
+### Sent NFT Escrow
+
+
+### Public CORE Escrows
