@@ -381,7 +381,7 @@ const secret = [1,2,3,4,5,~];
 const signer = Keypair.fromSecretKey(new Uint8Array(secret)); // seller
 let tx = await mcswap.nftCancel({
     "rpc": rpc,
-    "blink": true,
+    "blink": false,
     "seller": "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere",
     "sellerMint": "5Jk6hn3rR1DJjtDU4MzgDuN3SXH4nfHiYgqmEVhGyEUt",
     "buyerMint": "Bdzry26srWQUvdRS1kSA3kXMndybBwP1j7cmcki8Rvru",
@@ -428,9 +428,36 @@ else{
 ```
 
 ### Received NFT Escrow
-
+```javascript
+import mcswap from 'mcswap-sdk';
+const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
+const nftReceived = await mcswap.nftReceived({
+    "rpc": rpc,
+    "display": true,
+    "wallet": "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL"
+});
+console.log(nftReceived);
+```
 
 ### Sent NFT Escrow
-
+```javascript
+import mcswap from 'mcswap-sdk';
+const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
+const nftSent = await mcswap.nftSent({
+    "rpc": rpc,
+    "display": true,
+    "wallet": "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere"
+});
+console.log(nftSent);
+```
 
 ### Public CORE Escrows
+```javascript
+import mcswap from 'mcswap-sdk';
+const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
+const escrows = await mcswap.nftPublic({
+    "rpc": rpc,
+    "display": true,
+});
+console.log(escrows);
+```
