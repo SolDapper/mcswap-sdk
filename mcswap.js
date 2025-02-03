@@ -10,7 +10,6 @@ import bs58 from 'bs58';
 import BN from "bn.js";
 const publicKey=(property="publicKey")=>{return BufferLayout.blob(32,property);}
 const uint64=(property="uint64")=>{return BufferLayout.blob(8,property);}
-
 class mcswap {
     
     constructor(){
@@ -84,6 +83,33 @@ class mcswap {
             publicKey("initializer"),
             publicKey("initializer_mint"),
             publicKey("temp_mint_account"),
+            publicKey("taker"),
+            publicKey("swap_mint"),
+            uint64("swap_lamports"),
+            publicKey("swap_token_mint"),
+            uint64("swap_tokens"),
+        ]);
+
+        // mcswap-pnft
+        this.PNFT_TREASURY = "FpStfD3eZaHzdsbpyYnXPLYoCnDVbmQBDxim7kvmf5R";
+        this.PNFT_MCSWAP_PROGRAM = "6aGKsKBA9zRbBZ2xKof94JEFf73vQg6kTWkB6gqtgfFm";
+        this.PNFT_STATIC_ALT = "F33TuQuCtiSpTjsCv4h51E2q48Wt5tyr469Lxb4Mgazu";
+        this.PNFT_ATA_PROGRAM = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL";
+        this.PNFT_RULES_PROGRAM = "auth9SigNpDKz4sJJ1DfCTuZrZNSAgh9sFD3rboVmgg";
+        this.PNFT_RULES_ACCT = "eBJLFYPxJmMGKuFwpDWkzxZeUrad92kZRC5BJLpzyT9";
+        this.PNFT_METADATA_PROGRAM = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s";
+
+        this.PNFT_PROGRAM_STATE = BufferLayout.struct([
+            BufferLayout.u8("is_initialized"),
+            uint64("fee_lamports"),
+            publicKey("dev_treasury"),
+        ]);
+        this.PNFT_SWAP_STATE = BufferLayout.struct([
+            BufferLayout.u8("is_initialized"),
+            uint64("utime"),
+            BufferLayout.u8("is_swap"),
+            publicKey("initializer"),
+            publicKey("initializer_mint"),
             publicKey("taker"),
             publicKey("swap_mint"),
             uint64("swap_lamports"),
@@ -2035,6 +2061,573 @@ class mcswap {
         return await this.nftReceived(_data_);
     }
     
+    // mcswap-pnft
+    async pnftCreate(_data_){
+        try{
+            // ***************************************************************************
+            if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
+            if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
+            let affiliateWallet = this.CORE_TREASURY;
+            let affiliateFee = 0;
+            if(typeof _data_.affiliateWallet!="undefined" && _data_.affiliateWallet!=false && 
+            typeof _data_.affiliateFee!="undefined" && _data_.affiliateFee!=false && _data_.affiliateFee>0){
+                affiliateWallet = _data_.affiliateWallet;
+                affiliateFee = _data_.affiliateFee;
+            }
+            if(typeof _data_.convert!="undefined"&&_data_.convert===true&&typeof _data_.affiliateFee!="undefined"&&_data_.affiliateFee!=false&&_data_.affiliateFee>0){
+                let affiliate_ = await this.convert({"rpc":_data_.rpc,"amount":_data_.affiliateFee,"mint":"So11111111111111111111111111111111111111112"});
+                affiliateFee = affiliate_.data;
+                _data_.affiliateFee = affiliate_.data;
+            }
+            if(typeof _data_.convert!="undefined"&&_data_.convert===true&&typeof _data_.lamports!="undefined"&&_data_.lamports!=false&&_data_.lamports>0){
+                let amount_a = await this.convert({"rpc":_data_.rpc,"amount":_data_.lamports,"mint":"So11111111111111111111111111111111111111112"});
+                _data_.lamports = amount_a.data;
+            }else{_data_.lamports=0;}
+            if(typeof _data_.convert!="undefined"&&_data_.convert===true&&typeof _data_.units!="undefined"&&_data_.units!=false&&_data_.units>0){
+                let amount_b = await this.convert({"rpc":_data_.rpc,"amount":_data_.units,"mint":_data_.tokenMint});
+                _data_.units = amount_b.data;
+            }else{_data_.units=0;}
+            if(_data_.seller==_data_.buyer){
+                const _error_ = {}
+                _error_.status="error";
+                _error_.message="buyer and seller can not be the same";
+                return _error_;
+            }
+            if(typeof _data_.sellerMint=="undefined"||_data_.sellerMint==false||_data_.sellerMint==""){
+                const _error_ = {}
+                _error_.status="error";
+                _error_.message="sellerMint not defined";
+                return _error_;
+            }
+            // ***************************************************************************
+            const connection = new Connection(_data_.rpc, "confirmed");
+            let isSwap = true;
+            const mint = _data_.sellerMint;
+            let swapMint = "11111111111111111111111111111111";
+            if(typeof _data_.buyerMint!="undefined"){swapMint=_data_.buyerMint;}else{isSwap=false;}
+            let swapLamports = 0;
+            if(typeof _data_.lamports!="undefined" && _data_.lamports>0){swapLamports=parseInt(_data_.lamports);}
+            let swapTokens = 0;
+            let swapTokenMint = new PublicKey("11111111111111111111111111111111");
+            if(typeof _data_.units!="undefined" && _data_.units>0){swapTokens=parseInt(_data_.units);swapTokenMint=new PublicKey(_data_.tokenMint);}
+            // ***************************************************************************
+            const pNFTSwapProgramId = new PublicKey(this.PNFT_MCSWAP_PROGRAM);
+            const splATAProgramId = new PublicKey(this.PNFT_ATA_PROGRAM);
+            const mplAuthRulesProgramId = new PublicKey(this.PNFT_RULES_PROGRAM);
+            const mplAuthRulesAccount = new PublicKey(this.PNFT_RULES_ACCT);        
+            const mplProgramid = new PublicKey(this.PNFT_METADATA_PROGRAM);
+            const programStatePDA = PublicKey.findProgramAddressSync([Buffer.from("program-state")],pNFTSwapProgramId);
+            const programState = await connection.getAccountInfo(programStatePDA[0]);
+            const encodedProgramStateData = programState.data;
+            const decodedProgramStateData = this.PNFT_PROGRAM_STATE.decode(encodedProgramStateData);
+            const devTreasury = new PublicKey(decodedProgramStateData.dev_treasury);
+            const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],pNFTSwapProgramId);
+            const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),new PublicKey(mint).toBytes(),new PublicKey(swapMint).toBytes()],pNFTSwapProgramId);
+            const providerMintATA = await splToken.getAssociatedTokenAddress(new PublicKey(mint),new PublicKey(_data_.seller),false,splToken.TOKEN_PROGRAM_ID,splToken.ASSOCIATED_TOKEN_PROGRAM_ID);
+            const tokenMetadataPDA = PublicKey.findProgramAddressSync([Buffer.from("metadata"),mplProgramid.toBytes(),new PublicKey(mint).toBytes()],mplProgramid);
+            const tokenMasterEditionPDA = PublicKey.findProgramAddressSync([Buffer.from("metadata"),mplProgramid.toBytes(),new PublicKey(mint).toBytes(),Buffer.from("edition")],mplProgramid);
+            const tokenDestinationATA = await splToken.getAssociatedTokenAddress(new PublicKey(mint),swapVaultPDA[0],true,splToken.TOKEN_PROGRAM_ID,splToken.ASSOCIATED_TOKEN_PROGRAM_ID);
+            const tokenRecordPDA = PublicKey.findProgramAddressSync([Buffer.from("metadata"),mplProgramid.toBytes(),new PublicKey(mint).toBytes(),Buffer.from("token_record"),new PublicKey(providerMintATA).toBytes()],mplProgramid);
+            const tokenRecordDesinationPDA = PublicKey.findProgramAddressSync([Buffer.from("metadata"),mplProgramid.toBytes(),new PublicKey(mint).toBytes(),Buffer.from("token_record"),new PublicKey(tokenDestinationATA).toBytes()],mplProgramid);
+            // ***************************************************************************
+            let createSwapMintATA = false;
+            let createSwapMintATAIx = null;        
+            let swapMintATA = null;
+            let takerMintInfo = null;        
+            if(swapMint!="11111111111111111111111111111111"){
+              swapMintATA = await splToken.getAssociatedTokenAddress(new PublicKey(swapMint),new PublicKey(_data_.seller),false,splToken.TOKEN_PROGRAM_ID,splToken.ASSOCIATED_TOKEN_PROGRAM_ID);
+              takerMintInfo = await connection.getAccountInfo(swapMintATA).catch(function(){});
+              if(takerMintInfo==null){createSwapMintATA=true;createSwapMintATAIx=splToken.createAssociatedTokenAccountInstruction(new PublicKey(_data_.seller),swapMintATA,new PublicKey(_data_.seller),new PublicKey(swapMint),splToken.TOKEN_PROGRAM_ID,splToken.ASSOCIATED_TOKEN_PROGRAM_ID)} 
+              else{createSwapMintATA=false;}
+            }        
+            let PNFT_TOKEN_PROGRAM = splToken.TOKEN_PROGRAM_ID;
+            let createSwapTokenATA = false;
+            let createSwapTokenATAIx = null;
+            let swapTokenATA = null;
+            let swapTokenInfo = null;
+            let response = null;
+            if(swapTokenMint.toString()!="11111111111111111111111111111111"){
+                response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
+                body:JSON.stringify({"jsonrpc":"2.0","id":"text","method":"getAsset","params":{"id":swapTokenMint.toString()}})});
+                let getAsset = await response.json();
+                if(typeof getAsset.result.mint_extensions!="undefined"){PNFT_TOKEN_PROGRAM=splToken.TOKEN_2022_PROGRAM_ID;}
+                swapTokenATA = await splToken.getAssociatedTokenAddress(swapTokenMint,new PublicKey(_data_.seller),false,PNFT_TOKEN_PROGRAM,splToken.ASSOCIATED_TOKEN_PROGRAM_ID);
+                swapTokenInfo = await connection.getAccountInfo(swapTokenATA).catch(function(){});        
+                if(swapTokenInfo==null){createSwapTokenATA=true;createSwapTokenATAIx=splToken.createAssociatedTokenAccountInstruction(new PublicKey(_data_.seller),swapTokenATA,new PublicKey(_data_.seller),swapTokenMint,PNFT_TOKEN_PROGRAM,splToken.ASSOCIATED_TOKEN_PROGRAM_ID);}
+                else{createSwapTokenATA=false;}
+            }
+            // ***************************************************************************
+            const totalSize = 1 + 1 + 32 + 32 + 8 + 32 + 8 + 8;
+            let uarray = new Uint8Array(totalSize);
+            let counter = 0;    
+            uarray[counter++] = 0;
+            if(isSwap==true){uarray[counter++]=1;}else{uarray[counter++]=0;}
+            let arr;
+            let byteArray;
+            const takerb58 = bs58.decode(_data_.buyer);
+            arr = Array.prototype.slice.call(Buffer.from(takerb58),0);
+            for(let i=0;i<arr.length;i++){uarray[counter++]=arr[i];}
+            const takerMintb58 = bs58.decode(swapMint);
+            arr = Array.prototype.slice.call(Buffer.from(takerMintb58),0);
+            for(let i=0;i<arr.length;i++){uarray[counter++]=arr[i];}
+            byteArray=[0,0,0,0,0,0,0,0];
+            for(let index=0;index<byteArray.length;index++) {
+                let byte = swapLamports & 0xff;
+                byteArray [index] = byte;
+                swapLamports=(swapLamports-byte)/256;
+            }
+            for(let i=0;i<byteArray.length;i++){uarray[counter++]=byteArray[i];}
+            const swapTokenMintb58 = bs58.decode(swapTokenMint.toString());
+            arr=Array.prototype.slice.call(Buffer.from(swapTokenMintb58),0);
+            for(let i=0;i<arr.length;i++){uarray[counter++]=arr[i];}
+            byteArray=[0,0,0,0,0,0,0,0];
+            for(let index=0;index<byteArray.length;index++){
+                let byte = swapTokens & 0xff;
+                byteArray [index] = byte;
+                swapTokens=(swapTokens-byte)/256;
+            }
+            for(let i=0;i<byteArray.length;i++){uarray[counter++]=byteArray[i];}
+            byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
+            for(let index = 0; index < byteArray.length; index ++ ){let byte = affiliateFee & 0xff;byteArray [ index ] = byte;affiliateFee = (affiliateFee - byte) / 256 ;}
+            for(let i = 0; i < byteArray.length; i++){uarray[counter++] = byteArray[i];}
+            // ***************************************************************************
+            const keys = [
+                { pubkey: new PublicKey(_data_.seller), isSigner: true, isWritable: true }, // 0
+                { pubkey: programStatePDA[0], isSigner: false, isWritable: false }, // 1
+                { pubkey: swapVaultPDA[0], isSigner: false, isWritable: true }, // 2
+                { pubkey: swapStatePDA[0], isSigner: false, isWritable: true }, // 3
+                { pubkey: providerMintATA, isSigner: false, isWritable: true }, // 4
+                { pubkey: new PublicKey(mint), isSigner: false, isWritable: false }, // 5
+                { pubkey: tokenMetadataPDA[0], isSigner: false, isWritable: true }, // 6
+                { pubkey: tokenMasterEditionPDA[0], isSigner: false, isWritable: false }, // 7
+                { pubkey: tokenDestinationATA, isSigner: false, isWritable: true }, // 8
+                { pubkey: tokenRecordPDA[0], isSigner: false, isWritable: true }, // 9
+                { pubkey: tokenRecordDesinationPDA[0], isSigner: false, isWritable: true }, // 10
+                { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // 11
+                { pubkey: SYSVAR_INSTRUCTIONS_PUBKEY, isSigner: false, isWritable: false }, // 12
+                { pubkey: splToken.TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }, // 13
+                { pubkey: splATAProgramId, isSigner: false, isWritable: false }, // 14
+                { pubkey: mplProgramid, isSigner: false, isWritable: false }, // 15
+                { pubkey: mplAuthRulesProgramId, isSigner: false, isWritable: false }, // 16
+                { pubkey: mplAuthRulesAccount, isSigner: false, isWritable: false }, // 17
+                { pubkey: devTreasury, isSigner: false, isWritable: true }, // 18
+                { pubkey: new PublicKey(affiliateWallet), isSigner: false, isWritable: true }, // 19
+            ];
+            // ***************************************************************************
+            const initializeSwapIx = new TransactionInstruction({programId: pNFTSwapProgramId,data:Buffer.from(uarray),keys: keys});
+            let instructions = null;
+            if(createSwapMintATA===true&&createSwapTokenATA===true){instructions=[createSwapMintATAIx,createSwapTokenATAIx,initializeSwapIx];} 
+            else if(createSwapMintATA===true){instructions=[createSwapMintATAIx,initializeSwapIx];} 
+            else if ( createSwapTokenATA === true) {instructions=[createSwapTokenATAIx,initializeSwapIx];} 
+            else {instructions=[initializeSwapIx];}
+            // ***************************************************************************
+            const _tx_ = {};
+            if(typeof _data_.tolerance!="undefined"){
+                _tx_.tolerance = _data_.tolerance;              
+            }
+            if(typeof _data_.blink!="undefined"&&_data_.blink===true){
+                _tx_.serialize = true;              
+                _tx_.encode = true; 
+                _tx_.compute = false;
+                _tx_.fees = false;
+            }
+            else{
+                _tx_.serialize = false;              
+                _tx_.encode = false;
+                _tx_.compute = true;
+                _tx_.fees = true;
+            }
+            _tx_.rpc = _data_.rpc;                     
+            _tx_.account = _data_.seller;       
+            _tx_.instructions = instructions;
+            _tx_.signers = false;
+            _tx_.table = false;               
+            _tx_.priority = _data_.priority;
+            return await this.tx(_tx_);
+            // ***************************************************************************
+        }
+        catch(err){
+            const _error_ = {}
+            _error_.status="error";
+            _error_.message=err;
+            return _error_;
+        }
+    }
+    async pnftReceived(_data_){
+        try{
+            if(typeof _data_.wallet=="undefined"||_data_.wallet==false||_data_.wallet==""){_data_.wallet="11111111111111111111111111111111";}
+            const connection = new Connection(_data_.rpc,"confirmed");
+            const PNFT_ProgramId = new PublicKey(this.PNFT_MCSWAP_PROGRAM);
+            const _result_ = {}
+            let PNFT_RECEIVED = [];
+            let accounts = null;
+            accounts = await connection.getParsedProgramAccounts(PNFT_ProgramId,{filters:[{dataSize:186,},{memcmp:{offset:74,bytes:_data_.wallet,},},],}).catch(function(){});
+            if(accounts != null){for(let i=0;i<accounts.length;i++){
+                const account = accounts[i];
+                const resultStatePDA = account.pubkey;
+                let resultState = null;
+                const record = {};
+                resultState = await connection.getAccountInfo(resultStatePDA);
+                if(resultState != null){
+                    let decodedData = this.PNFT_SWAP_STATE.decode(resultState.data);
+                    const acct = account.pubkey.toString();
+                    record.acct = acct;
+                    const initializer = new PublicKey(decodedData.initializer).toString();
+                    const initializer_mint = new PublicKey(decodedData.initializer_mint).toString();
+                    const taker = new PublicKey(decodedData.taker).toString();
+                    const is_swap = new PublicKey(decodedData.is_swap).toString();
+                    const swap_mint = new PublicKey(decodedData.swap_mint).toString();
+                    const swap_lamports = parseInt(new BN(decodedData.swap_lamports, 10, "le"));
+                    const swap_token_mint = new PublicKey(decodedData.swap_token_mint).toString();
+                    const swap_tokens = parseInt(new BN(decodedData.swap_tokens, 10, "le"));
+                    const utime = parseInt(new BN(decodedData.utime, 10, "le").toString());
+                    record.utime = utime;
+                    record.seller = initializer;
+                    record.buyer = taker;
+                    record.sellerMint = initializer_mint;
+                    record.buyerMint = swap_mint;
+                    record.lamports = swap_lamports;
+                    record.tokenMint = swap_token_mint;
+                    record.units = swap_tokens;
+                    if(typeof _data_.display!="undefined"&&_data_.display===true){
+                        const lamports = await this.convert({"rpc":_data_.rpc,"amount":record.lamports,"mint":"So11111111111111111111111111111111111111112","display":_data_.display});
+                        const units = await this.convert({"rpc":_data_.rpc,"amount":record.units,"mint":record.tokenMint,"display":_data_.display});
+                        record.lamports = lamports.data;
+                        record.units = units.data;
+                    }
+                    PNFT_RECEIVED.push(record);
+                }
+                if(i==(accounts.length-1)){
+                    _result_.status="ok";
+                    _result_.message="success";
+                    _result_.data=PNFT_RECEIVED;
+                    return _result_;
+                }
+            }}
+            else{
+                _result_.status="ok";
+                _result_.message="no contracts found";
+                _result_.data=PNFT_RECEIVED;
+                return _result_;
+            }
+        }
+        catch(err){
+            const _error_ = {}
+            _error_.status="error";
+            _error_.message=err;
+            return _error_;
+        }
+    }
+    async pnftCancel(_data_){
+        try{
+            // ***************************************************************************
+            if(typeof _data_.priority=="undefined"||_data_.priority==false){_data_.priority=this.PRIORITY;}
+            if(typeof _data_.buyerMint=="undefined"||_data_.buyerMint==false||_data_.buyerMint==""){_data_.buyerMint="11111111111111111111111111111111";}
+            if(typeof _data_.sellerMint=="undefined"||_data_.sellerMint==false||_data_.sellerMint==""){
+                const _error_ = {}
+                _error_.status="error";
+                _error_.message="buyerMint not defined";
+                return _error_;
+            }
+            // ***************************************************************************
+            const connection = new Connection(_data_.rpc, "confirmed");
+            let swapMint = "11111111111111111111111111111111";
+            if (typeof _data_.buyerMint!="undefined"){swapMint=_data_.buyerMint;}
+            const mint = _data_.sellerMint;
+            const pNFTSwapProgramId = new PublicKey(this.PNFT_MCSWAP_PROGRAM);
+            const splATAProgramId = new PublicKey(this.PNFT_ATA_PROGRAM);
+            const mplAuthRulesProgramId = new PublicKey(this.PNFT_RULES_PROGRAM);
+            const mplAuthRulesAccount = new PublicKey(this.PNFT_RULES_ACCT);
+            const mplProgramid = new PublicKey(this.PNFT_METADATA_PROGRAM);
+            const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],pNFTSwapProgramId);
+            const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),new PublicKey(mint).toBytes(),new PublicKey(swapMint).toBytes()],pNFTSwapProgramId);
+            const swapState = await connection.getAccountInfo(swapStatePDA[0]).catch(function(error){});
+            const encodedSwapStateData = swapState.data;
+            const decodedSwapStateData = this.PNFT_SWAP_STATE.decode(encodedSwapStateData);
+            const vaultMintATA = await splToken.getAssociatedTokenAddress(new PublicKey(mint),swapVaultPDA[0],true,splToken.TOKEN_PROGRAM_ID,splToken.ASSOCIATED_TOKEN_PROGRAM_ID);
+            const tokenMetadataPDA = PublicKey.findProgramAddressSync([Buffer.from("metadata"),mplProgramid.toBytes(),new PublicKey(mint).toBytes()],mplProgramid);
+            const tokenMasterEditionPDA = PublicKey.findProgramAddressSync([Buffer.from("metadata"),mplProgramid.toBytes(),new PublicKey(mint).toBytes(),Buffer.from("edition")],mplProgramid);
+            const tokenDestinationATA = await splToken.getAssociatedTokenAddress(new PublicKey(mint),new PublicKey(_data_.seller),false,splToken.TOKEN_PROGRAM_ID,splToken.ASSOCIATED_TOKEN_PROGRAM_ID);
+            const tokenRecordPDA = PublicKey.findProgramAddressSync([Buffer.from("metadata"),new PublicKey(mplProgramid).toBytes(),new PublicKey(mint).toBytes(),Buffer.from("token_record"),new PublicKey(vaultMintATA).toBytes()],mplProgramid);
+            const tokenRecordDesinationPDA = PublicKey.findProgramAddressSync([Buffer.from("metadata"),new PublicKey(mplProgramid).toBytes(),new PublicKey(mint).toBytes(),Buffer.from("token_record"),new PublicKey(tokenDestinationATA).toBytes()],mplProgramid,);
+            const totalSize = 1 + 32;
+            let uarray = new Uint8Array(totalSize);    
+            let counter = 0;    
+            uarray[counter++] = 2; // 2 = ReverseSwap Instruction
+            const swapMintb58 = bs58.decode(swapMint);
+            const arr = Array.prototype.slice.call(Buffer.from(swapMintb58),0);
+            for(let i=0;i<arr.length;i++){uarray[counter++]=arr[i];}
+            const reverseSwapIx = new TransactionInstruction({programId:pNFTSwapProgramId,data: Buffer.from(uarray),
+                keys: [
+                    { pubkey: new PublicKey(_data_.seller), isSigner: true, isWritable: true }, // 0
+                    { pubkey: swapVaultPDA[0], isSigner: false, isWritable: true }, // 1
+                    { pubkey: swapStatePDA[0], isSigner: false, isWritable: true }, // 2
+                    { pubkey: vaultMintATA, isSigner: false, isWritable: true }, // 3
+                    { pubkey: new PublicKey(mint), isSigner: false, isWritable: false }, // 4
+                    { pubkey: tokenMetadataPDA[0], isSigner: false, isWritable: true }, // 5
+                    { pubkey: tokenMasterEditionPDA[0], isSigner: false, isWritable: false }, // 6
+                    { pubkey: tokenDestinationATA, isSigner: false, isWritable: true }, // 7
+                    { pubkey: tokenRecordPDA[0], isSigner: false, isWritable: true }, // 8
+                    { pubkey: tokenRecordDesinationPDA[0], isSigner: false, isWritable: true }, // 9
+                    { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // 10
+                    { pubkey: SYSVAR_INSTRUCTIONS_PUBKEY, isSigner: false, isWritable: false }, // 11
+                    { pubkey: splToken.TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }, // 12
+                    { pubkey: splATAProgramId, isSigner: false, isWritable: false }, // 13
+                    { pubkey: new PublicKey(mplProgramid), isSigner: false, isWritable: false }, // 14
+                    { pubkey: mplAuthRulesProgramId, isSigner: false, isWritable: false }, // 15
+                    { pubkey: mplAuthRulesAccount, isSigner: false, isWritable: false }, // 16
+                ]
+            });
+            const instructions = [reverseSwapIx];
+            // build transaction
+            const _tx_ = {};
+            if(typeof _data_.blink!="undefined"&&_data_.blink===true){
+                _tx_.serialize = true;              
+                _tx_.encode = true; 
+                _tx_.fees = false;   
+            }
+            else{
+                _tx_.serialize = false;              
+                _tx_.encode = false;
+                _tx_.fees = true;   
+            }
+            if(typeof _data_.compute=="undefined"||_data_.compute===true){_tx_.compute=true;}else{_tx_.compute=false;}               
+            _tx_.rpc = _data_.rpc;                     
+            _tx_.account = _data_.seller;           
+            _tx_.instructions = instructions;   
+            _tx_.signers = false;                
+            _tx_.table = false;  
+            _tx_.tolerance = 1.2;                     
+            _tx_.priority = _data_.priority;
+            return await this.tx(_tx_);
+            // build transaction
+        }
+        catch(err){
+            const _error_ = {}
+            _error_.status="error";
+            _error_.message=err;
+            return _error_;
+        }
+    }
+    async pnftExecute(_data_){
+        try{
+            // ***************************************************************************
+            if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
+            if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
+            let affiliateWallet = this.TREASURY;
+            let affiliateFee = 0;
+            if(typeof _data_.affiliateWallet!="undefined" && _data_.affiliateWallet!=false && 
+            typeof _data_.affiliateFee!="undefined" && _data_.affiliateFee!=false && _data_.affiliateFee>0){
+                affiliateWallet = _data_.affiliateWallet;
+                affiliateFee = _data_.affiliateFee;
+            }
+            if(typeof _data_.convert!="undefined"&&_data_.convert===true&&typeof _data_.affiliateFee!="undefined"&&_data_.affiliateFee!=false&&_data_.affiliateFee>0){
+                let affiliate_ = await this.convert({"rpc":_data_.rpc,"amount":_data_.affiliateFee,"mint":"So11111111111111111111111111111111111111112"});
+                affiliateFee = affiliate_.data;
+                _data_.affiliateFee = affiliate_.data;
+            }
+            if(typeof _data_.buyerMint=="undefined"||_data_.buyerMint==false){_data_.buyerMint="11111111111111111111111111111111";}
+            // ***************************************************************************
+            const connection = new Connection(_data_.rpc,"confirmed");
+            const sellerMint = _data_.sellerMint;
+            let buyerMint = "11111111111111111111111111111111";
+            if(typeof _data_.buyerMint!="undefined"){buyerMint=_data_.buyerMint;}
+            const pNFTSwapProgramId = new PublicKey(this.PNFT_MCSWAP_PROGRAM);
+            const splATAProgramId = new PublicKey(this.PNFT_ATA_PROGRAM);
+            const mplAuthRulesProgramId = new PublicKey(this.PNFT_RULES_PROGRAM);
+            const mplAuthRulesAccount = new PublicKey(this.PNFT_RULES_ACCT);
+            const mplProgramid = new PublicKey(this.PNFT_METADATA_PROGRAM);
+            const programStatePDA = PublicKey.findProgramAddressSync([Buffer.from("program-state")],pNFTSwapProgramId);
+            const programState = await connection.getAccountInfo(programStatePDA[0]).catch(function(error){}); 
+            const encodedProgramStateData = programState.data;
+            const decodedProgramStateData = this.PNFT_PROGRAM_STATE.decode(encodedProgramStateData);
+            const devTreasury = new PublicKey(decodedProgramStateData.dev_treasury);
+            const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],pNFTSwapProgramId);
+            const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),new PublicKey(sellerMint).toBytes(),new PublicKey(buyerMint).toBytes()],pNFTSwapProgramId);
+            const swapState = await connection.getAccountInfo(swapStatePDA[0]).catch(function(error){});        
+            const encodedSwapStateData = swapState.data;
+            const decodedSwapStateData = this.PNFT_SWAP_STATE.decode(encodedSwapStateData);
+            const initializer = new PublicKey(decodedSwapStateData.initializer);
+            const initializerTokenMint = new PublicKey(decodedSwapStateData.initializer_mint);
+            const takerTokenMint = new PublicKey(decodedSwapStateData.swap_mint);
+            const swapTokenMint = new PublicKey(decodedSwapStateData.swap_token_mint);
+            const vaultTokenMintATA = await splToken.getAssociatedTokenAddress(initializerTokenMint,swapVaultPDA[0],true,splToken.TOKEN_PROGRAM_ID,splToken.ASSOCIATED_TOKEN_PROGRAM_ID);
+            const tokenMetadataPDA = PublicKey.findProgramAddressSync([Buffer.from("metadata"),mplProgramid.toBytes(),initializerTokenMint.toBytes()],mplProgramid);
+            const tokenMasterEditionPDA = PublicKey.findProgramAddressSync([Buffer.from("metadata"),mplProgramid.toBytes(),initializerTokenMint.toBytes(),Buffer.from("edition")],mplProgramid);
+            const tokenDestinationATA = await splToken.getAssociatedTokenAddress(initializerTokenMint,new PublicKey(_data_.buyer),false,splToken.TOKEN_PROGRAM_ID,splToken.ASSOCIATED_TOKEN_PROGRAM_ID);
+            let createTokenDestinationATA = false;
+            let createTokenDestinationATAIx = null;
+            const DestinationResp=await connection.getAccountInfo(tokenDestinationATA)
+            if(DestinationResp==null){createTokenDestinationATA=true;createTokenDestinationATAIx=splToken.createAssociatedTokenAccountInstruction(new PublicKey(_data_.buyer),tokenDestinationATA,new PublicKey(_data_.buyer),initializerTokenMint,splToken.TOKEN_PROGRAM_ID,splToken.ASSOCIATED_TOKEN_PROGRAM_ID);}
+            else{createTokenDestinationATA=false;}
+            const tokenRecordPDA = PublicKey.findProgramAddressSync([Buffer.from("metadata"),mplProgramid.toBytes(),initializerTokenMint.toBytes(),Buffer.from("token_record"),vaultTokenMintATA.toBytes()],mplProgramid);
+            const tokenRecordDesinationPDA = PublicKey.findProgramAddressSync([Buffer.from("metadata"),mplProgramid.toBytes(),initializerTokenMint.toBytes(),Buffer.from("token_record"),tokenDestinationATA.toBytes()],mplProgramid);
+            const takerTokenMintATA = await splToken.getAssociatedTokenAddress(takerTokenMint,new PublicKey(_data_.buyer),false,splToken.TOKEN_PROGRAM_ID,splToken.ASSOCIATED_TOKEN_PROGRAM_ID);
+            const takerTokenMetadataPDA = PublicKey.findProgramAddressSync([Buffer.from("metadata"),mplProgramid.toBytes(),takerTokenMint.toBytes()],mplProgramid);
+            const takerTokenMasterEditionPDA = PublicKey.findProgramAddressSync([Buffer.from("metadata"),mplProgramid.toBytes(),takerTokenMint.toBytes(),Buffer.from("edition")],mplProgramid);
+            const takerTokenDestinationATA = await splToken.getAssociatedTokenAddress(takerTokenMint,initializer,false,splToken.TOKEN_PROGRAM_ID,splToken.ASSOCIATED_TOKEN_PROGRAM_ID);
+            const takerTokenRecordPDA = PublicKey.findProgramAddressSync([Buffer.from("metadata"),mplProgramid.toBytes(),takerTokenMint.toBytes(),Buffer.from("token_record"),takerTokenMintATA.toBytes()],mplProgramid,);
+            const takerTokenRecordDesinationPDA = PublicKey.findProgramAddressSync([Buffer.from("metadata"),mplProgramid.toBytes(),takerTokenMint.toBytes(),Buffer.from("token_record"),takerTokenDestinationATA.toBytes()],mplProgramid);
+            let PNFT_TOKEN_PROGRAM = splToken.TOKEN_PROGRAM_ID;
+            let response;
+            if(swapTokenMint.toString()!="11111111111111111111111111111111"){  
+                response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
+                body:JSON.stringify({"jsonrpc":"2.0","id":"text","method":"getAsset","params":{"id":swapTokenMint.toString()}})});
+                let getAsset = await response.json();
+                if(typeof getAsset.result.mint_extensions!="undefined"){PNFT_TOKEN_PROGRAM=splToken.TOKEN_2022_PROGRAM_ID;}
+            }
+            const swapTokenATA = await splToken.getAssociatedTokenAddress(swapTokenMint,new PublicKey(_data_.buyer),false,PNFT_TOKEN_PROGRAM,splToken.ASSOCIATED_TOKEN_PROGRAM_ID);
+            const initializerSwapTokenATA = await splToken.getAssociatedTokenAddress(swapTokenMint,initializer,false,PNFT_TOKEN_PROGRAM,splToken.ASSOCIATED_TOKEN_PROGRAM_ID);
+            // ***************************************************************************
+            const totalSize = 1 + 8;
+            let uarray = new Uint8Array(totalSize);    
+            let counter = 0;    
+            uarray[counter++] = 1; // 1 = SwapNFTs Instruction
+            var byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
+            for (let index = 0; index < byteArray.length; index ++ ) {let byte = affiliateFee & 0xff;byteArray [ index ] = byte;affiliateFee = (affiliateFee - byte) / 256 ;}
+            for (let i = 0; i < byteArray.length; i++) {uarray[counter++] = byteArray[i];}
+            // ***************************************************************************
+            const keys = [
+                { pubkey: new PublicKey(_data_.buyer), isSigner: true, isWritable: true }, // 0
+                { pubkey: initializer, isSigner: false, isWritable: true }, // 1
+                { pubkey: programStatePDA[0], isSigner: false, isWritable: false }, // 2
+                { pubkey: swapVaultPDA[0], isSigner: false, isWritable: true }, // 3
+                { pubkey: swapStatePDA[0], isSigner: false, isWritable: true }, // 4
+                { pubkey: vaultTokenMintATA, isSigner: false, isWritable: true }, // 5
+                { pubkey: initializerTokenMint, isSigner: false, isWritable: false }, // 6
+                { pubkey: tokenMetadataPDA[0], isSigner: false, isWritable: true }, // 7
+                { pubkey: tokenMasterEditionPDA[0], isSigner: false, isWritable: false }, // 8
+                { pubkey: tokenDestinationATA, isSigner: false, isWritable: true }, // 9
+                { pubkey: tokenRecordPDA[0], isSigner: false, isWritable: true }, // 10
+                { pubkey: tokenRecordDesinationPDA[0], isSigner: false, isWritable: true }, // 11
+                { pubkey: takerTokenMintATA, isSigner: false, isWritable: true }, // 12
+                { pubkey: takerTokenMint, isSigner: false, isWritable: false }, // 13
+                { pubkey: takerTokenMetadataPDA[0], isSigner: false, isWritable: true }, // 14
+                { pubkey: takerTokenMasterEditionPDA[0], isSigner: false, isWritable: false }, // 15
+                { pubkey: takerTokenDestinationATA, isSigner: false, isWritable: true }, // 16
+                { pubkey: takerTokenRecordPDA[0], isSigner: false, isWritable: true }, // 17
+                { pubkey: takerTokenRecordDesinationPDA[0], isSigner: false, isWritable: true }, // 18
+                { pubkey: swapTokenATA, isSigner: false, isWritable: true }, // 19
+                { pubkey: swapTokenMint, isSigner: false, isWritable: true }, // 20
+                { pubkey: initializerSwapTokenATA, isSigner: false, isWritable: true }, // 21            
+                { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // 21
+                { pubkey: SYSVAR_INSTRUCTIONS_PUBKEY, isSigner: false, isWritable: false }, // 23
+                { pubkey: splToken.TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }, // 24
+                { pubkey: splToken.TOKEN_2022_PROGRAM_ID, isSigner: false, isWritable: false }, // 25
+                { pubkey: splATAProgramId, isSigner: false, isWritable: false }, // 26
+                { pubkey: mplProgramid, isSigner: false, isWritable: false }, // 27
+                { pubkey: mplAuthRulesProgramId, isSigner: false, isWritable: false }, // 28
+                { pubkey: mplAuthRulesAccount, isSigner: false, isWritable: false }, // 29
+                { pubkey: devTreasury, isSigner: false, isWritable: true }, // 30
+                { pubkey: new PublicKey(affiliateWallet), isSigner: false, isWritable: true }, // 31
+            ];
+            // ***************************************************************************
+            const swapPNFTsIx = new TransactionInstruction({programId:pNFTSwapProgramId,data:Buffer.from(uarray),keys:keys});
+            const lookupTable = new PublicKey(this.PNFT_STATIC_ALT);
+            const lookupTableAccount = await connection.getAddressLookupTable(lookupTable).then((res)=>res.value);
+            let instructions = null;
+            if(createTokenDestinationATA==true){instructions=[createTokenDestinationATAIx,swapPNFTsIx];}else{instructions=[swapPNFTsIx];}
+            // ***************************************************************************
+            const _tx_ = {};
+            if(typeof _data_.tolerance!="undefined"){
+                _tx_.tolerance = _data_.tolerance;              
+            }
+            if(typeof _data_.blink!="undefined"&&_data_.blink===true){
+                _tx_.serialize = true;              
+                _tx_.encode = true; 
+                _tx_.compute = false;
+                _tx_.fees = false;
+            }
+            else{
+                _tx_.serialize = false;              
+                _tx_.encode = false;
+                _tx_.compute = true;
+                _tx_.fees = true;
+            }
+            _tx_.rpc = _data_.rpc;                     
+            _tx_.account = _data_.buyer;       
+            _tx_.instructions = instructions;
+            _tx_.table = lookupTableAccount;                   
+            _tx_.priority = _data_.priority;
+            return await this.tx(_tx_);
+            // ***************************************************************************
+        }
+        catch(err){
+            const _error_ = {}
+            _error_.status="error";
+            _error_.message=err;
+            return _error_;
+        }
+    }
+    async pnftSent(_data_){
+        try{
+            const connection = new Connection(_data_.rpc,"confirmed");
+            const PNFT_ProgramId = new PublicKey(this.PNFT_MCSWAP_PROGRAM);
+            const _result_ = {}
+            let PNFT_SENT = [];
+            let accounts = null;
+            accounts = await connection.getParsedProgramAccounts(PNFT_ProgramId,{filters:[{dataSize:186,},{memcmp:{offset:10,bytes:_data_.wallet,},},],}).catch(function(){});
+            if(accounts != null){for(let i=0;i<accounts.length;i++){
+                const account = accounts[i];
+                const resultStatePDA = account.pubkey;
+                let resultState = null;
+                const record = {};
+                resultState = await connection.getAccountInfo(resultStatePDA);
+                if(resultState != null){
+                    let decodedData = this.PNFT_SWAP_STATE.decode(resultState.data);
+                    const acct = account.pubkey.toString();
+                    record.acct = acct;
+                    const initializer = new PublicKey(decodedData.initializer).toString();
+                    const initializer_mint = new PublicKey(decodedData.initializer_mint).toString();
+                    const taker = new PublicKey(decodedData.taker).toString();
+                    const is_swap = new PublicKey(decodedData.is_swap).toString();
+                    const swap_mint = new PublicKey(decodedData.swap_mint).toString();
+                    const swap_lamports = parseInt(new BN(decodedData.swap_lamports, 10, "le"));
+                    const swap_token_mint = new PublicKey(decodedData.swap_token_mint).toString();
+                    const swap_tokens = parseInt(new BN(decodedData.swap_tokens, 10, "le"));
+                    const utime = parseInt(new BN(decodedData.utime, 10, "le").toString());
+                    record.utime = utime;
+                    record.seller = initializer;
+                    record.buyer = taker;
+                    record.sellerMint = initializer_mint;
+                    record.buyerMint = swap_mint;
+                    record.lamports = swap_lamports;
+                    record.tokenMint = swap_token_mint;
+                    record.units = swap_tokens;
+                    if(typeof _data_.display!="undefined"&&_data_.display===true){
+                        const lamports = await this.convert({"rpc":_data_.rpc,"amount":record.lamports,"mint":"So11111111111111111111111111111111111111112","display":_data_.display});
+                        const units = await this.convert({"rpc":_data_.rpc,"amount":record.units,"mint":record.tokenMint,"display":_data_.display});
+                        record.lamports = lamports.data;
+                        record.units = units.data;
+                    }
+                    PNFT_SENT.push(record);
+                }
+                if(i==(accounts.length-1)){
+                    _result_.status="ok";
+                    _result_.message="success";
+                    _result_.data=PNFT_SENT;
+                    return _result_;
+                }
+            }}
+            else{
+                _result_.status="ok";
+                _result_.message="no contracts found";
+                _result_.data=PNFT_SENT;
+                return _result_;
+            }
+        }
+        catch(err){
+            const _error_ = {}
+            _error_.status="error";
+            _error_.message=err;
+            return _error_;
+        }
+    }
+    async pnftPublic(_data_){
+        _data_.wallet = false;
+        return await this.pnftReceived(_data_);
+    }
+
     // utilities
     async fetch(_data_){
         try{
@@ -2331,6 +2924,7 @@ class mcswap {
         });
         let data = await response.json();
         data = parseInt(data.result.priorityFeeEstimate);
+        if(data == 1){data = 100000;}
         if(data < 10000){data = 10000;}
         console.log("fee estimate", data);
         return data;
@@ -2398,6 +2992,5 @@ class mcswap {
     }
 
 }
-
 const _mcswap_ = new mcswap();
 export default _mcswap_;

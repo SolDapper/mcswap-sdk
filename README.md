@@ -466,3 +466,144 @@ const escrows = await mcswap.nftPublic({
 });
 console.log(escrows);
 ```
+
+## mcswap-pnft
+### Create PNFT Escrow
+```javascript
+import mcswap from 'mcswap-sdk';
+import { Keypair } from "@solana/web3.js";
+const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
+const secret = [1,2,3,4,5,~];
+const signer = Keypair.fromSecretKey(new Uint8Array(secret)); // seller
+const base_fee = await mcswap.fee({
+    "rpc": rpc, 
+    "display": true,
+    "standard": "pnft"
+});
+console.log("base fee", base_fee+" sol");
+let tx = await mcswap.pnftCreate({
+    "rpc": rpc,
+    "blink": false,
+    "convert": true,
+    "tolerance": "1.2",
+    "priority": "Medium",
+    "affiliateWallet": "ACgZcmgmAnMDxXxZUo9Zwg2PS6WQLXy63JnnLmJFYxZZ",
+    "affiliateFee": "0.0009",
+    "seller": "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere",
+    "sellerMint": "BnsiXSzPmbBoBf5JpyauQrcKU7UdRA25G6PMSP4Jsa5g",
+    "buyer": "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL",
+    "buyerMint": "92zkz8DEjG2V7FPf74VJ3DHV99XEBpGQPddPz3KmQHtS",
+    "lamports": "0.0001",
+    "tokenMint": "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
+    "units": "0.01",
+});
+if(typeof tx.status!="undefined"){console.log(tx);}
+else{
+    tx.sign([signer]);
+    const signature = await mcswap.send(rpc,tx);
+    console.log("signature", signature);
+    console.log("awaiting status...");
+    const status = await mcswap.status(rpc,signature);
+    if(status!="finalized"){console.log("status", status);}
+    else{
+        console.log(status);
+        const escrow = await mcswap.fetch({
+            "rpc": rpc,
+            "display": true,
+            "standard": "pnft",
+            "sellerMint": "BnsiXSzPmbBoBf5JpyauQrcKU7UdRA25G6PMSP4Jsa5g",
+            "buyerMint": "92zkz8DEjG2V7FPf74VJ3DHV99XEBpGQPddPz3KmQHtS"
+        });
+        console.log(escrow);
+    }
+}
+```
+
+### Cancel PNFT Escrow
+```javascript
+import mcswap from 'mcswap-sdk';
+import { Keypair } from "@solana/web3.js";
+const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
+const secret = [1,2,3,4,5,~];
+const signer = Keypair.fromSecretKey(new Uint8Array(secret));
+let tx = await mcswap.pnftCancel({
+    "rpc": rpc,
+    "blink": false,
+    "seller": "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere",
+    "sellerMint": "BnsiXSzPmbBoBf5JpyauQrcKU7UdRA25G6PMSP4Jsa5g",
+    "buyerMint": "92zkz8DEjG2V7FPf74VJ3DHV99XEBpGQPddPz3KmQHtS",
+});
+if(typeof tx.status!="undefined"){console.log(tx);}
+else{
+    tx.sign([signer]);
+    const signature = await mcswap.send(rpc,tx);
+    console.log("signature", signature);
+    console.log("awaiting status...");
+    const status = await mcswap.status(rpc,signature);
+    console.log(status);
+}
+```
+
+### Execute PNFT Escrow
+```javascript
+import mcswap from 'mcswap-sdk';
+import { Keypair } from "@solana/web3.js";
+const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
+const secret = [1,2,3,4,5,~];
+const signer = Keypair.fromSecretKey(new Uint8Array(secret)); // buyer
+const escrow = await mcswap.fetch({
+    "rpc": rpc,
+    "display": true,
+    "standard": "pnft",
+    "sellerMint": "BnsiXSzPmbBoBf5JpyauQrcKU7UdRA25G6PMSP4Jsa5g",
+    "buyerMint": "92zkz8DEjG2V7FPf74VJ3DHV99XEBpGQPddPz3KmQHtS",
+});
+console.log(escrow);
+const tx = await mcswap.pnftExecute({
+    "rpc": rpc,
+    "blink": false,
+    "convert": true,
+    "tolerance": "1.2",
+    "priority": "Medium",
+    "affiliateWallet": "ACgZcmgmAnMDxXxZUo9Zwg2PS6WQLXy63JnnLmJFYxZZ",
+    "affiliateFee": "0.0009",
+    "buyer": "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL",
+    "sellerMint": "BnsiXSzPmbBoBf5JpyauQrcKU7UdRA25G6PMSP4Jsa5g",
+    "buyerMint": "92zkz8DEjG2V7FPf74VJ3DHV99XEBpGQPddPz3KmQHtS",
+});
+```
+
+### Received PNFT Escrow
+```javascript
+import mcswap from 'mcswap-sdk';
+const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
+const pnftReceived = await mcswap.pnftReceived({
+    "rpc": rpc,
+    "display": true,
+    "wallet": "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL"
+});
+console.log(pnftReceived);
+```
+
+### Sent PNFT Escrow
+```javascript
+import mcswap from 'mcswap-sdk';
+const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
+const pnftSent = await mcswap.pnftSent({
+    "rpc": rpc,
+    "display": true,
+    "wallet": "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere"
+});
+console.log(pnftSent);
+```
+
+### Public PNFT Escrows
+```javascript
+import mcswap from 'mcswap-sdk';
+const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
+const escrows = await mcswap.pnftPublic({
+    "rpc": rpc,
+    "display": true,
+});
+console.log(escrows);
+```
