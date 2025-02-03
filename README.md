@@ -437,7 +437,7 @@ else{
 }
 ```
 
-### Received NFT Escrow
+### Received NFT Escrows
 ```javascript
 import mcswap from 'mcswap-sdk';
 const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
@@ -449,7 +449,7 @@ const nftReceived = await mcswap.nftReceived({
 console.log(nftReceived);
 ```
 
-### Sent NFT Escrow
+### Sent NFT Escrows
 ```javascript
 import mcswap from 'mcswap-sdk';
 const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
@@ -578,7 +578,7 @@ const tx = await mcswap.pnftExecute({
 });
 ```
 
-### Received PNFT Escrow
+### Received PNFT Escrows
 ```javascript
 import mcswap from 'mcswap-sdk';
 const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
@@ -590,7 +590,7 @@ const pnftReceived = await mcswap.pnftReceived({
 console.log(pnftReceived);
 ```
 
-### Sent PNFT Escrow
+### Sent PNFT Escrows
 ```javascript
 import mcswap from 'mcswap-sdk';
 const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
