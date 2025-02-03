@@ -15,6 +15,7 @@ import mcswap from 'mcswap-sdk';
 ```javascript
 
 // mcswap-spl
+// BG9YVprV4XeQR15puwwaWfBBPzamTtuMRJLkAa8pG5hz
 mcswap.splCreate
 mcswap.splExecute
 mcswap.splCancel
@@ -22,6 +23,7 @@ mcswap.splReceived
 mcswap.splSent
 
 // mcswap-core
+// DE6UDLhAu8U8CL6b1XPjj76merQeSKFYgPQs2R4jc7Ba
 mcswap.coreCreate
 mcswap.coreCancel
 mcswap.coreExecute
@@ -30,6 +32,7 @@ mcswap.coreSent
 mcswap.corePublic
 
 // mcswap-nft
+// 34dUBGrhkvjGDPSuH3zgtpBdBwZ6QSag8JpvZAnXmXTR
 mcswap.nftCreate
 mcswap.nftCancel
 mcswap.nftExecute
@@ -38,6 +41,7 @@ mcswap.nftSent
 mcswap.nftPublic
 
 // mcswap-pnft
+// 6aGKsKBA9zRbBZ2xKof94JEFf73vQg6kTWkB6gqtgfFm
 mcswap.pnftCreate
 mcswap.pnftCancel
 mcswap.pnftExecute
@@ -46,7 +50,7 @@ mcswap.pnftSent
 mcswap.pnftPublic
 
 // mcswap-cnft
-
+// xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 // utilities
 mcswap.tx
