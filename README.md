@@ -1,5 +1,5 @@
 # mcswap-sdk
-Javascript SDK for the McSwap Solana Protocol (v2)
+Javascript SDK for the McSwap Pro Solana Protocol
 
 # Install
 ```javascript
@@ -38,7 +38,12 @@ mcswap.nftSent
 mcswap.nftPublic
 
 // mcswap-pnft
-
+mcswap.pnftCreate
+mcswap.pnftCancel
+mcswap.pnftExecute
+mcswap.pnftReceived
+mcswap.pnftSent
+mcswap.pnftPublic
 
 // mcswap-cnft
 
