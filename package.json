@@ -1,6 +1,6 @@
 {
   "name": "mcswap-sdk",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "A Javascript SDK for the McSwap (v2) Solana Protocol",
   "main": "mcswap.js",
   "type": "module",
