@@ -801,7 +801,7 @@ affiliateFee: int units || string decimal using convert - omit&default = 0
 seller: string - (required)
 ```
 
-### SPL Escrows
+### Token Escrows
 ```javascript
 // a buyer must be defined for all spl escrows
 buyer: string - (required) 
@@ -828,7 +828,7 @@ token4Mint: string - omit&default = false
 token4Amount: int units || string decimal with convert - omit&default = false
 ```
 
-### NFT/CNFT/PNFT/CORE Escrows
+### NFT Escrows
 ```javascript
 // pass false or omit the buyer when creating an escrow to make the escrow 
 // a public marketplace listing that can be fullfilled by anyone
