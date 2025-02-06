@@ -3138,10 +3138,12 @@ class mcswap {
             if(swapProof==null){swapProof=[];}
             const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],cNFTSwapProgramId);    
             let TOKEN_PROGRAM = splToken.TOKEN_PROGRAM_ID;
-            response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({"jsonrpc":"2.0","id":"text","method":"getAsset","params":{"id":swapTokenMint.toString()}})});
-            let meta_data = await response.json();
-            if(typeof meta_data.result.mint_extensions!="undefined"){TOKEN_PROGRAM=splToken.TOKEN_2022_PROGRAM_ID;}
+            if(swapTokenMint.toString()!="11111111111111111111111111111111"){
+                response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
+                body:JSON.stringify({"jsonrpc":"2.0","id":"text","method":"getAsset","params":{"id":swapTokenMint.toString()}})});
+                let meta_data = await response.json();
+                if(typeof meta_data.result.mint_extensions!="undefined"){TOKEN_PROGRAM=splToken.TOKEN_2022_PROGRAM_ID;}
+            }
             const initializerTokenATA = await splToken.getAssociatedTokenAddress(swapTokenMint,swapInitializer,false,TOKEN_PROGRAM,splToken.ASSOCIATED_TOKEN_PROGRAM_ID);
             const providerTokenATA = await splToken.getAssociatedTokenAddress(swapTokenMint,new PublicKey(_data_.buyer),false,TOKEN_PROGRAM,splToken.ASSOCIATED_TOKEN_PROGRAM_ID);
             // ***************************************************************************
