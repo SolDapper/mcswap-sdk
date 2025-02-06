@@ -781,7 +781,7 @@ console.log(escrows);
 
 # Escrow Creation Options
 
-### common
+### Common
 ```javascript
 // helius endpoint
 rpc: string - (required)
