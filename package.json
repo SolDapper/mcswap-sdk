@@ -1,6 +1,6 @@
 {
   "name": "mcswap-sdk",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A Javascript SDK for the McSwap (v2) Solana Protocol",
   "main": "mcswap.js",
   "type": "module",
@@ -26,11 +26,11 @@
   },
   "homepage": "https://github.com/SolDapper/mcswap-sdk#readme",
   "dependencies": {
-    "@solana/buffer-layout": "^4.0.1",
     "@solana/spl-account-compression": "^0.2.1",
     "@solana/spl-token": "^0.3.11",
     "@solana/web3.js": "^1.89.0",
     "bn.js": "^5.2.1",
-    "bs58": "^5.0.0"
+    "bs58": "^5.0.0",
+    "buffer-layout": "^1.2.2"
   }
 }
