@@ -809,6 +809,7 @@ sellerMint: string - (required)
 // pass false or omit as the buyer to create an escrow as a public marketplace 
 // listing that can be executed by anyone who fullfills the request
 buyer: string - omit&default = false
+
 // at least one of the options below must be used when 
 // defining what is being requested from the buyer
 
