@@ -1,5 +1,5 @@
 # mcswap-sdk
-Javascript SDK for the McSwap Pro Solana Protocol
+Javascript SDK for the McSwap Protocol
 
 # Install
 ```javascript
@@ -830,8 +830,10 @@ token4Amount: int units || string decimal with convert - omit&default = false
 
 ### NFT Escrows
 ```javascript
-// pass false or omit the buyer when creating an escrow to make the escrow 
-// a public marketplace listing that can be fullfilled by anyone
+// pass false or omit the buyer when creating an escrow to make the escrow a public
+// marketplace listing that can be executed by anyone who fullfills the request
 buyer: string - omit&default = false
+
+
 
 ```
