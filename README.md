@@ -803,7 +803,7 @@ seller: string - (required)
 
 ### Token Escrows
 ```javascript
-// a buyer must be defined for all spl escrows
+// a buyer must be defined for all mcswap-spl escrows
 buyer: string - (required) 
 
 // mint addresses below can be any spl or supertoken.
