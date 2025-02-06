@@ -862,7 +862,6 @@ class mcswap {
             _tx_.table = lookupTableAccount;                   
             _tx_.priority = _data_.priority;
             return await this.tx(_tx_);
-            // build transaction
             // ***************************************************************************
         }
         catch(err){
@@ -1138,7 +1137,6 @@ class mcswap {
             const initializeSwapIx = new TransactionInstruction({programId:new PublicKey(this.CORE_MCSWAP_PROGRAM),data:Buffer.from(uarray),keys:keys});
             if(createSwapTokenATA==true){instructions=[createSwapTokenATAIx,initializeSwapIx];}else{instructions=[initializeSwapIx];}
             // ***************************************************************************
-            // build transaction
             const _tx_ = {};
             if(typeof _data_.tolerance!="undefined"){
                 _tx_.tolerance = _data_.tolerance;              
@@ -3711,9 +3709,6 @@ class mcswap {
             _tx_= Buffer.from(_tx_).toString("base64");
         }
         if(_serialize_ == false || _encode_ == false){
-            // _obj_.status="ok";
-            // _obj_.message="success";
-            // _obj_.tx=_tx_;
             _obj_ = _tx_;
         }
         else{
