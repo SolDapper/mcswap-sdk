@@ -1426,7 +1426,7 @@ class mcswap {
             else{
                 _result_.status="ok";
                 _result_.message="no contracts found";
-                _result_.data=NFT_SENT;
+                _result_.data=CORE_RECEIVED;
                 return _result_;
             }
         }
