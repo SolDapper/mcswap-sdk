@@ -85,8 +85,8 @@ const secret = [1,2,3,4,5,~];
 const signer = Keypair.fromSecretKey(new Uint8Array(secret));
 const base_fee = await mcswap.fee({
     "rpc": rpc, 
-    "display":true,
-    "standard":"spl"
+    "display": true,
+    "standard": "spl"
 });
 console.log("base fee", base_fee+" sol");
 let tx = await mcswap.splCreate({
@@ -213,8 +213,8 @@ const secret = [1,2,3,4,5,~];
 const signer = Keypair.fromSecretKey(new Uint8Array(secret)); // seller
 const base_fee = await mcswap.fee({
     "rpc": rpc, 
-    "display":true,
-    "standard":"core"
+    "display": true,
+    "standard": "core"
 });
 console.log("base fee", base_fee+" sol");
 let tx = await mcswap.coreCreate({
@@ -357,8 +357,8 @@ const secret = [1,2,3,4,5,~];
 const signer = Keypair.fromSecretKey(new Uint8Array(secret)); // seller
 const base_fee = await mcswap.fee({
     "rpc": rpc, 
-    "display":true,
-    "standard":"nft"
+    "display": true,
+    "standard": "nft"
 });
 console.log("base fee", base_fee+" sol");
 let tx = await mcswap.nftCreate({
