@@ -801,14 +801,39 @@ affiliateFee: int units || string decimal using convert - omit&default = 0
 seller: string - (required)
 ```
 
+### NFT Escrows
+```javascript
+// asset id of the nft you're sending to escrow
+sellerMint: string - (required) 
+
+// pass false or omit as the buyer to create an escrow as a public marketplace 
+// listing that can be executed by anyone who fullfills the request
+buyer: string - omit&default = false
+// at least one of the options below must be used when 
+// defining what is being requested from the buyer
+
+// asset id of a nft IF requesting one from the buyer
+// the nft you're requesting must be the same standard as the nft you're selling
+buyerMint: string - omit&default = false
+// amount of sol IF requesting sol from the buyer
+lamports: int units || string decimal with convert - omit&default = 0
+// token mint address of tokens IF requesting tokens from the buyer
+tokenMint: string - omit&default = false
+// amount of tokens above IF requesting tokens from the buyer
+units: int units || string decimal with convert - omit&default = 0
+```
+
 ### Token Escrows
 ```javascript
 // a buyer must be defined for all mcswap-spl escrows
 buyer: string - (required) 
 
 // mint addresses below can be any spl or supertoken.
+// token 1 & 2 are the seller
+// token 3 & 4 are buyer
+// token 2 & 4 are optional
+// to escrow or SOL, use the wrapped SOL mint address
 
-// if SOL, pass the wrapped SOL mint address.
 // token mint of tokens to hold in escrow
 token1Mint: string - (required) 
 // amount of tokens above to hold in escrow
@@ -826,14 +851,4 @@ token3Amount: int units || string decimal with convert - (required)
 token4Mint: string - omit&default = false
 // amount of optional tokens above requested from buyer
 token4Amount: int units || string decimal with convert - omit&default = false
-```
-
-### NFT Escrows
-```javascript
-// pass false or omit the buyer when creating an escrow to make the escrow a public
-// marketplace listing that can be executed by anyone who fullfills the request
-buyer: string - omit&default = false
-
-
-
 ```
