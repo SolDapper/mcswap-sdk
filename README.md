@@ -778,3 +778,60 @@ const escrows = await mcswap.cnftPublic({
 });
 console.log(escrows);
 ```
+
+# Escrow Creation Options
+
+### common
+```javascript
+// helius endpoint
+rpc: string - (required)
+// if true the response will be for a blink tx 
+blink: bool - omit&default = false
+// if true you're passing decimal values in relevant values below
+convert: bool - omit&default = false
+// multiplyer for cu optimization padding (non-blink txs only)
+tolerance: int - omit&default = 1.1
+// helius priority fee level (Min/Low/Medium/High/VeryHigh)
+priority: string - omit&default = "Low"
+// your app fee collection wallet
+affiliateWallet: string - omit&default = protocol treasury wallet
+// your app fee amount (SOL)
+affiliateFee: int units || string decimal using convert - omit&default = 0
+// the asset seller wallet creating the escrow
+seller: string - (required)
+```
+
+### spl escrows
+```javascript
+// a buyer must be defined for all spl escrows
+buyer: string - (required) 
+
+// mint addresses below can be any spl or supertoken.
+
+// if SOL, pass the wrapped SOL mint address.
+// token mint of tokens to hold in escrow
+token1Mint: string - (required) 
+// amount of tokens above to hold in escrow
+token1Amount: int units || string decimal with convert - (required)
+// optional token mint to hold in escrow
+token2Mint: string - omit&default = false
+// amount of optional tokens above to hold in escrow
+token2Amount: int units || string decimal with convert - omit&default = false
+
+// token mint being requested from buyer
+token3Mint: string - (required) 
+// amount of tokens above requested from buyer
+token3Amount: int units || string decimal with convert - (required)
+// optional token mint being requested from buyer
+token4Mint: string - omit&default = false
+// amount of optional tokens above requested from buyer
+token4Amount: int units || string decimal with convert - omit&default = false
+```
+
+### nft/cnft/pnft/core escrows
+```javascript
+// pass false or omit the buyer when creating an escrow to make the escrow 
+// a public marketplace listing that can be fullfilled by anyone
+buyer: string - omit&default = false
+
+```
