@@ -8,6 +8,7 @@ import BufferLayout from "@solana/buffer-layout";
 import * as splToken from "@solana/spl-token";
 import bs58 from 'bs58';
 import BN from "bn.js";
+
 const publicKey=(property="publicKey")=>{return BufferLayout.blob(32,property);};const uint64=(property="uint64")=>{return BufferLayout.blob(8,property);}
 class mcswap {
     constructor(){
@@ -17,6 +18,9 @@ class mcswap {
         this.SPL_TREASURY = "5zx6c1E5aaBE6BbXu1ureKoZfpGbPBk9srmKavr3Xz3k";
         this.SPL_MCSWAP_PROGRAM = "BG9YVprV4XeQR15puwwaWfBBPzamTtuMRJLkAa8pG5hz";
         this.SPL_STATIC_ALT = "HtWT9EbpaxrNfbTgjsMuk9dXYmkvJwyr7q7bQjCCRQHU";
+
+        console.log("BufferLayout", BufferLayout);
+
         this.SPL_PROGRAM_STATE = BufferLayout.struct([
             BufferLayout.u8("is_initialized"),
             uint64("dev_lamports"),
