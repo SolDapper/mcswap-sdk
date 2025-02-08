@@ -4,6 +4,8 @@ Javascript SDK for the McSwap Protocol
 McSwap is a Trustless Smart Escrow Protocol on the Solana Blockchain that enables app developers to build their own Marketplaces and OTC services for digital assets. Direct onchain revenue sharing is built-in and allows developers to define usage fees for when 
 they or their application's users create or execute an escrow through their apps and tools powered by McSwap under the hood.
 
+![powered by solana](http://mcswap.xyz/gh/stacked-color.svg)
+
 # Install
 ```javascript
 npm i mcswap-sdk
