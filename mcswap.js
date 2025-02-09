@@ -3115,7 +3115,7 @@ class mcswap {
             let swapTreeId = "11111111111111111111111111111111";
             let swapRoot = "11111111111111111111111111111111";
             let swapTreeAuthorityPDA = new PublicKey("11111111111111111111111111111111");
-            let swapProof = null;        
+            let swapProof = null;
             if(isSwap===true){
                 response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
                 body:JSON.stringify({"jsonrpc":"2.0","id":"text","method":"getAsset","params":{"id":swapAssetId}})});
@@ -3187,6 +3187,9 @@ class mcswap {
               { pubkey: devTreasury, isSigner: false, isWritable: true }, // 19
               { pubkey: new PublicKey(affiliateWallet), isSigner: false, isWritable: true }, // 20
             ];
+            for(let index = 0; index < keys.length; index ++ ){
+                console.log(index, keys[index].toString());
+            }
             // ***************************************************************************
             for(let i=0;i<proof.length;i++){keys.push(proof[i]);}    
             if(isSwap===true){for(let i=0;i<swapProof.length;i++){keys.push(swapProof[i]);}}
