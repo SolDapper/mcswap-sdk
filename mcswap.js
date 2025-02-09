@@ -3628,7 +3628,7 @@ class mcswap {
         const opti_tx = new VersionedTransaction(opti_msg);    
         const opti_cu_res = await connection.simulateTransaction(opti_tx,{replaceRecentBlockhash:true,sigVerify:false,});
         if(opti_cu_res.value.err != null){
-            return {"status":"error","message":"simulation error","details":opti_cu_res.value.err,"logs":opti_cu_res.value.logs}
+            return {"status":"error","message":"simulation error","details":opti_cu_res.value.err,"logs":opti_cu_res.value.logs,"debug":opti_cu_res};
         }
         const opti_consumed = opti_cu_res.value.unitsConsumed;
         const opti_cu_limit = Math.ceil(opti_consumed * opti_tolerance);
