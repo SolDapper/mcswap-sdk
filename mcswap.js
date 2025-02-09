@@ -3187,9 +3187,6 @@ class mcswap {
               { pubkey: devTreasury, isSigner: false, isWritable: true }, // 19
               { pubkey: new PublicKey(affiliateWallet), isSigner: false, isWritable: true }, // 20
             ];
-            for(let index = 0; index < keys.length; index ++ ){
-                console.log(index, keys[index].toString());
-            }
             // ***************************************************************************
             for(let i=0;i<proof.length;i++){keys.push(proof[i]);}    
             if(isSwap===true){for(let i=0;i<swapProof.length;i++){keys.push(swapProof[i]);}}
@@ -3631,7 +3628,7 @@ class mcswap {
         const opti_tx = new VersionedTransaction(opti_msg);    
         const opti_cu_res = await connection.simulateTransaction(opti_tx,{replaceRecentBlockhash:true,sigVerify:false,});
         if(opti_cu_res.value.err != null){
-            return {"status":"error","message":"simulation error","details":opti_cu_res.value.err,"logs":opti_cu_res.value.logs,"debug":opti_cu_res};
+            return {"status":"error","message":"simulation error","details":opti_cu_res.value.err,"logs":opti_cu_res.value.logs};
         }
         const opti_consumed = opti_cu_res.value.unitsConsumed;
         const opti_cu_limit = Math.ceil(opti_consumed * opti_tolerance);
