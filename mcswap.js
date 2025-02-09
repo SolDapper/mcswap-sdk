@@ -2695,7 +2695,7 @@ class mcswap {
             const connection = new Connection(_data_.rpc, "confirmed");
             let assetId = _data_.sellerMint;
             let swapAssetId = "11111111111111111111111111111111";
-            if(typeof _data_.buyerMint!="undefined"){swapAssetId=_data_.buyerMint;}
+            if(typeof _data_.buyerMint!="undefined"&&_data_.buyerMint!=false){swapAssetId=_data_.buyerMint;}
             let taker = _data_.buyer;
             let swapLamports = 0;
             if(typeof _data_.lamports!="undefined"&&_data_.lamports>0){swapLamports=_data_.lamports;}
@@ -2727,8 +2727,8 @@ class mcswap {
             let canopyDepth = treeAccount.getCanopyDepth();
             let proof = [];
             proof = getAssetProof.result.proof.slice(0,getAssetProof.result.proof.length-(!!canopyDepth ? canopyDepth:0)).map((node)=>({pubkey:new PublicKey(node),isWritable:false,isSigner:false,}));
-            let swapAssetOwner = taker;
-            let swapDelegate = taker;
+            let swapAssetOwner = "11111111111111111111111111111111";
+            let swapDelegate = "11111111111111111111111111111111";
             let swapDatahash = "11111111111111111111111111111111";
             let swapCreatorhash = "11111111111111111111111111111111";
             let swapLeafId = 0;
@@ -3516,7 +3516,9 @@ class mcswap {
                 NAME = "program-state";
             }
             const FEE_PROGRAM_PDA=PublicKey.findProgramAddressSync([Buffer.from(NAME)],new PublicKey(PROGRAM));
-            const FEE_PROGRAM_STATE=await connection.getAccountInfo(FEE_PROGRAM_PDA[0]).catch(function(){});
+            const FEE_PROGRAM_STATE=await connection.getAccountInfo(FEE_PROGRAM_PDA[0]).catch(function(err){
+                console.log("err", err);
+            });
             const decodedData=STATE.decode(FEE_PROGRAM_STATE.data);
             let lamports;
             if(_data_.standard=="spl"){lamports=parseInt(new BN(decodedData.dev_lamports,10,"le").toString());}
