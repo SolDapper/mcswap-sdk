@@ -2133,18 +2133,17 @@ class mcswap {
             let swapTokenMint = new PublicKey("11111111111111111111111111111111");
             if(typeof _data_.units!="undefined" && _data_.units>0){swapTokens=parseInt(_data_.units);swapTokenMint=new PublicKey(_data_.tokenMint);}
             // ***************************************************************************
-            const pNFTSwapProgramId = new PublicKey(this.PNFT_MCSWAP_PROGRAM);
             const splATAProgramId = new PublicKey(this.PNFT_ATA_PROGRAM);
             const mplAuthRulesProgramId = new PublicKey(this.PNFT_RULES_PROGRAM);
             const mplAuthRulesAccount = new PublicKey(this.PNFT_RULES_ACCT);        
             const mplProgramid = new PublicKey(this.PNFT_METADATA_PROGRAM);
-            const programStatePDA = PublicKey.findProgramAddressSync([Buffer.from("program-state")],pNFTSwapProgramId);
+            const programStatePDA = PublicKey.findProgramAddressSync([Buffer.from("program-state")],new PublicKey(this.PNFT_MCSWAP_PROGRAM));
             const programState = await connection.getAccountInfo(programStatePDA[0]);
             const encodedProgramStateData = programState.data;
             const decodedProgramStateData = this.PNFT_PROGRAM_STATE.decode(encodedProgramStateData);
             const devTreasury = new PublicKey(decodedProgramStateData.dev_treasury);
-            const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],pNFTSwapProgramId);
-            const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),new PublicKey(mint).toBytes(),new PublicKey(swapMint).toBytes()],pNFTSwapProgramId);
+            const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],new PublicKey(this.PNFT_MCSWAP_PROGRAM));
+            const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),new PublicKey(mint).toBytes(),new PublicKey(swapMint).toBytes()],new PublicKey(this.PNFT_MCSWAP_PROGRAM));
             const providerMintATA = await splToken.getAssociatedTokenAddress(new PublicKey(mint),new PublicKey(_data_.seller),false,splToken.TOKEN_PROGRAM_ID,splToken.ASSOCIATED_TOKEN_PROGRAM_ID);
             const tokenMetadataPDA = PublicKey.findProgramAddressSync([Buffer.from("metadata"),mplProgramid.toBytes(),new PublicKey(mint).toBytes()],mplProgramid);
             const tokenMasterEditionPDA = PublicKey.findProgramAddressSync([Buffer.from("metadata"),mplProgramid.toBytes(),new PublicKey(mint).toBytes(),Buffer.from("edition")],mplProgramid);
@@ -2236,7 +2235,7 @@ class mcswap {
                 { pubkey: new PublicKey(affiliateWallet), isSigner: false, isWritable: true }, // 19
             ];
             // ***************************************************************************
-            const initializeSwapIx = new TransactionInstruction({programId: pNFTSwapProgramId,data:Buffer.from(uarray),keys: keys});
+            const initializeSwapIx = new TransactionInstruction({programId: new PublicKey(this.PNFT_MCSWAP_PROGRAM),data:Buffer.from(uarray),keys: keys});
             let instructions = null;
             if(createSwapMintATA===true&&createSwapTokenATA===true){instructions=[createSwapMintATAIx,createSwapTokenATAIx,initializeSwapIx];} 
             else if(createSwapMintATA===true){instructions=[createSwapMintATAIx,initializeSwapIx];} 
@@ -2291,13 +2290,12 @@ class mcswap {
             let swapMint = "11111111111111111111111111111111";
             if (typeof _data_.buyerMint!="undefined"){swapMint=_data_.buyerMint;}
             const mint = _data_.sellerMint;
-            const pNFTSwapProgramId = new PublicKey(this.PNFT_MCSWAP_PROGRAM);
             const splATAProgramId = new PublicKey(this.PNFT_ATA_PROGRAM);
             const mplAuthRulesProgramId = new PublicKey(this.PNFT_RULES_PROGRAM);
             const mplAuthRulesAccount = new PublicKey(this.PNFT_RULES_ACCT);
             const mplProgramid = new PublicKey(this.PNFT_METADATA_PROGRAM);
-            const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],pNFTSwapProgramId);
-            const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),new PublicKey(mint).toBytes(),new PublicKey(swapMint).toBytes()],pNFTSwapProgramId);
+            const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],new PublicKey(this.PNFT_MCSWAP_PROGRAM));
+            const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),new PublicKey(mint).toBytes(),new PublicKey(swapMint).toBytes()],new PublicKey(this.PNFT_MCSWAP_PROGRAM));
             const swapState = await connection.getAccountInfo(swapStatePDA[0]).catch(function(error){});
             const encodedSwapStateData = swapState.data;
             const decodedSwapStateData = this.PNFT_SWAP_STATE.decode(encodedSwapStateData);
@@ -2314,7 +2312,7 @@ class mcswap {
             const swapMintb58 = bs58.decode(swapMint);
             const arr = Array.prototype.slice.call(Buffer.from(swapMintb58),0);
             for(let i=0;i<arr.length;i++){uarray[counter++]=arr[i];}
-            const reverseSwapIx = new TransactionInstruction({programId:pNFTSwapProgramId,data: Buffer.from(uarray),
+            const reverseSwapIx = new TransactionInstruction({programId:new PublicKey(this.PNFT_MCSWAP_PROGRAM),data: Buffer.from(uarray),
                 keys: [
                     { pubkey: new PublicKey(_data_.seller), isSigner: true, isWritable: true }, // 0
                     { pubkey: swapVaultPDA[0], isSigner: false, isWritable: true }, // 1
@@ -2392,18 +2390,17 @@ class mcswap {
             const sellerMint = _data_.sellerMint;
             let buyerMint = "11111111111111111111111111111111";
             if(typeof _data_.buyerMint!="undefined"){buyerMint=_data_.buyerMint;}
-            const pNFTSwapProgramId = new PublicKey(this.PNFT_MCSWAP_PROGRAM);
             const splATAProgramId = new PublicKey(this.PNFT_ATA_PROGRAM);
             const mplAuthRulesProgramId = new PublicKey(this.PNFT_RULES_PROGRAM);
             const mplAuthRulesAccount = new PublicKey(this.PNFT_RULES_ACCT);
             const mplProgramid = new PublicKey(this.PNFT_METADATA_PROGRAM);
-            const programStatePDA = PublicKey.findProgramAddressSync([Buffer.from("program-state")],pNFTSwapProgramId);
+            const programStatePDA = PublicKey.findProgramAddressSync([Buffer.from("program-state")],new PublicKey(this.PNFT_MCSWAP_PROGRAM));
             const programState = await connection.getAccountInfo(programStatePDA[0]).catch(function(error){}); 
             const encodedProgramStateData = programState.data;
             const decodedProgramStateData = this.PNFT_PROGRAM_STATE.decode(encodedProgramStateData);
             const devTreasury = new PublicKey(decodedProgramStateData.dev_treasury);
-            const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],pNFTSwapProgramId);
-            const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),new PublicKey(sellerMint).toBytes(),new PublicKey(buyerMint).toBytes()],pNFTSwapProgramId);
+            const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],new PublicKey(this.PNFT_MCSWAP_PROGRAM));
+            const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),new PublicKey(sellerMint).toBytes(),new PublicKey(buyerMint).toBytes()],new PublicKey(this.PNFT_MCSWAP_PROGRAM));
             const swapState = await connection.getAccountInfo(swapStatePDA[0]).catch(function(error){});        
             const encodedSwapStateData = swapState.data;
             const decodedSwapStateData = this.PNFT_SWAP_STATE.decode(encodedSwapStateData);
@@ -2482,7 +2479,7 @@ class mcswap {
                 { pubkey: new PublicKey(affiliateWallet), isSigner: false, isWritable: true }, // 31
             ];
             // ***************************************************************************
-            const swapPNFTsIx = new TransactionInstruction({programId:pNFTSwapProgramId,data:Buffer.from(uarray),keys:keys});
+            const swapPNFTsIx = new TransactionInstruction({programId:new PublicKey(this.PNFT_MCSWAP_PROGRAM),data:Buffer.from(uarray),keys:keys});
             const lookupTable = new PublicKey(this.PNFT_STATIC_ALT);
             const lookupTableAccount = await connection.getAddressLookupTable(lookupTable).then((res)=>res.value);
             let instructions = null;
@@ -2703,12 +2700,10 @@ class mcswap {
             if(typeof _data_.tokenMint!="undefined"){swapTokenMint=new PublicKey(_data_.tokenMint);swapTokens=_data_.units;}
             let isSwap=true;
             if(swapAssetId=="11111111111111111111111111111111"){isSwap=false;}
-            const cNFTSwapProgramId = new PublicKey(this.CNFT_MCSWAP_PROGRAM);
-            const programStatePDA = PublicKey.findProgramAddressSync([Buffer.from("program-state")],cNFTSwapProgramId);
+            const programStatePDA = PublicKey.findProgramAddressSync([Buffer.from("program-state")],new PublicKey(this.CNFT_MCSWAP_PROGRAM));
             const programState = await connection.getAccountInfo(programStatePDA[0]);  
             const encodedProgramStateData = programState.data;
             const decodedProgramStateData = this.CNFT_PROGRAM_STATE.decode(encodedProgramStateData);
-            const feeLamports = new BN(decodedProgramStateData.fee_lamports, 10, "le");
             const devTreasury = new PublicKey(decodedProgramStateData.dev_treasury);
             const delegate = new PublicKey(_data_.seller);
             // ***************************************************************************
@@ -2765,8 +2760,8 @@ class mcswap {
                 return _error_;
             }
             else{
-                const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],cNFTSwapProgramId);
-                const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),new PublicKey(assetId).toBytes(),new PublicKey(swapAssetId).toBytes()],cNFTSwapProgramId);        
+                const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],new PublicKey(this.CNFT_MCSWAP_PROGRAM));
+                const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),new PublicKey(assetId).toBytes(),new PublicKey(swapAssetId).toBytes()],new PublicKey(this.CNFT_MCSWAP_PROGRAM));        
                 let tokenATA = null;
                 let createTokenATA = null;
                 let createTokenATAIx = null;
@@ -2882,7 +2877,7 @@ class mcswap {
                     { pubkey: new PublicKey(affiliateWallet), isSigner: false, isWritable: true }, // 12
                 ];
                 for(let i=0;i<proof.length;i++){keys.push(proof[i]);}
-                const initializeSwapIx = new TransactionInstruction({programId:cNFTSwapProgramId,data:Buffer.from(uarray),keys:keys});
+                const initializeSwapIx = new TransactionInstruction({programId:new PublicKey(this.CNFT_MCSWAP_PROGRAM),data:Buffer.from(uarray),keys:keys});
                 const msLookupTable = new PublicKey(this.CNFT_STATIC_ALT);     
                 const lookupTableAccount = await connection.getAddressLookupTable(msLookupTable).then((res)=>res.value);            
                 let instructions;
@@ -2939,8 +2934,7 @@ class mcswap {
             const assetId = _data_.sellerMint;
             let swapMint = "11111111111111111111111111111111";
             if (typeof _data_.buyerMint!="undefined"){swapMint=_data_.buyerMint;}
-            const cNFTSwapProgramId = new PublicKey(this.CNFT_MCSWAP_PROGRAM);
-            const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),new PublicKey(assetId).toBytes(),new PublicKey(swapMint).toBytes()],cNFTSwapProgramId);
+            const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),new PublicKey(assetId).toBytes(),new PublicKey(swapMint).toBytes()],new PublicKey(this.CNFT_MCSWAP_PROGRAM));
             const swapState = await connection.getAccountInfo(swapStatePDA[0]);
             const encodedSwapStateData = swapState.data;
             const decodedSwapStateData = this.CNFT_SWAP_STATE.decode(encodedSwapStateData);
@@ -2958,7 +2952,7 @@ class mcswap {
             const canopyDepth = treeAccount.getCanopyDepth();
             const proof = getAssetProof.result.proof.slice(0, getAssetProof.result.proof.length - (!!canopyDepth ? canopyDepth : 0))
             .map((node)=>({pubkey:new PublicKey(node),isWritable:false,isSigner:false,}));
-            const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],cNFTSwapProgramId);
+            const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],new PublicKey(this.CNFT_MCSWAP_PROGRAM));
             // ***************************************************************************
             let totalSize = 1 + 32 + 32 + 1;
             let uarray = new Uint8Array(totalSize);
@@ -3022,7 +3016,7 @@ class mcswap {
             ];
             // ***************************************************************************
             for(let i=0;i<proof.length;i++){keys.push(proof[i]);}
-            const reverseSwapIx = new TransactionInstruction({programId:cNFTSwapProgramId,data:Buffer.from(uarray),keys:keys});
+            const reverseSwapIx = new TransactionInstruction({programId:new PublicKey(this.CNFT_MCSWAP_PROGRAM),data:Buffer.from(uarray),keys:keys});
             const instructions = [reverseSwapIx];
             // ***************************************************************************
             const _tx_ = {};
@@ -3080,14 +3074,13 @@ class mcswap {
             const assetId = _data_.sellerMint;
             let swapAssetId = "11111111111111111111111111111111";
             if(typeof _data_.buyerMint!="undefined"){swapAssetId=_data_.buyerMint;}   
-            const cNFTSwapProgramId = new PublicKey(this.CNFT_MCSWAP_PROGRAM); 
-            const programStatePDA = PublicKey.findProgramAddressSync([Buffer.from("program-state")],cNFTSwapProgramId);
+            const programStatePDA = PublicKey.findProgramAddressSync([Buffer.from("program-state")],new PublicKey(this.CNFT_MCSWAP_PROGRAM));
             const programState = await connection.getAccountInfo(programStatePDA[0]);  
             const encodedProgramStateData = programState.data;
             const decodedProgramStateData = this.CNFT_PROGRAM_STATE.decode(encodedProgramStateData);
             const feeLamports = new BN(decodedProgramStateData.fee_lamports, 10, "le");
             const devTreasury = new PublicKey(decodedProgramStateData.dev_treasury);
-            const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),new PublicKey(assetId).toBytes(),new PublicKey(swapAssetId).toBytes()],cNFTSwapProgramId);
+            const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),new PublicKey(assetId).toBytes(),new PublicKey(swapAssetId).toBytes()],new PublicKey(this.CNFT_MCSWAP_PROGRAM));
             const swapState = await connection.getAccountInfo(swapStatePDA[0]);        
             let isSwap = true;      
             const encodedSwapStateData = swapState.data;
@@ -3095,7 +3088,7 @@ class mcswap {
             if(new BN(decodedSwapStateData.is_swap,10,"le")==0){isSwap=false;}
             const swapInitializer = new PublicKey(decodedSwapStateData.initializer);
             const swapLeafOwner = new PublicKey(decodedSwapStateData.swap_leaf_owner);
-            const swapDelegate = new PublicKey(decodedSwapStateData.swap_delegate);
+            let swapDelegate = new PublicKey(decodedSwapStateData.swap_delegate);
             const swapLamports = new BN(decodedSwapStateData.swap_lamports, 10, "le");
             const swapTokenMint = new PublicKey(decodedSwapStateData.swap_token_mint);
             const swapTokens = new BN(decodedSwapStateData.swap_tokens, 10, "le");
@@ -3121,6 +3114,7 @@ class mcswap {
             let swapTreeAuthorityPDA = new PublicKey("11111111111111111111111111111111");
             let swapProof = null;
             if(isSwap===true){
+                swapDelegate = new PublicKey(_data_.buyer);
                 response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
                 body:JSON.stringify({"jsonrpc":"2.0","id":"text","method":"getAsset","params":{"id":swapAssetId}})});
                 const getSwapAsset = await response.json();
@@ -3140,7 +3134,7 @@ class mcswap {
                 .map((node)=>({pubkey:new PublicKey(node),isWritable:false,isSigner:false,}));        
             }
             if(swapProof==null){swapProof=[];}
-            const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],cNFTSwapProgramId);    
+            const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],new PublicKey(this.CNFT_MCSWAP_PROGRAM));    
             let TOKEN_PROGRAM = splToken.TOKEN_PROGRAM_ID;
             if(swapTokenMint.toString()!="11111111111111111111111111111111"){
                 response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
@@ -3194,7 +3188,7 @@ class mcswap {
             // ***************************************************************************
             for(let i=0;i<proof.length;i++){keys.push(proof[i]);}    
             if(isSwap===true){for(let i=0;i<swapProof.length;i++){keys.push(swapProof[i]);}}
-            const swapcNFTsIx = new TransactionInstruction({programId:cNFTSwapProgramId,data:Buffer.from(uarray),keys:keys,});
+            const swapcNFTsIx = new TransactionInstruction({programId:new PublicKey(this.CNFT_MCSWAP_PROGRAM),data:Buffer.from(uarray),keys:keys,});
             const msLookupTable = new PublicKey(this.CNFT_STATIC_ALT);
             const lookupTableAccount = await connection.getAddressLookupTable(msLookupTable).then((res)=>res.value);
             const instructions = [swapcNFTsIx];
