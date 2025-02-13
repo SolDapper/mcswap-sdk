@@ -2696,7 +2696,6 @@ class mcswap {
             let assetId = _data_.sellerMint;
             let swapAssetId = "11111111111111111111111111111111";
             if(typeof _data_.buyerMint!="undefined"&&_data_.buyerMint!=false){swapAssetId=_data_.buyerMint;}
-            let taker = _data_.buyer;
             let swapLamports = 0;
             if(typeof _data_.lamports!="undefined"&&_data_.lamports>0){swapLamports=_data_.lamports;}
             let swapTokens = 0;
@@ -2742,8 +2741,10 @@ class mcswap {
                 response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
                 body:JSON.stringify({"jsonrpc":"2.0","id":"text","method":"getAsset","params":{"id":swapAssetId}})});
                 getSwapAsset = await response.json();
-                swapAssetOwner = getSwapAsset.result.ownership.owner;
-                if(getSwapAsset.result.ownership.delegated==true){swapDelegate=getSwapAsset.result.ownership.delegate;}
+                if(typeof _data_.buyer!="undefined"&&_data_.buyer!=false){
+                    swapAssetOwner = getSwapAsset.result.ownership.owner;
+                    if(getSwapAsset.result.ownership.delegated==true){swapDelegate=getSwapAsset.result.ownership.delegate;}
+                }
                 swapDatahash = getSwapAsset.result.compression.data_hash;
                 swapCreatorhash = getSwapAsset.result.compression.creator_hash;
                 swapLeafId = getSwapAsset.result.compression.leaf_id;
@@ -2827,12 +2828,15 @@ class mcswap {
                 const swapAssetCreatorhashb58 = bs58.decode(swapCreatorhash); 
                 arr = Array.prototype.slice.call(Buffer.from(swapAssetCreatorhashb58), 0);
                 for(let i=0;i<arr.length;i++){uarray[counter++]=arr[i];}
+
                 const swapAssetOwnerb58 = bs58.decode(swapAssetOwner); 
                 arr = Array.prototype.slice.call(Buffer.from(swapAssetOwnerb58), 0);
                 for(let i=0;i<arr.length;i++){uarray[counter++]=arr[i];}
+
                 const swapDelegateb58 = bs58.decode(swapDelegate); 
                 arr = Array.prototype.slice.call(Buffer.from(swapDelegateb58), 0);
                 for(let i=0;i<arr.length;i++){uarray[counter++]=arr[i];}
+
                 byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
                 for(index=0;index<byteArray.length;index ++){
                     byte = swapLeafId & 0xff;

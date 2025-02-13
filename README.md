@@ -694,7 +694,7 @@ const secret = [1,2,3,4,5,~];
 const signer = Keypair.fromSecretKey(new Uint8Array(secret)); // seller
 const tx = await mcswap.cnftCancel({
     "rpc": rpc,
-    "blink": true,
+    "blink": false,
     "seller": "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere",
     "sellerMint": "5PdHoNA8WU6JrL6CXGR5xLrx3hGccNj59n5NvfYJTYJF",
     "buyerMint": "97H5pNKnomLe8kUhPK2veNz4jbtAW1DLLDg3A3HabSCJ",
