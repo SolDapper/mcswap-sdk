@@ -2712,7 +2712,7 @@ class mcswap {
             response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
             body:JSON.stringify({"jsonrpc":"2.0","id":"text","method":"getAsset","params":{"id":assetId}})});
             getAsset = await response.json();
-            let leafId = getAsset.data.result.compression.leaf_id;
+            let leafId = getAsset.result.compression.leaf_id;
             
             let getAssetProof;
             response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
