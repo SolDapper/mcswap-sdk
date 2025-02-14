@@ -2712,6 +2712,8 @@ class mcswap {
             response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
             body:JSON.stringify({"jsonrpc":"2.0","id":"text","method":"getAsset","params":{"id":assetId}})});
             getAsset = await response.json();
+            let leafId = getAsset.data.result.compression.leaf_id;
+            
             let getAssetProof;
             response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
             body:JSON.stringify({"jsonrpc":"2.0","id":"text","method":"getAssetProof","params":{"id":assetId}})});
@@ -2721,6 +2723,7 @@ class mcswap {
             let canopyDepth = treeAccount.getCanopyDepth();
             let proof = [];
             proof = getAssetProof.result.proof.slice(0,getAssetProof.result.proof.length-(!!canopyDepth ? canopyDepth:0)).map((node)=>({pubkey:new PublicKey(node),isWritable:false,isSigner:false,}));
+            
             let swapAssetOwner = "11111111111111111111111111111111";
             let swapDelegate = "11111111111111111111111111111111";
             let swapDatahash = "11111111111111111111111111111111";
@@ -2765,12 +2768,12 @@ class mcswap {
                 let tokenATA = null;
                 let createTokenATA = null;
                 let createTokenATAIx = null;
+                let CNFT_TOKEN_PROGRAM = splToken.TOKEN_PROGRAM_ID;
                 if(swapTokenMint.toString()!="11111111111111111111111111111111"){
-                    let CNFT_TOKEN_PROGRAM = splToken.TOKEN_PROGRAM_ID;
                     response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
                     body:JSON.stringify({"jsonrpc":"2.0","id":"text","method":"getAsset","params":{"id":swapTokenMint.toString()}})});
-                    let getAsset = await response.json();
-                    if(typeof getAsset.result.mint_extensions!="undefined"){CNFT_TOKEN_PROGRAM=splToken.TOKEN_2022_PROGRAM_ID;}
+                    let getToken = await response.json();
+                    if(typeof getToken.result.mint_extensions!="undefined"){CNFT_TOKEN_PROGRAM=splToken.TOKEN_2022_PROGRAM_ID;}
                     tokenATA = await splToken.getAssociatedTokenAddress(swapTokenMint,new PublicKey(_data_.seller),false,CNFT_TOKEN_PROGRAM,splToken.ASSOCIATED_TOKEN_PROGRAM_ID);
                     response = null;
                     response = await connection.getAccountInfo(tokenATA);
@@ -2803,9 +2806,9 @@ class mcswap {
                 for(let i=0;i<arr.length;i++){uarray[counter++]=arr[i];}
                 byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
                 for (index = 0; index < byteArray.length; index ++ ) {
-                    byte = getAsset.result.compression.leaf_id & 0xff;
+                    byte = leafId & 0xff;
                     byteArray [ index ] = byte;
-                    getAsset.result.compression.leaf_id = (getAsset.result.compression.leaf_id - byte) / 256 ;
+                    leafId = (leafId - byte) / 256 ;
                 }
                 for(let i=0;i<byteArray.length;i++){uarray[counter++]=byteArray[i];}
                 const swapAssetIdb58 = bs58.decode(swapAssetId);
@@ -2823,15 +2826,12 @@ class mcswap {
                 const swapAssetCreatorhashb58 = bs58.decode(swapCreatorhash); 
                 arr = Array.prototype.slice.call(Buffer.from(swapAssetCreatorhashb58), 0);
                 for(let i=0;i<arr.length;i++){uarray[counter++]=arr[i];}
-
                 const swapAssetOwnerb58 = bs58.decode(swapAssetOwner); 
                 arr = Array.prototype.slice.call(Buffer.from(swapAssetOwnerb58), 0);
                 for(let i=0;i<arr.length;i++){uarray[counter++]=arr[i];}
-
                 const swapDelegateb58 = bs58.decode(swapDelegate); 
                 arr = Array.prototype.slice.call(Buffer.from(swapDelegateb58), 0);
                 for(let i=0;i<arr.length;i++){uarray[counter++]=arr[i];}
-
                 byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
                 for(index=0;index<byteArray.length;index ++){
                     byte = swapLeafId & 0xff;
