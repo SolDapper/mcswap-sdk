@@ -13,6 +13,7 @@ class mcswap {
     constructor(){
         this.NAME = "McSwap Javascript SDK";
         this.PRIORITY = "Low";
+        this.TOLERANCE = 1.1;
         // mcswap-spl
         this.SPL_TREASURY = "5zx6c1E5aaBE6BbXu1ureKoZfpGbPBk9srmKavr3Xz3k";
         this.SPL_MCSWAP_PROGRAM = "BG9YVprV4XeQR15puwwaWfBBPzamTtuMRJLkAa8pG5hz";
@@ -147,6 +148,7 @@ class mcswap {
     async splCreate(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.convert!="undefined"&&_data_.convert===true){
                 if(typeof _data_.token1Amount!="undefined"&&_data_.token1Amount>0){
                     const amount_1 = await this.convert({"rpc":_data_.rpc,"amount":_data_.token1Amount,"mint":_data_.token1Mint});
@@ -292,7 +294,7 @@ class mcswap {
                 _error_.message="Program State Not Initialized!";
                 return _error_;
             }
-            const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),seller.toBytes(),buyer.toBytes()],new PublicKey(this.SPL_MCSWAP_PROGRAM));
+            const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),seller.toBytes(),buyer.toBytes()],new PublicKey(this.SPL_MCSWAP_PROGRAM));            
             // ***************************************************************************
             let token1Setting = false;
             let token2Setting = false;
@@ -522,7 +524,12 @@ class mcswap {
             _tx_.signers = signers;
             _tx_.table = lookupTableAccount;                   
             _tx_.priority = _data_.priority;
-            return await this.tx(_tx_);
+            if(_data_.builder==false){
+                return {"status":"ok","message":"builder disabled","ix":instructions,"table":lookupTableAccount};
+            }
+            else{
+                return await this.tx(_tx_);
+            }
             // ***************************************************************************
         }
         catch(err){
@@ -535,6 +542,7 @@ class mcswap {
     async splCancel(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
             const connection = new Connection(_data_.rpc, "confirmed");
@@ -630,7 +638,12 @@ class mcswap {
             _tx_.signers = _data_.signers;
             _tx_.table = lookupTableAccount;  
             _tx_.priority = _data_.priority;
-            return await this.tx(_tx_);
+            if(_data_.builder==false){
+                return {"status":"ok","message":"builder disabled","ix":instructions,"table":lookupTableAccount};
+            }
+            else{
+                return await this.tx(_tx_);
+            }   
             // ***************************************************************************
         }
         catch(err){
@@ -643,6 +656,7 @@ class mcswap {
     async splExecute(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.convert!="undefined"&&_data_.convert===true){
                 if(typeof _data_.affiliateFee!="undefined"&&_data_.affiliateFee>0){
                     const aflFee = await this.convert({"rpc":_data_.rpc,"amount":_data_.affiliateFee,"mint":"So11111111111111111111111111111111111111112"});
@@ -861,7 +875,12 @@ class mcswap {
             _tx_.instructions = instructions;
             _tx_.table = lookupTableAccount;                   
             _tx_.priority = _data_.priority;
-            return await this.tx(_tx_);
+            if(_data_.builder==false){
+                return {"status":"ok","message":"builder disabled","ix":instructions,"table":lookupTableAccount};
+            }
+            else{
+                return await this.tx(_tx_);
+            }   
             // ***************************************************************************
         }
         catch(err){
@@ -1009,6 +1028,7 @@ class mcswap {
     async coreCreate(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
             let affiliateWallet = this.CORE_TREASURY;
@@ -1159,7 +1179,12 @@ class mcswap {
             _tx_.signers = false;
             _tx_.table = false;               
             _tx_.priority = _data_.priority;
-            return await this.tx(_tx_);
+            if(_data_.builder==false){
+                return {"status":"ok","message":"builder disabled","ix":instructions,"table":false};
+            }
+            else{
+                return await this.tx(_tx_);
+            }   
             // ***************************************************************************
         }
         catch(err){
@@ -1172,6 +1197,7 @@ class mcswap {
     async coreCancel(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority==false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.buyerMint=="undefined"||_data_.buyerMint==false||_data_.buyerMint==""){_data_.buyerMint="11111111111111111111111111111111";}
             if(typeof _data_.sellerMint=="undefined"||_data_.sellerMint==false||_data_.sellerMint==""){
@@ -1229,7 +1255,12 @@ class mcswap {
             _tx_.signers = _data_.signers;
             _tx_.table = false;  
             _tx_.priority = _data_.priority;
-            return await this.tx(_tx_);
+            if(_data_.builder==false){
+                return {"status":"ok","message":"builder disabled","ix":instructions,"table":false};
+            }
+            else{
+                return await this.tx(_tx_);
+            }   
             // ***************************************************************************
         }
         catch(err){
@@ -1242,6 +1273,7 @@ class mcswap {
     async coreExecute(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
             let affiliateWallet = this.TREASURY;
@@ -1359,7 +1391,12 @@ class mcswap {
             _tx_.instructions = instructions;
             _tx_.table = false;                   
             _tx_.priority = _data_.priority;
-            return await this.tx(_tx_);
+            if(_data_.builder==false){
+                return {"status":"ok","message":"builder disabled","ix":instructions,"table":false};
+            }
+            else{
+                return await this.tx(_tx_);
+            }   
             // ***************************************************************************
         }
         catch(err){
@@ -1508,6 +1545,7 @@ class mcswap {
     async nftCreate(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
             let affiliateWallet = this.CORE_TREASURY;
@@ -1694,7 +1732,12 @@ class mcswap {
             _tx_.signers = false;
             _tx_.table = lookupTableAccount;                   
             _tx_.priority = _data_.priority;
-            return await this.tx(_tx_);
+            if(_data_.builder==false){
+                return {"status":"ok","message":"builder disabled","ix":instructions,"table":lookupTableAccount};
+            }
+            else{
+                return await this.tx(_tx_);
+            }   
             // ***************************************************************************
         }
         catch(err){
@@ -1707,6 +1750,7 @@ class mcswap {
     async nftCancel(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority==false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.buyerMint=="undefined"||_data_.buyerMint==false||_data_.buyerMint==""){_data_.buyerMint="11111111111111111111111111111111";}
             if(typeof _data_.sellerMint=="undefined"||_data_.sellerMint==false||_data_.sellerMint==""){
@@ -1779,7 +1823,12 @@ class mcswap {
             _tx_.signers = _data_.signers;
             _tx_.table = false;  
             _tx_.priority = _data_.priority;
-            return await this.tx(_tx_);
+            if(_data_.builder==false){
+                return {"status":"ok","message":"builder disabled","ix":instructions,"table":false};
+            }
+            else{
+                return await this.tx(_tx_);
+            }   
             // ***************************************************************************
         }catch(err){
             const _error_ = {}
@@ -1791,6 +1840,7 @@ class mcswap {
     async nftExecute(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
             let affiliateWallet = this.TREASURY;
@@ -1938,7 +1988,12 @@ class mcswap {
             _tx_.instructions = instructions;
             _tx_.table = lookupTableAccount;                   
             _tx_.priority = _data_.priority;
-            return await this.tx(_tx_);
+            if(_data_.builder==false){
+                return {"status":"ok","message":"builder disabled","ix":instructions,"table":lookupTableAccount};
+            }
+            else{
+                return await this.tx(_tx_);
+            }   
             // ***************************************************************************
         }
         catch(err){
@@ -2087,6 +2142,7 @@ class mcswap {
     async pnftCreate(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
             let affiliateWallet = this.CORE_TREASURY;
@@ -2264,7 +2320,12 @@ class mcswap {
             _tx_.signers = false;
             _tx_.table = false;               
             _tx_.priority = _data_.priority;
-            return await this.tx(_tx_);
+            if(_data_.builder==false){
+                return {"status":"ok","message":"builder disabled","ix":instructions,"table":false};
+            }
+            else{
+                return await this.tx(_tx_);
+            }   
             // ***************************************************************************
         }
         catch(err){
@@ -2277,6 +2338,7 @@ class mcswap {
     async pnftCancel(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority==false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.buyerMint=="undefined"||_data_.buyerMint==false||_data_.buyerMint==""){_data_.buyerMint="11111111111111111111111111111111";}
             if(typeof _data_.sellerMint=="undefined"||_data_.sellerMint==false||_data_.sellerMint==""){
@@ -2357,7 +2419,12 @@ class mcswap {
             _tx_.signers = _data_.signers;
             _tx_.table = false;  
             _tx_.priority = _data_.priority;
-            return await this.tx(_tx_);
+            if(_data_.builder==false){
+                return {"status":"ok","message":"builder disabled","ix":instructions,"table":false};
+            }
+            else{
+                return await this.tx(_tx_);
+            }   
             // ***************************************************************************
         }
         catch(err){
@@ -2370,6 +2437,7 @@ class mcswap {
     async pnftExecute(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
             let affiliateWallet = this.TREASURY;
@@ -2506,7 +2574,12 @@ class mcswap {
             _tx_.instructions = instructions;
             _tx_.table = lookupTableAccount;                   
             _tx_.priority = _data_.priority;
-            return await this.tx(_tx_);
+            if(_data_.builder==false){
+                return {"status":"ok","message":"builder disabled","ix":instructions,"table":lookupTableAccount};
+            }
+            else{
+                return await this.tx(_tx_);
+            }   
             // ***************************************************************************
         }
         catch(err){
@@ -2654,6 +2727,7 @@ class mcswap {
         try{
             const max_proofs = 18;
             // ***************************************************************************
+            if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
             let affiliateWallet = this.CORE_TREASURY;
@@ -2906,7 +2980,12 @@ class mcswap {
                 _tx_.signers = false;
                 _tx_.table = lookupTableAccount;               
                 _tx_.priority = _data_.priority;
-                return await this.tx(_tx_);
+                if(_data_.builder==false){
+                    return {"status":"ok","message":"builder disabled","ix":instructions,"table":lookupTableAccount};
+                }
+                else{
+                    return await this.tx(_tx_);
+                }
                 // ***************************************************************************
             }
             // ***************************************************************************
@@ -2921,6 +3000,7 @@ class mcswap {
     async cnftCancel(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority==false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.buyerMint=="undefined"||_data_.buyerMint==false||_data_.buyerMint==""){_data_.buyerMint="11111111111111111111111111111111";}
             if(typeof _data_.sellerMint=="undefined"||_data_.sellerMint==false||_data_.sellerMint==""){
@@ -3041,7 +3121,12 @@ class mcswap {
             _tx_.signers = _data_.signers;
             _tx_.table = false;  
             _tx_.priority = _data_.priority;
-            return await this.tx(_tx_);
+            if(_data_.builder==false){
+                return {"status":"ok","message":"builder disabled","ix":instructions,"table":false};
+            }
+            else{
+                return await this.tx(_tx_);
+            }   
             // ***************************************************************************
         }
         catch(err){
@@ -3054,6 +3139,7 @@ class mcswap {
     async cnftExecute(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
             let affiliateWallet = this.TREASURY;
@@ -3214,7 +3300,12 @@ class mcswap {
             _tx_.instructions = instructions;
             _tx_.table = lookupTableAccount;                   
             _tx_.priority = _data_.priority;
-            return await this.tx(_tx_);
+            if(_data_.builder==false){
+                return {"status":"ok","message":"builder disabled","ix":instructions,"table":lookupTableAccount};
+            }
+            else{
+                return await this.tx(_tx_);
+            }   
             // ***************************************************************************
         }
         catch(err){
@@ -3395,6 +3486,8 @@ class mcswap {
                 _result_.token2Amount=parseInt(_result_.token2Amount);
                 _result_.token3Amount=parseInt(_result_.token3Amount);
                 _result_.token4Amount=parseInt(_result_.token4Amount);
+                if(_result_.token2Mint=="11111111111111111111111111111111"){_result_.token2Mint=false;}
+                if(_result_.token4Mint=="11111111111111111111111111111111"){_result_.token4Mint=false;}
                 if(typeof _data_.display!="undefined"&&_data_.display===true){
                     const token1Amount=await this.convert({"rpc":_data_.rpc,"amount":_result_.token1Amount,"mint":_result_.token1Mint,"display":_data_.display});
                     const token2Amount=await this.convert({"rpc":_data_.rpc,"amount":_result_.token2Amount,"mint":_result_.token2Mint,"display":_data_.display});
@@ -3412,8 +3505,8 @@ class mcswap {
                     _result_.token2Decimals=token2Amount.decimals;
                     _result_.token3Decimals=token3Amount.decimals;
                     _result_.token4Decimals=token4Amount.decimals;
-                    if(typeof _result_.token2Amount=="undefined"){_result_.token2Amount=0;_result_.token2Decimals=0;_result_.token2Symbol="-";}
-                    if(typeof _result_.token4Amount=="undefined"){_result_.token4Amount=0;_result_.token4Decimals=0;_result_.token4Symbol="-";}
+                    if(typeof _result_.token2Amount=="undefined"){_result_.token2Amount=0;_result_.token2Decimals=0;_result_.token2Symbol=false;}
+                    if(typeof _result_.token4Amount=="undefined"){_result_.token4Amount=0;_result_.token4Decimals=0;_result_.token4Symbol=false;}
                 }
                 return _result_;
             }
@@ -3465,6 +3558,11 @@ class mcswap {
                 _result_.lamports=parseInt(new BN(decoded.swap_lamports,10,"le"));
                 _result_.tokenMint=new PublicKey(decoded.swap_token_mint).toString();
                 _result_.units=parseInt(new BN(decoded.swap_tokens,10,"le"));
+
+                if(_result_.buyerMint=="11111111111111111111111111111111"){_result_.buyerMint=false;}
+                if(_result_.buyer=="11111111111111111111111111111111"){_result_.buyer=false;}
+                if(_result_.tokenMint=="11111111111111111111111111111111"){_result_.tokenMint=false;}
+
                 if(typeof _data_.display!="undefined"&&_data_.display===true){
                     const lamports=await this.convert({"rpc":_data_.rpc,"amount":_result_.lamports,"mint":"So11111111111111111111111111111111111111112","display":_data_.display});
                     const units=await this.convert({"rpc":_data_.rpc,"amount":_result_.units,"mint":_result_.tokenMint,"display":_data_.display});
@@ -3669,7 +3767,7 @@ class mcswap {
         if(typeof _data_.instructions=="undefined"){_obj_.message="missing instructions";return _obj_;}else{_instructions_=_data_.instructions;}
         if(typeof _data_.signers=="undefined" || _data_.signers==false){_signers_=false;}else{_signers_=_data_.signers;}
         if(typeof _data_.priority=="undefined"){_priority_="Low";}else{_priority_=_data_.priority;}
-        if(typeof _data_.tolerance=="undefined"){_tolerance_="1.1";}else{_tolerance_=_data_.tolerance;}
+        if(typeof _data_.tolerance=="undefined" || _data_.tolerance==false){_tolerance_=1.1;}else{_tolerance_=_data_.tolerance;}
         if(typeof _data_.serialize=="undefined"){_serialize_=false;}else{_serialize_=_data_.serialize;}
         if(typeof _data_.encode=="undefined"){_encode_=false;}else{_encode_=_data_.encode;}
         if(typeof _data_.compute=="undefined"){_compute_=true;}else{_compute_=_data_.compute;}

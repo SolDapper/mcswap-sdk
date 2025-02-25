@@ -790,6 +790,8 @@ console.log(escrows);
 ```javascript
 // helius endpoint
 rpc: string - (required)
+// defaults to true, passing false will return the ix rather than tx
+builder: bool - omit&default = true
 // if true the response will be for a blink tx 
 blink: bool - omit&default = false
 // if true you're passing decimal values in relevant values below
