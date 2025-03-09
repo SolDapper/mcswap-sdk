@@ -1067,13 +1067,13 @@ class mcswap {
             const connection = new Connection(_data_.rpc,"confirmed");
             const seller = new PublicKey(_data_.seller);
             const taker = "11111111111111111111111111111111";
-            let buyer = new PublicKey(taker);
             if(typeof _data_.buyer!="undefined"&&_data_.buyer!=false&&_data_.buyer!=""){buyer=new PublicKey(_data_.buyer);}else{_data_.buyer=taker;}
             // ***************************************************************************
             let isSwap = true;
             if(typeof _data_.buyerMint=="undefined"||typeof _data_.buyerMint==false||_data_.buyerMint==""){_data_.buyerMint="11111111111111111111111111111111";isSwap=false;}
             if(typeof _data_.tokenMint=="undefined"||typeof _data_.tokenMint==false||_data_.tokenMint==""){_data_.units=0;_data_.tokenMint="11111111111111111111111111111111";}
             if(typeof _data_.lamports=="undefined"||typeof _data_.lamports==false){_data_.lamports=0;}
+            if(typeof _data_.units=="undefined"||typeof _data_.units==false){_data_.units=0;}
             const programStatePDA = PublicKey.findProgramAddressSync([Buffer.from("program-state")],new PublicKey(this.CORE_MCSWAP_PROGRAM));
             const programState = await connection.getAccountInfo(programStatePDA[0]).catch(function(error){});
             const encodedProgramStateData = programState.data;
@@ -2180,15 +2180,17 @@ class mcswap {
             }
             // ***************************************************************************
             const connection = new Connection(_data_.rpc, "confirmed");
+            const taker = "11111111111111111111111111111111";
+            if(typeof _data_.buyer!="undefined"&&_data_.buyer!=false&&_data_.buyer!=""){buyer=new PublicKey(_data_.buyer);}else{_data_.buyer=taker;}
             let isSwap = true;
             const mint = _data_.sellerMint;
             let swapMint = "11111111111111111111111111111111";
-            if(typeof _data_.buyerMint!="undefined"){swapMint=_data_.buyerMint;}else{isSwap=false;}
+            if(typeof _data_.buyerMint!="undefined"&&_data_.buyerMint!=false){swapMint=_data_.buyerMint;}else{isSwap=false;}
             let swapLamports = 0;
-            if(typeof _data_.lamports!="undefined" && _data_.lamports>0){swapLamports=parseInt(_data_.lamports);}
+            if(typeof _data_.lamports!="undefined"&&_data_.lamports!=false&&_data_.lamports>0){swapLamports=parseInt(_data_.lamports);}
             let swapTokens = 0;
             let swapTokenMint = new PublicKey("11111111111111111111111111111111");
-            if(typeof _data_.units!="undefined" && _data_.units>0){swapTokens=parseInt(_data_.units);swapTokenMint=new PublicKey(_data_.tokenMint);}
+            if(typeof _data_.units!="undefined"&&_data_.units!=false&&_data_.units>0){swapTokens=parseInt(_data_.units);swapTokenMint=new PublicKey(_data_.tokenMint);}
             // ***************************************************************************
             const splATAProgramId = new PublicKey(this.PNFT_ATA_PROGRAM);
             const mplAuthRulesProgramId = new PublicKey(this.PNFT_RULES_PROGRAM);
@@ -2769,10 +2771,10 @@ class mcswap {
             let swapAssetId = "11111111111111111111111111111111";
             if(typeof _data_.buyerMint!="undefined"&&_data_.buyerMint!=false){swapAssetId=_data_.buyerMint;}
             let swapLamports = 0;
-            if(typeof _data_.lamports!="undefined"&&_data_.lamports>0){swapLamports=_data_.lamports;}
+            if(typeof _data_.lamports!="undefined"&&_data_.lamports!=false&&_data_.lamports>0){swapLamports=_data_.lamports;}
             let swapTokens = 0;
             let swapTokenMint = new PublicKey("11111111111111111111111111111111");
-            if(typeof _data_.tokenMint!="undefined"){swapTokenMint=new PublicKey(_data_.tokenMint);swapTokens=_data_.units;}
+            if(typeof _data_.tokenMint!="undefined"&&_data_.tokenMint!=false){swapTokenMint=new PublicKey(_data_.tokenMint);swapTokens=_data_.units;}
             let isSwap=true;
             if(swapAssetId=="11111111111111111111111111111111"){isSwap=false;}
             const programStatePDA = PublicKey.findProgramAddressSync([Buffer.from("program-state")],new PublicKey(this.CNFT_MCSWAP_PROGRAM));
