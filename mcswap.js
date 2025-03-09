@@ -525,7 +525,7 @@ class mcswap {
             _tx_.table = lookupTableAccount;                   
             _tx_.priority = _data_.priority;
             if(_data_.builder==false){
-                return {"status":"ok","message":"builder disabled","ix":instructions,"table":lookupTableAccount};
+                return {"status":"ok","message":"builder disabled","ix":instructions,"table":lookupTableAccount,"signers":signers};
             }
             else{
                 return await this.tx(_tx_);
@@ -1582,11 +1582,12 @@ class mcswap {
             }
             // ***************************************************************************
             let connection = new Connection(_data_.rpc, "confirmed");
+            let taker = "11111111111111111111111111111111";
+            if(typeof _data_.buyer!="undefined"&&_data_.buyer!=false&&_data_.buyer!=""){}else{_data_.buyer=taker;}
             let isSwap = true;
             const mint = _data_.sellerMint;
             let swapMint = "11111111111111111111111111111111";
-            if(typeof _data_.buyerMint!="undefined"){swapMint=_data_.buyerMint;}else{isSwap=false;}
-            let taker = _data_.buyer;
+            if(typeof _data_.buyerMint!="undefined"&&_data_.buyerMint!=false){swapMint=_data_.buyerMint;}else{isSwap=false;}
             let swapLamports=parseInt(_data_.lamports);
             let swapTokens = 0;
             let swapTokenMint = new PublicKey("11111111111111111111111111111111");
@@ -1605,7 +1606,7 @@ class mcswap {
             response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
             body:JSON.stringify({"jsonrpc":"2.0","id":"text","method":"getAsset","params":{"id":mint}})});
             meta_data = await response.json();
-            if(typeof meta_data.result.mint_extensions != "undefined"){
+            if(typeof meta_data.result?.mint_extensions != "undefined"){
                 PROGRAM_1 = splToken.TOKEN_2022_PROGRAM_ID;
             }
             const swapVaultATA = await splToken.getAssociatedTokenAddress(new PublicKey(mint),swapVaultPDA[0],true,PROGRAM_1,splToken.ASSOCIATED_TOKEN_PROGRAM_ID,);        
@@ -1616,7 +1617,7 @@ class mcswap {
             response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
             body:JSON.stringify({"jsonrpc":"2.0","id":"text","method":"getAsset","params":{"id":swapMint}})});
             meta_data = await response.json();
-            if(typeof meta_data.result.mint_extensions != "undefined"){
+            if(typeof meta_data.result?.mint_extensions != "undefined"){
                 PROGRAM_2 = splToken.TOKEN_2022_PROGRAM_ID;
             }
             // ***************************************************************************
@@ -1660,7 +1661,7 @@ class mcswap {
             uarray[counter++] = 0; // 0 = nft_swap InitializeSwap instruction
             if(isSwap==true){uarray[counter++]=1;}else{uarray[counter++]=0;}
             let arr;
-            const takerb58 = bs58.decode(taker);
+            const takerb58 = bs58.decode(_data_.buyer);
             arr = Array.prototype.slice.call(Buffer.from(takerb58),0);
             for(let i = 0; i < arr.length; i++){uarray[counter++]=arr[i];}
             const swapMintb58 = bs58.decode(swapMint);
