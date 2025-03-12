@@ -82,7 +82,7 @@ const signer = Keypair.fromSecretKey(new Uint8Array(secret));
 ```
 
 ## mcswap-spl
-### Create SPL Escrow
+### splCreate Escrow
 ```javascript
 const tx = await mcswap.splCreate({
     rpc: rpc,
@@ -124,7 +124,7 @@ else{
 }
 ```
 
-### Cancel SPL Escrow
+### splCancel Escrow
 ```javascript
 const tx = await mcswap.splCancel({
     rpc: rpc,
@@ -141,7 +141,7 @@ else{
 }
 ```
 
-### Execute SPL Escrow
+### splExecute Escrow
 ```javascript
 const tx = await mcswap.splExecute({
     rpc: rpc,
@@ -162,7 +162,7 @@ else{
 }
 ```
 
-### Received SPL Escrows
+### splReceived Escrows
 ```javascript
 const splReceived = await mcswap.splReceived({
     rpc: rpc,
@@ -172,7 +172,7 @@ const splReceived = await mcswap.splReceived({
 console.log(splReceived);
 ```
 
-### Sent SPL Escrows
+### splSent Escrows
 ```javascript
 const splSent = await mcswap.splSent({
     rpc: rpc,
@@ -183,8 +183,9 @@ const splSent = await mcswap.splSent({
 console.log(splSent);
 ```
 
-## mcswap-nft, pnft, cnft, core
+## mcswap nft
 ### Create NFT Escrow
+nftCreate, pnftCreate, cnftCreate, coreCreate
 ```javascript
 const tx = await mcswap.nftCreate({
     rpc: rpc,
@@ -214,11 +215,11 @@ else{
     else{
         console.log(status);
         const escrow = await mcswap.fetch({
-            "rpc": rpc,
-            "display": true,
-            "standard": "nft",
-            "sellerMint": "5Jk6hn3rR1DJjtDU4MzgDuN3SXH4nfHiYgqmEVhGyEUt",
-            "buyerMint": "Bdzry26srWQUvdRS1kSA3kXMndybBwP1j7cmcki8Rvru"
+            rpc: rpc,
+            display: true,
+            standard: "nft", // nft, pnft, cnft, core
+            sellerMint: "5Jk6hn3rR1DJjtDU4MzgDuN3SXH4nfHiYgqmEVhGyEUt",
+            buyerMint: false
         });
         console.log(escrow);
     }
