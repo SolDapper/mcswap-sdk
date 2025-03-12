@@ -81,7 +81,7 @@ const secret = [1,2,3,4,5,~];
 const signer = Keypair.fromSecretKey(new Uint8Array(secret));
 ```
 
-## mcswap-spl
+## mcswap spl
 ### splCreate Escrow
 ```javascript
 const tx = await mcswap.splCreate({
