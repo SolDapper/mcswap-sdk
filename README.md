@@ -185,7 +185,6 @@ console.log(splSent);
 
 ## mcswap nft
 ### nftCreate, pnftCreate, cnftCreate, coreCreate
-
 ```javascript
 const tx = await mcswap.nftCreate({
     rpc: rpc,
@@ -226,7 +225,7 @@ else{
 }
 ```
 
-### Cancel NFT Escrow
+### nftCancel, pnftCancel, cnftCancel, coreCancel
 ```javascript
 import mcswap from 'mcswap-sdk';
 import { Keypair } from "@solana/web3.js";
@@ -251,7 +250,7 @@ else{
 }
 ```
 
-### Execute NFT Escrow
+### nftExecute, pnftExecute, cnftExecute, coreExecute
 ```javascript
 import mcswap from 'mcswap-sdk';
 import { Keypair } from "@solana/web3.js";
@@ -281,7 +280,7 @@ else{
 }
 ```
 
-### Received NFT Escrows
+### nftReceived, pnftReceived, cnftReceived, coreReceived
 ```javascript
 import mcswap from 'mcswap-sdk';
 const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
@@ -293,7 +292,7 @@ const nftReceived = await mcswap.nftReceived({
 console.log(nftReceived);
 ```
 
-### Sent NFT Escrows
+### nftSent, pnftSent, cnftSent, coreSent
 ```javascript
 import mcswap from 'mcswap-sdk';
 const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
