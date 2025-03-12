@@ -73,9 +73,8 @@ mcswap.fee
 
 # Examples
 
-## setup
+## example setup
 ```javascript
-import mcswap from 'mcswap-sdk';
 import { Keypair } from "@solana/web3.js";
 const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
 const secret = [1,2,3,4,5,~];
