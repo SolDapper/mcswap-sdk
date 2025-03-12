@@ -184,8 +184,8 @@ console.log(splSent);
 ```
 
 ## mcswap nft
-### Create NFT Escrow
-nftCreate, pnftCreate, cnftCreate, coreCreate
+### nftCreate, pnftCreate, cnftCreate, coreCreate
+
 ```javascript
 const tx = await mcswap.nftCreate({
     rpc: rpc,
