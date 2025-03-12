@@ -303,3 +303,13 @@ const nftSent = await mcswap.nftSent({
 });
 console.log(nftSent);
 ```
+
+## base fees
+``` javascript
+const base_fee = await mcswap.fee({
+    rpc: rpc, 
+    display: true,
+    standard: "nft" // nft, pnft, cnft, core
+});
+console.log(nftSent);
+```
