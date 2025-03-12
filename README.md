@@ -73,39 +73,37 @@ mcswap.fee
 
 # Examples
 
-## mcswap-spl
-### Create SPL Escrow
+## setup
 ```javascript
 import mcswap from 'mcswap-sdk';
 import { Keypair } from "@solana/web3.js";
 const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
 const secret = [1,2,3,4,5,~];
-const signer = Keypair.fromSecretKey(new Uint8Array(secret)); // seller
-const base_fee = await mcswap.fee({
-    rpc: rpc, 
-    display: true,
-    standard: "spl"
-});
-console.log("base fee", base_fee+" sol");
-let tx = await mcswap.splCreate({
+const signer = Keypair.fromSecretKey(new Uint8Array(secret));
+```
+
+## mcswap-spl
+### Create SPL Escrow
+```javascript
+const tx = await mcswap.splCreate({
     rpc: rpc,
-    builder: true,
-    blink: false,
-    convert: true,
-    tolerance: "1.2",
-    priority: "Medium",
+    builder: true, // builder false will return ix for tx only
+    blink: false, // blink true will return a base64 formatted object
+    convert: true, // pass 
+    tolerance: "1.2", // cu estimate multiplier for padding if needed
+    priority: "Medium", // priority fee level
     affiliateWallet: "ACgZcmgmAnMDxXxZUo9Zwg2PS6WQLXy63JnnLmJFYxZZ",
     affiliateFee: "0.0009",
     seller: "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere",
     token1Mint: "So11111111111111111111111111111111111111112",
     token1Amount: "0.001",
-    token2Mint: "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
-    token2Amount: "0.002",
+    token2Mint: false,
+    token2Amount: false,
     buyer: false, // buyer false makes this a public listing
     token3Mint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
     token3Amount: "0.003",
-    token4Mint: "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
-    token4Amount: "0.004",
+    token4Mint: false,
+    token4Amount: false
 });
 if(tx.tx){
     tx.tx.sign([signer]);
@@ -129,14 +127,9 @@ else{
 
 ### Cancel SPL Escrow
 ```javascript
-import mcswap from 'mcswap-sdk';
-import { Keypair } from "@solana/web3.js";
-const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
-const secret = [1,2,3,4,5,~];
-const signer = Keypair.fromSecretKey(new Uint8Array(secret)); // seller
 const tx = await mcswap.splCancel({
     rpc: rpc,
-    escrow: "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL"
+    escrow: "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL" // escrow id (acct)
 });
 if(typeof tx.status!="undefined"){console.log(tx);}
 else{
@@ -151,11 +144,6 @@ else{
 
 ### Execute SPL Escrow
 ```javascript
-import mcswap from 'mcswap-sdk';
-import { Keypair } from "@solana/web3.js";
-const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
-const secret = [1,2,3,4,5,~];
-const signer = Keypair.fromSecretKey(new Uint8Array(secret));
 const tx = await mcswap.splExecute({
     rpc: rpc,
     convert: true,
@@ -177,24 +165,21 @@ else{
 
 ### Received SPL Escrows
 ```javascript
-import mcswap from 'mcswap-sdk';
-const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
 const splReceived = await mcswap.splReceived({
-    "rpc": rpc,
-    "display": true,
-    "wallet": "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL"
+    rpc: rpc,
+    display: true,
+    wallet: "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL"
 });
 console.log(splReceived);
 ```
 
 ### Sent SPL Escrows
 ```javascript
-import mcswap from 'mcswap-sdk';
-const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
 const splSent = await mcswap.splSent({
-    "rpc": rpc,
-    "display": true,
-    "wallet": "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere"
+    rpc: rpc,
+    display: true,
+    private: false, // (default) private false returns public listings
+    wallet: "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere"
 });
 console.log(splSent);
 ```
@@ -202,17 +187,6 @@ console.log(splSent);
 ## mcswap-nft, pnft, cnft, core
 ### Create NFT Escrow
 ```javascript
-import mcswap from 'mcswap-sdk';
-import { Keypair } from "@solana/web3.js";
-const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
-const secret = [1,2,3,4,5,~];
-const signer = Keypair.fromSecretKey(new Uint8Array(secret)); // seller
-const base_fee = await mcswap.fee({
-    "rpc": rpc, 
-    "display": true,
-    "standard": "nft"
-});
-console.log("base fee", base_fee+" sol");
 let tx = await mcswap.nftCreate({
     "rpc": rpc,
     "builder": true,
@@ -329,81 +303,4 @@ const nftSent = await mcswap.nftSent({
     "wallet": "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere"
 });
 console.log(nftSent);
-```
-
-# Escrow Creation Options
-
-### Common
-```javascript
-// helius endpoint
-rpc: string - (required)
-// defaults to true, passing false will return the ix rather than tx
-builder: bool - omit&default = true
-// if true the response will be for a blink tx 
-blink: bool - omit&default = false
-// if true you're passing decimal values in relevant values below
-convert: bool - omit&default = false
-// multiplyer for cu optimization padding (non-blink txs only)
-tolerance: int - omit&default = 1.1
-// helius priority fee level (Min/Low/Medium/High/VeryHigh)
-priority: string - omit&default = "Low"
-// your app fee collection wallet
-affiliateWallet: string - omit&default = protocol treasury wallet
-// your app fee amount (SOL)
-affiliateFee: int units || string decimal using convert - omit&default = 0
-// the asset seller wallet creating the escrow
-seller: string - (required)
-```
-
-### NFT Escrows
-```javascript
-// asset id of the nft you're sending to escrow
-sellerMint: string - (required) 
-
-// pass false or omit as the buyer to create an escrow as a public marketplace 
-// listing that can be executed by anyone who fullfills the request
-buyer: string - omit&default = false
-
-// at least one of the options below must be used when 
-// defining what is being requested from the buyer
-
-// asset id of a nft IF requesting one from the buyer
-// the nft you're requesting must be the same standard as the nft you're selling
-buyerMint: string - omit&default = false
-// amount of sol IF requesting sol from the buyer
-lamports: int units || string decimal with convert - omit&default = 0
-// token mint address of tokens IF requesting tokens from the buyer
-tokenMint: string - omit&default = false
-// amount of tokens above IF requesting tokens from the buyer
-units: int units || string decimal with convert - omit&default = 0
-```
-
-### Token Escrows
-```javascript
-// a buyer must be defined for all mcswap-spl escrows
-buyer: string - (required) 
-
-// mint addresses below can be any spl or supertoken.
-// token 1 & 2 are the seller
-// token 3 & 4 are buyer
-// token 2 & 4 are optional
-// to escrow or SOL, use the wrapped SOL mint address
-
-// token mint of tokens to hold in escrow
-token1Mint: string - (required) 
-// amount of tokens above to hold in escrow
-token1Amount: int units || string decimal with convert - (required)
-// optional token mint to hold in escrow
-token2Mint: string - omit&default = false
-// amount of optional tokens above to hold in escrow
-token2Amount: int units || string decimal with convert - omit&default = false
-
-// token mint being requested from buyer
-token3Mint: string - (required) 
-// amount of tokens above requested from buyer
-token3Amount: int units || string decimal with convert - (required)
-// optional token mint being requested from buyer
-token4Mint: string - omit&default = false
-// amount of optional tokens above requested from buyer
-token4Amount: int units || string decimal with convert - omit&default = false
 ```
