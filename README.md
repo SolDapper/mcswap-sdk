@@ -89,6 +89,7 @@ const base_fee = await mcswap.fee({
 console.log("base fee", base_fee+" sol");
 let tx = await mcswap.splCreate({
     rpc: rpc,
+    builder: true,
     blink: false,
     convert: true,
     tolerance: "1.2",
@@ -100,7 +101,7 @@ let tx = await mcswap.splCreate({
     token1Amount: "0.001",
     token2Mint: "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
     token2Amount: "0.002",
-    buyer: "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL",
+    buyer: false, // buyer false makes this a public listing
     token3Mint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
     token3Amount: "0.003",
     token4Mint: "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
@@ -116,10 +117,7 @@ if(tx.tx){
     else{
         console.log(status);
         const escrow = await mcswap.fetch({
-            rpc: rpc,
-            display: true,
-            standard: "spl",
-            escrow: tx.escrow
+            rpc:rpc, display:true, standard:"spl", escrow:tx.escrow
         });
         console.log(escrow);
     }
