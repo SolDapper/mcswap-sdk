@@ -89,7 +89,7 @@ const tx = await mcswap.splCreate({
     builder: true, // builder false will return ix for tx only
     blink: false, // blink true will return a base64 formatted object
     convert: true, // pass 
-    tolerance: "1.2", // cu estimate multiplier for padding if needed
+    tolerance: 1.2, // cu estimate multiplier for padding if needed
     priority: "Medium", // priority fee level
     affiliateWallet: "ACgZcmgmAnMDxXxZUo9Zwg2PS6WQLXy63JnnLmJFYxZZ",
     affiliateFee: "0.0009",
@@ -186,22 +186,22 @@ console.log(splSent);
 ## mcswap-nft, pnft, cnft, core
 ### Create NFT Escrow
 ```javascript
-let tx = await mcswap.nftCreate({
-    "rpc": rpc,
-    "builder": true,
-    "blink": false,
-    "convert": true,
-    "tolerance": "1.2",
-    "priority": "Medium",
-    "affiliateWallet": "ACgZcmgmAnMDxXxZUo9Zwg2PS6WQLXy63JnnLmJFYxZZ",
-    "affiliateFee": "0.0009",
-    "seller": "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere",
-    "sellerMint": "5Jk6hn3rR1DJjtDU4MzgDuN3SXH4nfHiYgqmEVhGyEUt",
-    "buyer": "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL",
-    "buyerMint": "Bdzry26srWQUvdRS1kSA3kXMndybBwP1j7cmcki8Rvru",
-    "lamports": "0.0001",
-    "tokenMint": "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
-    "units": "0.01",
+const tx = await mcswap.nftCreate({
+    rpc: rpc,
+    builder: true,
+    blink: false,
+    convert: true,
+    tolerance: 1.2,
+    priority: "Medium",
+    affiliateWallet: "ACgZcmgmAnMDxXxZUo9Zwg2PS6WQLXy63JnnLmJFYxZZ",
+    affiliateFee: "0.0009",
+    seller: "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere",
+    sellerMint: "5Jk6hn3rR1DJjtDU4MzgDuN3SXH4nfHiYgqmEVhGyEUt",
+    buyer: false, // buyer false makes this a public listing
+    buyerMint: false,
+    lamports: "0.0001",
+    tokenMint: "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
+    units: "0.01"
 });
 if(typeof tx.status!="undefined"){console.log(tx);}
 else{
