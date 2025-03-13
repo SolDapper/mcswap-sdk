@@ -89,7 +89,7 @@ const base_fee = await mcswap.fee({
     display: true,
     standard: "nft" // nft, pnft, cnft, core
 });
-console.log(nftSent);
+console.log(base_fee);
 ```
 
 ## mcswap spl
