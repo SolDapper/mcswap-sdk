@@ -81,6 +81,17 @@ const secret = [1,2,3,4,5,~];
 const signer = Keypair.fromSecretKey(new Uint8Array(secret));
 ```
 
+## base fees
+gets the current base fee for the protocol by asset standard
+``` javascript
+const base_fee = await mcswap.fee({
+    rpc: rpc, 
+    display: true,
+    standard: "nft" // nft, pnft, cnft, core
+});
+console.log(nftSent);
+```
+
 ## mcswap spl
 ### splCreate Escrow
 ```javascript
@@ -286,16 +297,6 @@ const nftSent = await mcswap.nftSent({
     display: true,
     private: false, // (default) private false returns public listings
     wallet: "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere"
-});
-console.log(nftSent);
-```
-
-## base fees
-``` javascript
-const base_fee = await mcswap.fee({
-    rpc: rpc, 
-    display: true,
-    standard: "nft" // nft, pnft, cnft, core
 });
 console.log(nftSent);
 ```
