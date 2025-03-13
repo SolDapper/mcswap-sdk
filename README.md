@@ -99,9 +99,9 @@ const tx = await mcswap.splCreate({
     rpc: rpc,
     builder: true, // builder false will return ix for tx only
     blink: false, // blink true will return a base64 formatted object
-    convert: true, // pass 
     tolerance: 1.2, // cu estimate multiplier for padding if needed
     priority: "Medium", // priority fee level
+    convert: true, // convert true because we're passing decimal values for amounts below
     affiliateWallet: "ACgZcmgmAnMDxXxZUo9Zwg2PS6WQLXy63JnnLmJFYxZZ",
     affiliateFee: "0.0009",
     seller: "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere",
