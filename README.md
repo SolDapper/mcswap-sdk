@@ -84,12 +84,12 @@ const signer = Keypair.fromSecretKey(new Uint8Array(secret));
 ## base fees
 gets the current base fee for the protocol by asset standard
 ``` javascript
-const base_fee = await mcswap.fee({
+const fee = await mcswap.fee({
     rpc: rpc, 
     display: true,
     standard: "nft" // nft, pnft, cnft, core
 });
-console.log(base_fee);
+console.log(fee);
 ```
 
 ## mcswap spl
