@@ -104,7 +104,7 @@ const tx = await mcswap.splCreate({
     convert: true, // convert true because we're passing decimal values for amounts below
     affiliateWallet: "ACgZcmgmAnMDxXxZUo9Zwg2PS6WQLXy63JnnLmJFYxZZ",
     affiliateFee: "0.0009",
-    seller: "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere",
+    seller: "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere", // provider
     token1Mint: "So11111111111111111111111111111111111111112",
     token1Amount: "0.001",
     token2Mint: false,
