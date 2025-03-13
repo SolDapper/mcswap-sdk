@@ -1003,8 +1003,8 @@ class mcswap {
                     record.token_2_amount = parseInt(new BN(decodedData.token2_amount, 10, "le"));
                     record.token_3_amount = parseInt(new BN(decodedData.token3_amount, 10, "le"));
                     record.token_4_amount = parseInt(new BN(decodedData.token4_amount, 10, "le"));
-                    let pushit = false;
                     // if private
+                    let pushit = false;
                     if(_data_.private === true){
                         if(record.buyer!="11111111111111111111111111111111"){pushit=true;}
                     }
@@ -1560,8 +1560,8 @@ class mcswap {
                     record.lamports = swap_lamports;
                     record.tokenMint = swap_token_mint;
                     record.units = swap_tokens;
-                    let pushit = false;
                     // if private
+                    let pushit = false;
                     if(_data_.private === true){
                         if(record.buyer!=false){pushit=true;}
                     }
@@ -2185,6 +2185,7 @@ class mcswap {
                     record.tokenMint = swap_token_mint;
                     record.units = swap_tokens;
                     // if private
+                    let pushit = false;
                     if(_data_.private === true){
                         if(record.buyer!=false){pushit=true;}
                     }
@@ -2795,6 +2796,7 @@ class mcswap {
                     record.tokenMint = swap_token_mint;
                     record.units = swap_tokens;
                     // if private
+                    let pushit = false;
                     if(_data_.private === true){
                         if(record.buyer!=false){pushit=true;}
                     }
@@ -3546,6 +3548,7 @@ class mcswap {
                 record.tokenMint = swap_token_mint;
                 record.units = swap_tokens;
                 // if private
+                let pushit = false;
                 if(_data_.private === true){
                     if(record.buyer!=false){pushit=true;}
                 }

@@ -92,7 +92,7 @@ const fee = await mcswap.fee({
 console.log(fee);
 ```
 
-## mcswap spl
+## mcswap-spl
 ### splCreate Escrow
 ```javascript
 const tx = await mcswap.splCreate({
@@ -194,7 +194,7 @@ const splSent = await mcswap.splSent({
 console.log(splSent);
 ```
 
-## mcswap nft
+## mcswap-nft
 ### nftCreate, pnftCreate, cnftCreate, coreCreate
 ```javascript
 const tx = await mcswap.nftCreate({
