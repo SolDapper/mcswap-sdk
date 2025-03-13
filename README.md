@@ -295,7 +295,7 @@ console.log(nftReceived);
 const nftSent = await mcswap.nftSent({
     rpc: rpc,
     display: true,
-    private: false, // (default) private false returns public listings
+    private: false, // private false returns public listings by default
     wallet: "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere"
 });
 console.log(nftSent);
