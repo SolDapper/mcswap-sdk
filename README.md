@@ -203,7 +203,7 @@ const tx = await mcswap.nftCreate({
     tokenMint: "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
     units: "0.01"
 });
-if(typeof tx.status!="undefined"){console.log(tx);}
+if(tx.status){console.log(tx);}
 else{
     tx.sign([signer]);
     const signature = await mcswap.send(rpc,tx);
@@ -227,19 +227,13 @@ else{
 
 ### nftCancel, pnftCancel, cnftCancel, coreCancel
 ```javascript
-import mcswap from 'mcswap-sdk';
-import { Keypair } from "@solana/web3.js";
-const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
-const secret = [1,2,3,4,5,~];
-const signer = Keypair.fromSecretKey(new Uint8Array(secret)); // seller
-let tx = await mcswap.nftCancel({
-    "rpc": rpc,
-    "blink": false,
-    "seller": "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere",
-    "sellerMint": "5Jk6hn3rR1DJjtDU4MzgDuN3SXH4nfHiYgqmEVhGyEUt",
-    "buyerMint": "Bdzry26srWQUvdRS1kSA3kXMndybBwP1j7cmcki8Rvru",
+const tx = await mcswap.nftCancel({
+    rpc: rpc,
+    blink: false,
+    sellerMint: "5Jk6hn3rR1DJjtDU4MzgDuN3SXH4nfHiYgqmEVhGyEUt",
+    buyerMint: false,
 });
-if(typeof tx.status!="undefined"){console.log(tx);}
+if(tx.status){console.log(tx);}
 else{
     tx.sign([signer]);
     const signature = await mcswap.send(rpc,tx);
@@ -252,24 +246,19 @@ else{
 
 ### nftExecute, pnftExecute, cnftExecute, coreExecute
 ```javascript
-import mcswap from 'mcswap-sdk';
-import { Keypair } from "@solana/web3.js";
-const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
-const secret = [1,2,3,4,5,~];
-const signer = Keypair.fromSecretKey(new Uint8Array(secret)); // buyer
 const tx = await mcswap.nftExecute({
-    "rpc": rpc,
-    "blink": false,
-    "convert": true,
-    "tolerance": "1.2",
-    "priority": "Medium",
-    "affiliateWallet": "ACgZcmgmAnMDxXxZUo9Zwg2PS6WQLXy63JnnLmJFYxZZ",
-    "affiliateFee": "0.0009",
-    "buyer": "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL",
-    "sellerMint": "5Jk6hn3rR1DJjtDU4MzgDuN3SXH4nfHiYgqmEVhGyEUt",
-    "buyerMint": "Bdzry26srWQUvdRS1kSA3kXMndybBwP1j7cmcki8Rvru",
+    rpc: rpc,
+    blink: false,
+    convert: true,
+    tolerance: 1.2,
+    priority: "Medium",
+    affiliateWallet: "ACgZcmgmAnMDxXxZUo9Zwg2PS6WQLXy63JnnLmJFYxZZ",
+    affiliateFee: "0.0009",
+    buyer: "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL",
+    sellerMint: "5Jk6hn3rR1DJjtDU4MzgDuN3SXH4nfHiYgqmEVhGyEUt",
+    buyerMint: false,
 });
-if(typeof tx.status!="undefined"){console.log(tx);}
+if(tx.status){console.log(tx);}
 else{
     tx.sign([signer]);
     const signature = await mcswap.send(rpc,tx);
@@ -282,24 +271,21 @@ else{
 
 ### nftReceived, pnftReceived, cnftReceived, coreReceived
 ```javascript
-import mcswap from 'mcswap-sdk';
-const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
 const nftReceived = await mcswap.nftReceived({
-    "rpc": rpc,
-    "display": true,
-    "wallet": "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL"
+    rpc: rpc,
+    display: true,
+    wallet: "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL"
 });
 console.log(nftReceived);
 ```
 
 ### nftSent, pnftSent, cnftSent, coreSent
 ```javascript
-import mcswap from 'mcswap-sdk';
-const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
 const nftSent = await mcswap.nftSent({
-    "rpc": rpc,
-    "display": true,
-    "wallet": "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere"
+    rpc: rpc,
+    display: true,
+    private: false, // (default) private false returns public listings
+    wallet: "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere"
 });
 console.log(nftSent);
 ```

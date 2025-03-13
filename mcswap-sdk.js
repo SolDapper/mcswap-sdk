@@ -1244,6 +1244,10 @@ class mcswap {
             const connection = new Connection(_data_.rpc, "confirmed");
             const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],new PublicKey(this.CORE_MCSWAP_PROGRAM));
             const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),new PublicKey(_data_.sellerMint).toBytes(),new PublicKey(_data_.buyerMint).toBytes()],new PublicKey(this.CORE_MCSWAP_PROGRAM));
+            const swapState = await connection.getAccountInfo(swapStatePDA[0]).catch(function(error){});
+            const encodedSwapStateData = swapState.data;
+            const decodedSwapStateData = this.CORE_SWAP_STATE.decode(encodedSwapStateData);
+            _data_.seller = new PublicKey(decodedSwapStateData.initializer).toString();
             let assetCollection = new PublicKey("11111111111111111111111111111111");
             const response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
             body:JSON.stringify({"jsonrpc":"2.0","id":"text","method":"getAsset","params":{"id":_data_.sellerMint}})});
@@ -1831,6 +1835,7 @@ class mcswap {
             const encodedSwapStateData = swapState.data;
             const decodedSwapStateData = this.NFT_SWAP_STATE.decode(encodedSwapStateData);
             const tempMintAccount = new PublicKey(decodedSwapStateData.temp_mint_account);
+            _data_.seller = new PublicKey(decodedSwapStateData.initializer).toString();
             let response;
             let meta_data;
             let ASSET_PROGRAM_ID = splToken.TOKEN_PROGRAM_ID;
@@ -2446,6 +2451,7 @@ class mcswap {
             const swapState = await connection.getAccountInfo(swapStatePDA[0]).catch(function(error){});
             const encodedSwapStateData = swapState.data;
             const decodedSwapStateData = this.PNFT_SWAP_STATE.decode(encodedSwapStateData);
+            _data_.seller = new PublicKey(decodedSwapStateData.initializer).toString();
             const vaultMintATA = await splToken.getAssociatedTokenAddress(new PublicKey(mint),swapVaultPDA[0],true,splToken.TOKEN_PROGRAM_ID,splToken.ASSOCIATED_TOKEN_PROGRAM_ID);
             const tokenMetadataPDA = PublicKey.findProgramAddressSync([Buffer.from("metadata"),mplProgramid.toBytes(),new PublicKey(mint).toBytes()],mplProgramid);
             const tokenMasterEditionPDA = PublicKey.findProgramAddressSync([Buffer.from("metadata"),mplProgramid.toBytes(),new PublicKey(mint).toBytes(),Buffer.from("edition")],mplProgramid);
@@ -3126,6 +3132,7 @@ class mcswap {
             const swapState = await connection.getAccountInfo(swapStatePDA[0]);
             const encodedSwapStateData = swapState.data;
             const decodedSwapStateData = this.CNFT_SWAP_STATE.decode(encodedSwapStateData);
+            _data_.seller = new PublicKey(decodedSwapStateData.initializer).toString();
             let response;
             let getAsset;
             response = await fetch(_data_.rpc,{method:'POST',headers:{"Content-Type":"application/json"},
