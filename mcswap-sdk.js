@@ -1315,7 +1315,7 @@ class mcswap {
             if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
-            let affiliateWallet = this.TREASURY;
+            let affiliateWallet = this.CORE_TREASURY;
             let affiliateFee = 0;
             if(typeof _data_.affiliateWallet!="undefined" && _data_.affiliateWallet!=false && 
             typeof _data_.affiliateFee!="undefined" && _data_.affiliateFee!=false && _data_.affiliateFee>0){
@@ -1611,7 +1611,7 @@ class mcswap {
             if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
-            let affiliateWallet = this.CORE_TREASURY;
+            let affiliateWallet = this.NFT_TREASURY;
             let affiliateFee = 0;
             if(typeof _data_.affiliateWallet!="undefined" && _data_.affiliateWallet!=false && 
             typeof _data_.affiliateFee!="undefined" && _data_.affiliateFee!=false && _data_.affiliateFee>0){
@@ -1908,7 +1908,7 @@ class mcswap {
             if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
-            let affiliateWallet = this.TREASURY;
+            let affiliateWallet = this.NFT_TREASURY;
             let affiliateFee = 0;
             if(typeof _data_.affiliateWallet!="undefined" && _data_.affiliateWallet!=false && 
             typeof _data_.affiliateFee!="undefined" && _data_.affiliateFee!=false && _data_.affiliateFee>0){
@@ -2234,7 +2234,7 @@ class mcswap {
             if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
-            let affiliateWallet = this.CORE_TREASURY;
+            let affiliateWallet = this.PNFT_TREASURY;
             let affiliateFee = 0;
             if(typeof _data_.affiliateWallet!="undefined" && _data_.affiliateWallet!=false && 
             typeof _data_.affiliateFee!="undefined" && _data_.affiliateFee!=false && _data_.affiliateFee>0){
@@ -2532,7 +2532,7 @@ class mcswap {
             if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
-            let affiliateWallet = this.TREASURY;
+            let affiliateWallet = this.PNFT_TREASURY;
             let affiliateFee = 0;
             if(typeof _data_.affiliateWallet!="undefined" && _data_.affiliateWallet!=false && 
             typeof _data_.affiliateFee!="undefined" && _data_.affiliateFee!=false && _data_.affiliateFee>0){
@@ -2846,7 +2846,7 @@ class mcswap {
             if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
-            let affiliateWallet = this.CORE_TREASURY;
+            let affiliateWallet = this.CNFT_TREASURY;
             let affiliateFee = 0;
             if(typeof _data_.affiliateWallet!="undefined" && _data_.affiliateWallet!=false && 
             typeof _data_.affiliateFee!="undefined" && _data_.affiliateFee!=false && _data_.affiliateFee>0){
@@ -3259,10 +3259,9 @@ class mcswap {
             if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
-            let affiliateWallet = this.TREASURY;
+            let affiliateWallet = this.CNFT_TREASURY;
             let affiliateFee = 0;
-            if(typeof _data_.affiliateWallet!="undefined" && _data_.affiliateWallet!=false && 
-            typeof _data_.affiliateFee!="undefined" && _data_.affiliateFee!=false && _data_.affiliateFee>0){
+            if(typeof _data_.affiliateWallet!="undefined" && _data_.affiliateWallet!=false &&  _data_.affiliateFee!=false && _data_.affiliateFee>0){
                 affiliateWallet = _data_.affiliateWallet;
                 affiliateFee = _data_.affiliateFee;
             }
@@ -3596,7 +3595,7 @@ class mcswap {
         try{
             const _result_={}
             if(typeof _data_.standard=="undefined"){_result_.status="error";_result_.message="no standard provided";return;}
-            if(typeof _data_.escrow=="undefined"){_result_.status="error";_result_.message="no escrow id provided";return;}
+            if(_data_.standard=="spl" && typeof _data_.escrow=="undefined"){_result_.status="error";_result_.message="no escrow id provided";return;}
             let PROGRAM;
             let STATE;
             let NAME;
@@ -3709,18 +3708,19 @@ class mcswap {
                 _result_.lamports=parseInt(new BN(decoded.swap_lamports,10,"le"));
                 _result_.tokenMint=new PublicKey(decoded.swap_token_mint).toString();
                 _result_.units=parseInt(new BN(decoded.swap_tokens,10,"le"));
-
                 if(_result_.buyerMint=="11111111111111111111111111111111"){_result_.buyerMint=false;}
                 if(_result_.buyer=="11111111111111111111111111111111"){_result_.buyer=false;}
                 if(_result_.tokenMint=="11111111111111111111111111111111"){_result_.tokenMint=false;}
-
+                _result_.symbol=false;
+                _result_.decimals=0;
                 if(typeof _data_.display!="undefined"&&_data_.display===true){
                     const lamports=await this.convert({"rpc":_data_.rpc,"amount":_result_.lamports,"mint":"So11111111111111111111111111111111111111112","display":_data_.display});
-                    const units=await this.convert({"rpc":_data_.rpc,"amount":_result_.units,"mint":_result_.tokenMint,"display":_data_.display});
                     _result_.lamports=lamports.data;
-                    _result_.units=units.data;
-                    _result_.symbol=units.symbol;
-                    _result_.decimals=units.decimals;
+                    if(_result_.tokenMint!=false){
+                        _result_.units=units.data;
+                        _result_.symbol=units.symbol;
+                        _result_.decimals=units.decimals;
+                    }
                 }
                 return _result_;
             }
