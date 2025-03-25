@@ -1,6 +1,6 @@
 {
   "name": "mcswap-sdk",
-  "version": "0.4.9",
+  "version": "0.5.0",
   "description": "Javascript SDK for the McSwap Protocol",
   "main": "mcswap-sdk.js",
   "type": "module",
