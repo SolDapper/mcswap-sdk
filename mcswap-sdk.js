@@ -3667,7 +3667,6 @@ class mcswap {
                     NAME = "swap-state";
                 }
                 else if(_data_.standard=="nft"){
-                    console.log("_data_.standard", _data_.standard);
                     PROGRAM = this.NFT_MCSWAP_PROGRAM;
                     STATE = this.NFT_SWAP_STATE;
                     NAME = "swap-state";
