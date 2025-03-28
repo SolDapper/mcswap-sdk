@@ -3667,6 +3667,7 @@ class mcswap {
                     NAME = "swap-state";
                 }
                 else if(_data_.standard=="nft"){
+                    console.log("_data_.standard", _data_.standard);
                     PROGRAM = this.NFT_MCSWAP_PROGRAM;
                     STATE = this.NFT_SWAP_STATE;
                     NAME = "swap-state";
@@ -3682,8 +3683,8 @@ class mcswap {
                     NAME = "swap-state";
                 }
                 if(typeof _data_.buyerMint=="undefined"||_data_.buyerMint==""||_data_.buyerMint==false){_data_.buyerMint="11111111111111111111111111111111";}
-                const STATE_PDA=PublicKey.findProgramAddressSync([Buffer.from(NAME),new PublicKey(_data_.sellerMint).toBytes(),new PublicKey(_data_.buyerMint).toBytes()],new PublicKey(PROGRAM));
-                const SWAP_STATE=await connection.getAccountInfo(STATE_PDA[0]).catch(function(){});
+                const STATE_PDA=new PublicKey(_data_.escrow);
+                const SWAP_STATE=await connection.getAccountInfo(STATE_PDA).catch(function(){});
                 const encoded=SWAP_STATE.data;
                 const decoded=STATE.decode(encoded);
                 if(_data_.standard=="core"){
@@ -3717,6 +3718,7 @@ class mcswap {
                     const lamports=await this.convert({"rpc":_data_.rpc,"amount":_result_.lamports,"mint":"So11111111111111111111111111111111111111112","display":_data_.display});
                     _result_.lamports=lamports.data;
                     if(_result_.tokenMint!=false){
+                        const units=await this.convert({"rpc":_data_.rpc,"amount":_result_.units,"mint":_result_.tokenMint,"display":_data_.display});
                         _result_.units=units.data;
                         _result_.symbol=units.symbol;
                         _result_.decimals=units.decimals;
