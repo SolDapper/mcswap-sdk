@@ -1,6 +1,6 @@
 {
   "name": "mcswap-sdk",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Javascript SDK for the McSwap Protocol",
   "main": "mcswap-sdk.js",
   "type": "module",
@@ -27,6 +27,7 @@
   "homepage": "https://mcswap.xyz",
   "dependencies": {
     "@solana/spl-account-compression": "^0.2.1",
+    "@solana/spl-memo": "^0.2.5",
     "@solana/spl-token": "^0.3.11",
     "@solana/web3.js": "^1.89.0",
     "bn.js": "^5.2.1",

@@ -160,7 +160,8 @@ const tx = await mcswap.splExecute({
     affiliateWallet: "ACgZcmgmAnMDxXxZUo9Zwg2PS6WQLXy63JnnLmJFYxZZ",
     affiliateFee: "0.0009",
     escrow: "3pjxfm25WWwD9BcWSqBFamJKYgEpNAnEz8mEmxk9biBQ",
-    buyer: "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL"
+    buyer: "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL",
+    memo: "Awesome Memo Man!"
 });
 if(typeof tx.status!="undefined"){console.log(tx);}
 else{
@@ -268,6 +269,7 @@ const tx = await mcswap.nftExecute({
     buyer: "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL",
     sellerMint: "5Jk6hn3rR1DJjtDU4MzgDuN3SXH4nfHiYgqmEVhGyEUt",
     buyerMint: false,
+    memo: "Awesome Memo Man!"
 });
 if(tx.status){console.log(tx);}
 else{
