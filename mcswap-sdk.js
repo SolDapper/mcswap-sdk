@@ -41,6 +41,7 @@ class mcswap {
             uint64("token3_amount"),
             publicKey("token4_mint"),
             uint64("token4_amount"),
+            BufferLayout.u8("physical"), 
         ]);
         // mcswap-core
         this.CORE_TREASURY = "Fmu3MXN9oNkcJsgf9Y2X19tHyYJ4SsPxyrgVoou1iKke";
@@ -62,6 +63,7 @@ class mcswap {
             uint64("swap_lamports"),
             publicKey("swap_token_mint"),
             uint64("swap_tokens"),
+            BufferLayout.u8("physical"), 
         ]);
         // mcswap-nft
         this.NFT_TREASURY = "7y1PdbvkkCuSYAE1zKeDrfv81Wfcuhi3ukHYPZsUoTiE";
@@ -84,6 +86,7 @@ class mcswap {
             uint64("swap_lamports"),
             publicKey("swap_token_mint"),
             uint64("swap_tokens"),
+            BufferLayout.u8("physical"), 
         ]);
         // mcswap-pnft
         this.PNFT_TREASURY = "FpStfD3eZaHzdsbpyYnXPLYoCnDVbmQBDxim7kvmf5R";
@@ -109,6 +112,7 @@ class mcswap {
             uint64("swap_lamports"),
             publicKey("swap_token_mint"),
             uint64("swap_tokens"),
+            BufferLayout.u8("physical"),
         ]);
         // mcswap-cnft
         this.CNFT_TREASURY = "H6WH84cmQGbXPwMi4fsv9bPbwWjWJuyy2iviEDZS9SmL";
@@ -143,12 +147,14 @@ class mcswap {
             uint64("swap_lamports"),
             publicKey("swap_token_mint"),
             uint64("swap_tokens"),
+            BufferLayout.u8("physical"), 
         ]);
     }
     // mcswap-spl
     async splCreate(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.physical=="undefined"||_data_.physical==false){_data_.physical=0;}else{_data_.physical=parseInt(_data_.physical);}
             if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.convert!="undefined"&&_data_.convert===true){
                 if(typeof _data_.token1Amount!="undefined"&&_data_.token1Amount>0){
@@ -365,7 +371,7 @@ class mcswap {
             }
             }
             // ***************************************************************************
-            const totalSize = 1 + 32 + 8 + 8 + 32 + 8 + 32 + 8 + 8;
+            const totalSize = 1 + 32 + 8 + 8 + 32 + 8 + 32 + 8 + 8 + 1;
             let uarray = new Uint8Array(totalSize);
             let counter = 0;    
             uarray[counter++] = 0; // 0 = token_swap InitializeSwap instruction
@@ -454,6 +460,7 @@ class mcswap {
             for (let i = 0; i < byteArray.length; i++) {
                 uarray[counter++] = byteArray[i];
             } 
+            uarray[counter++] = _data_.physical;
             // ***************************************************************************
             const keys = [
                 { pubkey: seller, isSigner: true, isWritable: true }, // 0
@@ -901,7 +908,7 @@ class mcswap {
             const SPL_ProgramId = new PublicKey(this.SPL_MCSWAP_PROGRAM);
             let SPL_RECEIVED = [];
             let accounts = null;
-            accounts = await connection.getParsedProgramAccounts(SPL_ProgramId,{filters:[{dataSize:297,},{memcmp:{offset:185,bytes:wallet,},},],}).catch(function(){});
+            accounts = await connection.getParsedProgramAccounts(SPL_ProgramId,{filters:[{dataSize:298,},{memcmp:{offset:185,bytes:wallet,},},],}).catch(function(){});
             if(accounts != null && accounts.length > 0){for(let i=0;i<accounts.length;i++){
                 const account = accounts[i];
                 const resultStatePDA = account.pubkey;
@@ -926,6 +933,7 @@ class mcswap {
                   record.token_2_amount = parseInt(new BN(decodedData.token2_amount, 10, "le"));
                   record.token_3_amount = parseInt(new BN(decodedData.token3_amount, 10, "le"));
                   record.token_4_amount = parseInt(new BN(decodedData.token4_amount, 10, "le"));
+                  record.physical = parseInt(new BN(decodedData.physical, 10, "le"));
                   if(typeof _data_.display!="undefined"&&_data_.display===true){
                     const token_1_amount = await this.convert({"rpc":_data_.rpc,"amount":record.token_1_amount,"mint":record.token_1_mint,"display":_data_.display});
                     const token_3_amount = await this.convert({"rpc":_data_.rpc,"amount":record.token_3_amount,"mint":record.token_3_mint,"display":_data_.display});
@@ -981,7 +989,7 @@ class mcswap {
             const SPL_ProgramId = new PublicKey(this.SPL_MCSWAP_PROGRAM);
             let SPL_SENT = [];
             let accounts = null;
-            accounts = await connection.getParsedProgramAccounts(SPL_ProgramId,{filters:[{dataSize:297,},{memcmp:{offset:9,bytes:wallet,},}],}).catch(function(){});
+            accounts = await connection.getParsedProgramAccounts(SPL_ProgramId,{filters:[{dataSize:298,},{memcmp:{offset:9,bytes:wallet,},}],}).catch(function(){});
             if(accounts != null && accounts.length > 0){for(let i=0;i<accounts.length;i++){
                 const account = accounts[i];
                 const resultStatePDA = account.pubkey;
@@ -1006,6 +1014,7 @@ class mcswap {
                     record.token_2_amount = parseInt(new BN(decodedData.token2_amount, 10, "le"));
                     record.token_3_amount = parseInt(new BN(decodedData.token3_amount, 10, "le"));
                     record.token_4_amount = parseInt(new BN(decodedData.token4_amount, 10, "le"));
+                    record.physical = parseInt(new BN(decodedData.physical, 10, "le"));
                     // if private
                     let pushit = false;
                     if(_data_.private === true){
@@ -1066,6 +1075,7 @@ class mcswap {
     async coreCreate(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.physical=="undefined"||_data_.physical==false){_data_.physical=0;}else{_data_.physical=parseInt(_data_.physical);}
             if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
@@ -1142,7 +1152,7 @@ class mcswap {
                 }
             }
             // ***************************************************************************
-            const totalSize = 1 + 1 + 32 + 32 + 8 + 32 + 8 + 8;
+            const totalSize = 1 + 1 + 32 + 32 + 8 + 32 + 8 + 8 + 1;
             let uarray = new Uint8Array(totalSize);
             let counter = 0;
             uarray[counter++] = 0;
@@ -1179,6 +1189,7 @@ class mcswap {
                 affiliateFee = (affiliateFee - byte) / 256 ;
             }
             for (let i=0;i<byteArray.length;i++){uarray[counter++]=byteArray[i];}
+            uarray[counter++] = _data_.physical;
             const keys = [
                 { pubkey: new PublicKey(_data_.seller), isSigner: true, isWritable: true }, // 0
                 { pubkey: programStatePDA[0], isSigner: false, isWritable: false }, // 1
@@ -1457,7 +1468,7 @@ class mcswap {
             const _result_ = {}
             let CORE_RECEIVED = [];
             let accounts = null;
-            accounts = await connection.getParsedProgramAccounts(CORE_ProgramId,{filters:[{dataSize:186,},{memcmp:{offset:74,bytes:_data_.wallet,},},],}).catch(function(){});
+            accounts = await connection.getParsedProgramAccounts(CORE_ProgramId,{filters:[{dataSize:187,},{memcmp:{offset:74,bytes:_data_.wallet,},},],}).catch(function(){});
             if(accounts != null && accounts.length > 0){for(let i=0;i<accounts.length;i++){
                 const account = accounts[i];
                 const resultStatePDA = account.pubkey;
@@ -1477,6 +1488,7 @@ class mcswap {
                     let swap_lamports = parseInt(new BN(decodedData.swap_lamports, 10, "le"));
                     let swap_token_mint = new PublicKey(decodedData.swap_token_mint).toString();
                     let swap_tokens = parseInt(new BN(decodedData.swap_tokens, 10, "le"));
+                    let physical = parseInt(new BN(decodedData.physical, 10, "le"));
                     if(taker=="11111111111111111111111111111111"){taker=false;}
                     if(swap_mint=="11111111111111111111111111111111"){swap_mint=false;}
                     if(swap_token_mint=="11111111111111111111111111111111"){swap_token_mint=false;}
@@ -1490,6 +1502,7 @@ class mcswap {
                     record.lamports = swap_lamports;
                     record.tokenMint = swap_token_mint;
                     record.units = swap_tokens;
+                    record.physical = physical;
                     if(typeof _data_.display!="undefined"&&_data_.display===true){
                         if(record.lamports>0){
                             const lamports = await this.convert({"rpc":_data_.rpc,"amount":record.lamports,"mint":"So11111111111111111111111111111111111111112","display":_data_.display});
@@ -1532,7 +1545,7 @@ class mcswap {
             const _result_ = {}
             let CORE_SENT = [];
             let accounts = null;
-            accounts = await connection.getParsedProgramAccounts(CORE_ProgramId,{filters:[{dataSize:186,},{memcmp:{offset:10,bytes:_data_.wallet,},},],}).catch(function(){});
+            accounts = await connection.getParsedProgramAccounts(CORE_ProgramId,{filters:[{dataSize:187,},{memcmp:{offset:10,bytes:_data_.wallet,},},],}).catch(function(){});
             if(accounts != null && accounts.length > 0){for(let i=0;i<accounts.length;i++){
                 const account = accounts[i];
                 const resultStatePDA = account.pubkey;
@@ -1552,6 +1565,7 @@ class mcswap {
                     let swap_token_mint = new PublicKey(decodedData.swap_token_mint).toString();
                     let swap_tokens = parseInt(new BN(decodedData.swap_tokens, 10, "le"));
                     let swap_lamports = parseInt(new BN(decodedData.swap_lamports, 10, "le"));
+                    let physical = parseInt(new BN(decodedData.physical, 10, "le"));
                     if(taker=="11111111111111111111111111111111"){taker=false;}
                     if(swap_mint=="11111111111111111111111111111111"){swap_mint=false;}
                     if(swap_token_mint=="11111111111111111111111111111111"){swap_token_mint=false;}
@@ -1565,6 +1579,7 @@ class mcswap {
                     record.lamports = swap_lamports;
                     record.tokenMint = swap_token_mint;
                     record.units = swap_tokens;
+                    record.physical = physical;
                     // if private
                     let pushit = false;
                     if(_data_.private === true){
@@ -1613,6 +1628,7 @@ class mcswap {
     async nftCreate(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.physical=="undefined"||_data_.physical==false){_data_.physical=0;}else{_data_.physical=parseInt(_data_.physical);}
             if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
@@ -1723,7 +1739,7 @@ class mcswap {
                 }
             }
             // ***************************************************************************
-            const totalSize = 1 + 1 + 32 + 32 + 8 + 32 + 8 + 8; 
+            const totalSize = 1 + 1 + 32 + 32 + 8 + 32 + 8 + 8 + 1; 
             let uarray = new Uint8Array(totalSize);
             let counter = 0;    
             uarray[counter++] = 0; // 0 = nft_swap InitializeSwap instruction
@@ -1750,6 +1766,7 @@ class mcswap {
             byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
             for(let index = 0; index < byteArray.length; index ++ ){byte = affiliateFee & 0xff;byteArray [ index ] = byte;affiliateFee = (affiliateFee - byte) / 256 ;}
             for (let i = 0; i < byteArray.length; i++) {uarray[counter++] = byteArray[i];}
+            uarray[counter++] = _data_.physical;
             // ***************************************************************************
             const keys = [
                 { pubkey: new PublicKey(_data_.seller), isSigner: true, isWritable: true }, // 0
@@ -2082,7 +2099,7 @@ class mcswap {
             const _result_ = {}
             let NFT_RECEIVED = [];
             let accounts = null;
-            accounts = await connection.getParsedProgramAccounts(NFT_ProgramId,{filters:[{dataSize:218,},{memcmp:{offset:106,bytes:_data_.wallet,},},],}).catch(function(){});
+            accounts = await connection.getParsedProgramAccounts(NFT_ProgramId,{filters:[{dataSize:219,},{memcmp:{offset:106,bytes:_data_.wallet,},},],}).catch(function(){});
             if(accounts != null && accounts.length > 0){for(let i=0;i<accounts.length;i++){
                 const account = accounts[i];
                 const resultStatePDA = account.pubkey;
@@ -2103,6 +2120,7 @@ class mcswap {
                     let swap_lamports = parseInt(new BN(decodedData.swap_lamports, 10, "le"));
                     let swap_token_mint = new PublicKey(decodedData.swap_token_mint).toString();
                     let swap_tokens = parseInt(new BN(decodedData.swap_tokens, 10, "le"));
+                    let physical = parseInt(new BN(decodedData.physical, 10, "le"));
                     if(taker=="11111111111111111111111111111111"){taker=false;}
                     if(swap_mint=="11111111111111111111111111111111"){swap_mint=false;}
                     if(swap_token_mint=="11111111111111111111111111111111"){swap_token_mint=false;}
@@ -2116,6 +2134,7 @@ class mcswap {
                     record.lamports = swap_lamports;
                     record.tokenMint = swap_token_mint;
                     record.units = swap_tokens;
+                    record.physical = physical;
                     if(typeof _data_.display!="undefined"&&_data_.display===true){
                         if(record.lamports>0){
                             const lamports = await this.convert({"rpc":_data_.rpc,"amount":record.lamports,"mint":"So11111111111111111111111111111111111111112","display":_data_.display});
@@ -2157,7 +2176,7 @@ class mcswap {
             const _result_ = {}
             let NFT_SENT = [];
             let accounts = null;
-            accounts = await connection.getParsedProgramAccounts(NFT_ProgramId,{filters:[{dataSize:218,},{memcmp:{offset:10,bytes:_data_.wallet,},},],}).catch(function(){});
+            accounts = await connection.getParsedProgramAccounts(NFT_ProgramId,{filters:[{dataSize:219,},{memcmp:{offset:10,bytes:_data_.wallet,},},],}).catch(function(){});
             if(accounts != null && accounts.length > 0){for(let i=0;i<accounts.length;i++){
                 const account = accounts[i];
                 const resultStatePDA = account.pubkey;
@@ -2178,6 +2197,7 @@ class mcswap {
                     let swap_lamports = parseInt(new BN(decodedData.swap_lamports, 10, "le"));
                     let swap_token_mint = new PublicKey(decodedData.swap_token_mint).toString();
                     let swap_tokens = parseInt(new BN(decodedData.swap_tokens, 10, "le"));
+                    let physical = parseInt(new BN(decodedData.physical, 10, "le"));
                     if(taker=="11111111111111111111111111111111"){taker=false;}
                     if(swap_mint=="11111111111111111111111111111111"){swap_mint=false;}
                     if(swap_token_mint=="11111111111111111111111111111111"){swap_token_mint=false;}
@@ -2191,6 +2211,7 @@ class mcswap {
                     record.lamports = swap_lamports;
                     record.tokenMint = swap_token_mint;
                     record.units = swap_tokens;
+                    record.physical = physical;
                     // if private
                     let pushit = false;
                     if(_data_.private === true){
@@ -2238,6 +2259,7 @@ class mcswap {
     async pnftCreate(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.physical=="undefined"||_data_.physical==false){_data_.physical=0;}else{_data_.physical=parseInt(_data_.physical);}
             if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
@@ -2332,7 +2354,7 @@ class mcswap {
                 else{createSwapTokenATA=false;}
             }
             // ***************************************************************************
-            const totalSize = 1 + 1 + 32 + 32 + 8 + 32 + 8 + 8;
+            const totalSize = 1 + 1 + 32 + 32 + 8 + 32 + 8 + 8 + 1;
             let uarray = new Uint8Array(totalSize);
             let counter = 0;    
             uarray[counter++] = 0;
@@ -2362,9 +2384,10 @@ class mcswap {
                 swapTokens=(swapTokens-byte)/256;
             }
             for(let i=0;i<byteArray.length;i++){uarray[counter++]=byteArray[i];}
-            byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
+            byteArray = [0,0,0,0,0,0,0,0];
             for(let index = 0; index < byteArray.length; index ++ ){let byte = affiliateFee & 0xff;byteArray [ index ] = byte;affiliateFee = (affiliateFee - byte) / 256 ;}
             for(let i = 0; i < byteArray.length; i++){uarray[counter++] = byteArray[i];}
+            uarray[counter++] = _data_.physical;
             // ***************************************************************************
             const keys = [
                 { pubkey: new PublicKey(_data_.seller), isSigner: true, isWritable: true }, // 0
@@ -2697,7 +2720,7 @@ class mcswap {
             const _result_ = {}
             let PNFT_RECEIVED = [];
             let accounts = null;
-            accounts = await connection.getParsedProgramAccounts(PNFT_ProgramId,{filters:[{dataSize:186,},{memcmp:{offset:74,bytes:_data_.wallet,},},],}).catch(function(){});
+            accounts = await connection.getParsedProgramAccounts(PNFT_ProgramId,{filters:[{dataSize:187,},{memcmp:{offset:74,bytes:_data_.wallet,},},],}).catch(function(){});
             if(accounts != null){for(let i=0;i<accounts.length;i++){
                 const account = accounts[i];
                 const resultStatePDA = account.pubkey;
@@ -2717,6 +2740,7 @@ class mcswap {
                     let swap_lamports = parseInt(new BN(decodedData.swap_lamports, 10, "le"));
                     let swap_token_mint = new PublicKey(decodedData.swap_token_mint).toString();
                     let swap_tokens = parseInt(new BN(decodedData.swap_tokens, 10, "le"));
+                    let physical = parseInt(new BN(decodedData.physical, 10, "le"));
                     if(taker=="11111111111111111111111111111111"){taker=false;}
                     if(swap_mint=="11111111111111111111111111111111"){swap_mint=false;}
                     if(swap_token_mint=="11111111111111111111111111111111"){swap_token_mint=false;}
@@ -2730,6 +2754,7 @@ class mcswap {
                     record.lamports = swap_lamports;
                     record.tokenMint = swap_token_mint;
                     record.units = swap_tokens;
+                    record.physical = physical;
                     if(typeof _data_.display!="undefined"&&_data_.display===true){
                         if(record.lamports>0){
                             const lamports = await this.convert({"rpc":_data_.rpc,"amount":record.lamports,"mint":"So11111111111111111111111111111111111111112","display":_data_.display});
@@ -2771,7 +2796,7 @@ class mcswap {
             const _result_ = {}
             let PNFT_SENT = [];
             let accounts = null;
-            accounts = await connection.getParsedProgramAccounts(PNFT_ProgramId,{filters:[{dataSize:186,},{memcmp:{offset:10,bytes:_data_.wallet,},},],}).catch(function(){});
+            accounts = await connection.getParsedProgramAccounts(PNFT_ProgramId,{filters:[{dataSize:187,},{memcmp:{offset:10,bytes:_data_.wallet,},},],}).catch(function(){});
             if(accounts != null){for(let i=0;i<accounts.length;i++){
                 const account = accounts[i];
                 const resultStatePDA = account.pubkey;
@@ -2791,6 +2816,7 @@ class mcswap {
                     let swap_lamports = parseInt(new BN(decodedData.swap_lamports, 10, "le"));
                     let swap_token_mint = new PublicKey(decodedData.swap_token_mint).toString();
                     let swap_tokens = parseInt(new BN(decodedData.swap_tokens, 10, "le"));
+                    let physical = parseInt(new BN(decodedData.physical, 10, "le"));
                     if(taker=="11111111111111111111111111111111"){taker=false;}
                     if(swap_mint=="11111111111111111111111111111111"){swap_mint=false;}
                     if(swap_token_mint=="11111111111111111111111111111111"){swap_token_mint=false;}
@@ -2804,6 +2830,7 @@ class mcswap {
                     record.lamports = swap_lamports;
                     record.tokenMint = swap_token_mint;
                     record.units = swap_tokens;
+                    record.physical = physical;
                     // if private
                     let pushit = false;
                     if(_data_.private === true){
@@ -2852,6 +2879,7 @@ class mcswap {
         try{
             const max_proofs = 18;
             // ***************************************************************************
+            if(typeof _data_.physical=="undefined"||_data_.physical==false){_data_.physical=0;}else{_data_.physical=parseInt(_data_.physical);}
             if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
             if(typeof _data_.signers=="undefined"||_data_.signers==false){_data_.signers=false;}
@@ -2982,7 +3010,7 @@ class mcswap {
                     }
                     else{createTokenATA=false;}
                 }
-                let totalSize = 1 + 1 + 32 + 32 + 32 + 32 + 8 + 32 + 32 + 32 + 32 + 32 + 32 + 32 + 8 + 1 + 8 + 32 + 8 + 8;        
+                let totalSize = 1 + 1 + 32 + 32 + 32 + 32 + 8 + 32 + 32 + 32 + 32 + 32 + 32 + 32 + 8 + 1 + 8 + 32 + 8 + 8 + 1;        
                 let uarray = new Uint8Array(totalSize);
                 let counter = 0;    
                 uarray[counter++] = 0; // 0 = cnft_swap InitializeSwap instruction        
@@ -3059,6 +3087,7 @@ class mcswap {
                 byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
                 for(let index = 0; index < byteArray.length; index ++ ){byte = affiliateFee & 0xff;byteArray [ index ] = byte;affiliateFee = (affiliateFee - byte) / 256 ;}
                 for(let i = 0; i < byteArray.length; i++){uarray[counter++] = byteArray[i];}
+                uarray[counter++] = _data_.physical;
                 // ***************************************************************************
                 let keys = [
                     { pubkey: new PublicKey(_data_.seller), isSigner: true, isWritable: true }, // 0
@@ -3449,7 +3478,7 @@ class mcswap {
         const _result_ = {}
         let CNFT_RECEIVED = [];
         let accounts = null;
-        accounts = await connection.getParsedProgramAccounts(NFT_ProgramId,{filters:[{dataSize:522,},{memcmp:{offset:410,bytes:_data_.wallet,},},],}).catch(function(){});
+        accounts = await connection.getParsedProgramAccounts(NFT_ProgramId,{filters:[{dataSize:523,},{memcmp:{offset:410,bytes:_data_.wallet,},},],}).catch(function(){});
         if(accounts != null){for(let i=0;i<accounts.length;i++){
             const account = accounts[i];
             const resultStatePDA = account.pubkey;
@@ -3469,6 +3498,7 @@ class mcswap {
                 let swap_lamports = parseInt(new BN(decodedData.swap_lamports, 10, "le"));
                 let swap_token_mint = new PublicKey(decodedData.swap_token_mint).toString();
                 let swap_tokens = parseInt(new BN(decodedData.swap_tokens, 10, "le"));
+                let physical = parseInt(new BN(decodedData.physical, 10, "le"));
                 if(taker=="11111111111111111111111111111111"){taker=false;}
                 if(swap_mint=="11111111111111111111111111111111"){swap_mint=false;}
                 if(swap_token_mint=="11111111111111111111111111111111"){swap_token_mint=false;}
@@ -3482,6 +3512,7 @@ class mcswap {
                 record.lamports = swap_lamports;
                 record.tokenMint = swap_token_mint;
                 record.units = swap_tokens;
+                record.physical = physical;
                 if(typeof _data_.display!="undefined"&&_data_.display===true){
                     if(record.lamports>0){
                         const lamports = await this.convert({"rpc":_data_.rpc,"amount":record.lamports,"mint":"So11111111111111111111111111111111111111112","display":_data_.display});
@@ -3524,7 +3555,7 @@ class mcswap {
         const _result_ = {}
         let CNFT_SENT = [];
         let accounts = null;
-        accounts = await connection.getParsedProgramAccounts(NFT_ProgramId,{filters:[{dataSize:522,},{memcmp:{offset:10,bytes:_data_.wallet,},},],}).catch(function(){});
+        accounts = await connection.getParsedProgramAccounts(NFT_ProgramId,{filters:[{dataSize:523,},{memcmp:{offset:10,bytes:_data_.wallet,},},],}).catch(function(){});
         if(accounts != null){for(let i=0;i<accounts.length;i++){
             const account = accounts[i];
             const resultStatePDA = account.pubkey;
@@ -3544,6 +3575,7 @@ class mcswap {
                 let swap_lamports = parseInt(new BN(decodedData.swap_lamports, 10, "le"));
                 let swap_token_mint = new PublicKey(decodedData.swap_token_mint).toString();
                 let swap_tokens = parseInt(new BN(decodedData.swap_tokens, 10, "le"));
+                let physical = parseInt(new BN(decodedData.physical, 10, "le"));
                 if(taker=="11111111111111111111111111111111"){taker=false;}
                 if(swap_mint=="11111111111111111111111111111111"){swap_mint=false;}
                 if(swap_token_mint=="11111111111111111111111111111111"){swap_token_mint=false;}
@@ -3557,6 +3589,7 @@ class mcswap {
                 record.lamports = swap_lamports;
                 record.tokenMint = swap_token_mint;
                 record.units = swap_tokens;
+                record.physical = physical;
                 // if private
                 let pushit = false;
                 if(_data_.private === true){
@@ -3633,6 +3666,7 @@ class mcswap {
                 _result_.token2Amount=parseInt(_result_.token2Amount);
                 _result_.token3Amount=parseInt(_result_.token3Amount);
                 _result_.token4Amount=parseInt(_result_.token4Amount);
+                _result_.physical = parseInt(new BN(decoded.physical, 10, "le"));
                 if(_result_.buyer=="11111111111111111111111111111111"){_result_.buyer=false;}
                 if(_result_.token2Mint=="11111111111111111111111111111111"){_result_.token2Mint=false;}
                 if(_result_.token4Mint=="11111111111111111111111111111111"){_result_.token4Mint=false;}
@@ -3719,6 +3753,7 @@ class mcswap {
                 _result_.lamports=parseInt(new BN(decoded.swap_lamports,10,"le"));
                 _result_.tokenMint=new PublicKey(decoded.swap_token_mint).toString();
                 _result_.units=parseInt(new BN(decoded.swap_tokens,10,"le"));
+                _result_.physical = parseInt(new BN(decoded.physical, 10, "le"));
                 if(_result_.buyerMint=="11111111111111111111111111111111"){_result_.buyerMint=false;}
                 if(_result_.buyer=="11111111111111111111111111111111"){_result_.buyer=false;}
                 if(_result_.tokenMint=="11111111111111111111111111111111"){_result_.tokenMint=false;}

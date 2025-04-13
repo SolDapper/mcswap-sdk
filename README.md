@@ -113,7 +113,8 @@ const tx = await mcswap.splCreate({
     token3Mint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
     token3Amount: "0.003",
     token4Mint: false,
-    token4Amount: false
+    token4Amount: false,
+    physical: 0, // 0 = Digital, 1 = Phygital + Shipping, 2 = Phygital Pick-Up, 
 });
 if(tx.tx){
     tx.tx.sign([signer]);
@@ -161,7 +162,7 @@ const tx = await mcswap.splExecute({
     affiliateFee: "0.0009",
     escrow: "3pjxfm25WWwD9BcWSqBFamJKYgEpNAnEz8mEmxk9biBQ",
     buyer: "2jcih7dUFmEQfMUXQQnL2Fkq9zMqj4jwpHqvRVe3gGLL",
-    memo: "Awesome Memo Man!"
+    memo: "Optional Memo Man!"
 });
 if(typeof tx.status!="undefined"){console.log(tx);}
 else{
@@ -213,7 +214,8 @@ const tx = await mcswap.nftCreate({
     buyerMint: false,
     lamports: "0.0001",
     tokenMint: "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
-    units: "0.01"
+    units: "0.01",
+    physical: 0, // 0 = Digital, 1 = Phygital + Shipping, 2 = Phygital Pick-Up, 
 });
 if(tx.status){console.log(tx);}
 else{
