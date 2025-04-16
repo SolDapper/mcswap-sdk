@@ -154,6 +154,7 @@ class mcswap {
     async splCreate(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.sellerEmail=="undefined"||_data_.sellerEmail==false){_data_.sellerEmail="";}
             if(typeof _data_.physical=="undefined"||_data_.physical==false){_data_.physical=0;}else{_data_.physical=parseInt(_data_.physical);}
             if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.convert!="undefined"&&_data_.convert===true){
@@ -524,6 +525,7 @@ class mcswap {
             _tx_.signers = signers;
             _tx_.table = lookupTableAccount;                   
             _tx_.priority = _data_.priority;
+            if(_data_.sellerEmail!=""){_tx_.memo = _data_.sellerEmail;}
             if(_data_.builder==false){
                 return {status:"ok",message:"builder disabled",ix:instructions,table:lookupTableAccount,signers:signers,escrow:tempToken1};
             }
@@ -1075,6 +1077,7 @@ class mcswap {
     async coreCreate(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.sellerEmail=="undefined"||_data_.sellerEmail==false){_data_.sellerEmail="";}
             if(typeof _data_.physical=="undefined"||_data_.physical==false){_data_.physical=0;}else{_data_.physical=parseInt(_data_.physical);}
             if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
@@ -1228,6 +1231,7 @@ class mcswap {
             _tx_.signers = false;
             _tx_.table = false;               
             _tx_.priority = _data_.priority;
+            if(_data_.sellerEmail!=""){_tx_.memo = _data_.sellerEmail;}
             if(_data_.builder==false){
                 return {status:"ok",message:"builder disabled",ix:instructions,table:false};
             }
@@ -1628,6 +1632,7 @@ class mcswap {
     async nftCreate(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.sellerEmail=="undefined"||_data_.sellerEmail==false){_data_.sellerEmail="";}
             if(typeof _data_.physical=="undefined"||_data_.physical==false){_data_.physical=0;}else{_data_.physical=parseInt(_data_.physical);}
             if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
@@ -1818,6 +1823,7 @@ class mcswap {
             _tx_.signers = false;
             _tx_.table = lookupTableAccount;                   
             _tx_.priority = _data_.priority;
+            if(_data_.sellerEmail!=""){_tx_.memo = _data_.sellerEmail;}
             if(_data_.builder==false){
                 return {"status":"ok","message":"builder disabled","ix":instructions,"table":lookupTableAccount};
             }
@@ -2259,6 +2265,7 @@ class mcswap {
     async pnftCreate(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.sellerEmail=="undefined"||_data_.sellerEmail==false){_data_.sellerEmail="";}
             if(typeof _data_.physical=="undefined"||_data_.physical==false){_data_.physical=0;}else{_data_.physical=parseInt(_data_.physical);}
             if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
@@ -2441,6 +2448,7 @@ class mcswap {
             _tx_.signers = false;
             _tx_.table = false;               
             _tx_.priority = _data_.priority;
+            if(_data_.sellerEmail!=""){_tx_.memo = _data_.sellerEmail;}
             if(_data_.builder==false){
                 return {"status":"ok","message":"builder disabled","ix":instructions,"table":false};
             }
@@ -2879,6 +2887,7 @@ class mcswap {
         try{
             const max_proofs = 18;
             // ***************************************************************************
+            if(typeof _data_.sellerEmail=="undefined"||_data_.sellerEmail==false){_data_.sellerEmail="";}
             if(typeof _data_.physical=="undefined"||_data_.physical==false){_data_.physical=0;}else{_data_.physical=parseInt(_data_.physical);}
             if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
             if(typeof _data_.priority=="undefined"||_data_.priority===false){_data_.priority=this.PRIORITY;}
@@ -3134,6 +3143,7 @@ class mcswap {
                 _tx_.signers = false;
                 _tx_.table = lookupTableAccount;               
                 _tx_.priority = _data_.priority;
+                if(_data_.sellerEmail!=""){_tx_.memo = _data_.sellerEmail;}
                 if(_data_.builder==false){
                     return {"status":"ok","message":"builder disabled","ix":instructions,"table":lookupTableAccount};
                 }

@@ -115,6 +115,7 @@ const tx = await mcswap.splCreate({
     token4Mint: false,
     token4Amount: false,
     physical: 0, // 0 = Digital, 1 = Phygital + Shipping, 2 = Phygital Pick-Up, 
+    sellerEmail: "me@mysite.com", // add a seller email address to the escrow if there's a physical
 });
 if(tx.tx){
     tx.tx.sign([signer]);
@@ -216,6 +217,7 @@ const tx = await mcswap.nftCreate({
     tokenMint: "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
     units: "0.01",
     physical: 0, // 0 = Digital, 1 = Phygital + Shipping, 2 = Phygital Pick-Up, 
+    sellerEmail: "me@mysite.com", // add a seller email address to the escrow if there's a physical
 });
 if(tx.status){console.log(tx);}
 else{
