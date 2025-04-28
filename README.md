@@ -229,14 +229,6 @@ else{
     if(status!="finalized"){console.log("status", status);}
     else{
         console.log(status);
-        const escrow = await mcswap.fetch({
-            rpc: rpc,
-            display: true,
-            standard: "nft", // nft, pnft, cnft, core
-            sellerMint: "5Jk6hn3rR1DJjtDU4MzgDuN3SXH4nfHiYgqmEVhGyEUt",
-            buyerMint: false
-        });
-        console.log(escrow);
     }
 }
 ```
