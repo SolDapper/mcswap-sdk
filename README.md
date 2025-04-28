@@ -62,13 +62,17 @@ mcswap.cnftReceived
 mcswap.cnftSent
 ```
 
-utilities
+helpers
 ```javascript
-mcswap.tx
-mcswap.send
-mcswap.status
+mcswap.find
 mcswap.fetch
 mcswap.fee
+```
+
+utilities
+```javascript
+mcswap.send
+mcswap.status
 ```
 
 # Examples
@@ -79,17 +83,6 @@ import { Keypair } from "@solana/web3.js";
 const rpc = "https://staked.helius-rpc.com?api-key=YOUR-KEY";
 const secret = [1,2,3,4,5,~];
 const signer = Keypair.fromSecretKey(new Uint8Array(secret));
-```
-
-## base fees
-gets the current base fee for the protocol by asset standard
-``` javascript
-const fee = await mcswap.fee({
-    rpc: rpc, 
-    display: true,
-    standard: "nft" // nft, pnft, cnft, core
-});
-console.log(fee);
 ```
 
 ## mcswap-spl
@@ -115,7 +108,7 @@ const tx = await mcswap.splCreate({
     token4Mint: false,
     token4Amount: false,
     physical: 0, // 0 = Digital, 1 = Phygital + Shipping, 2 = Phygital Pick-Up, 
-    sellerEmail: "me@mysite.com", // add a seller email address to the escrow if there's a physical
+    sellerEmail: "me@mysite.com", // add if physical > 0
 });
 if(tx.tx){
     tx.tx.sign([signer]);
@@ -217,7 +210,7 @@ const tx = await mcswap.nftCreate({
     tokenMint: "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
     units: "0.01",
     physical: 0, // 0 = Digital, 1 = Phygital + Shipping, 2 = Phygital Pick-Up, 
-    sellerEmail: "me@mysite.com", // add a seller email address to the escrow if there's a physical
+    sellerEmail: "me@mysite.com", // add if physical > 0
 });
 if(tx.status){console.log(tx);}
 else{
@@ -297,4 +290,43 @@ const nftSent = await mcswap.nftSent({
     wallet: "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere"
 });
 console.log(nftSent);
+```
+
+# Helpers
+
+### find escrow id
+returns an escrow id or false
+```javascript
+const escrow = await mcswap.find({
+    rpc: rpc,
+    standard: "core",
+    seller: "7Z3LJB2rxV4LiRBwgwTcufAWxnFTVJpcoCMiCo8Z5Ere",
+    mint: "35rxoAdMJXm6cSSEpQ25qgmLFjhShpsEMc3guQjeZva8",
+    private: false,
+});
+console.log(escrow);
+// response: DUjEPTHQsUizXcyfix5iEnxvU6vMxU6EJW4FEHs9Xgrb
+```
+
+### fetch escrow details
+returns an escrow's details
+```javascript
+const details = await mcswap.fetch({
+    rpc: rpc,
+    display: true,
+    standard: "core",
+    escrow: "DUjEPTHQsUizXcyfix5iEnxvU6vMxU6EJW4FEHs9Xgrb",
+});
+console.log(details);
+```
+
+### get base fee
+get the base escrow fee for the standard
+```javascript
+const fee = await mcswap.fee({
+    rpc: rpc, 
+    display: true, // true = sol, false = lamports
+    standard: "nft" // spl, nft, pnft, cnft, core
+});
+console.log(fee);
 ```

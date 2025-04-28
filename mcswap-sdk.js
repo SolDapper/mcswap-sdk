@@ -3644,12 +3644,59 @@ class mcswap {
         return _error_;
     }
     }
-    // utilities
+    // helpers
+    async find(_data_){
+        const _result_={}
+        if(typeof _data_.rpc=="undefined"){_result_.status="error";_result_.message="no rpc provided";return;}
+        if(typeof _data_.standard=="undefined"){_result_.status="error";_result_.message="no standard provided";return;}
+        if(typeof _data_.mint=="undefined"){_result_.status="error";_result_.message="no mint provided";return;}
+        if(typeof _data_.seller=="undefined"){_result_.status="error";_result_.message="no seller provided";return;}
+        if(typeof _data_.private=="undefined"){_data_.private=false;}
+        try{
+            let escrows = [];
+            const params = {
+                rpc: _data_.rpc,
+                display: false,
+                private: _data_.private,
+                wallet: _data_.seller
+            };
+            if(_data_.standard=="nft"){
+                escrows = await this.nftSent(params);
+            }
+            else if(_data_.standard=="cnft"){
+                escrows = await this.cnftSent(params);
+            }
+            else if(_data_.standard=="pnft"){
+                escrows = await this.pnftSent(params);
+            }
+            else if(_data_.standard=="core"){
+                escrows = await this.coreSent(params);
+            }
+            if(escrows.data.length>0){
+                for(let i=0;i<escrows.data.length;i++){
+                    const escrow = escrows.data[i];
+                    if(_data_.mint==escrow.sellerMint){
+                        i = escrows.data.length;
+                        return escrow.acct;
+                    }
+                }
+            }
+            else{
+                return false;
+            }
+        }
+        catch(err){
+            const _error_ = {}
+            _error_.status="error";
+            _error_.message=err;
+            return _error_;
+        }
+    }
     async fetch(_data_){
         try{
             const _result_={}
             if(typeof _data_.standard=="undefined"){_result_.status="error";_result_.message="no standard provided";return;}
-            if(_data_.standard=="spl" && typeof _data_.escrow=="undefined"){_result_.status="error";_result_.message="no escrow id provided";return;}
+            if(typeof _data_.escrow=="undefined"){_result_.status="error";_result_.message="no escrow id provided";return;}
             let PROGRAM;
             let STATE;
             let NAME;
@@ -3829,6 +3876,7 @@ class mcswap {
             else{lamports=parseInt(new BN(decodedData.fee_lamports,10,"le").toString());}
             if(typeof _data_.display!="undefined" && _data_.display===true){return Number.parseFloat(lamports/1000000000).toFixed(9);}else{return lamports;}
     }
+    // utilities
     async convert(_data_){
         try{
             let decimals;
