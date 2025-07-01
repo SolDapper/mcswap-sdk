@@ -535,7 +535,7 @@ class mcswap {
                     return transaction;
                 }
                 else{
-                    return {status:"ok",escrow:tempToken1.toString(),tx:transaction};
+                    return {status:"ok",escrow:swapStatePDA[0].toString(),tx:transaction};
                 }
             }
             // ***************************************************************************
@@ -698,9 +698,9 @@ class mcswap {
                 _error_.message="Program State Not Initialized";
                 return _error_;
             }
-            const swapStatePDA = new PublicKey(_data_.escrow);            
+            const swapStatePDA = new PublicKey(_data_.escrow);
             let swapState = null;
-            swapState = await connection.getAccountInfo(_data_.escrow);
+            swapState = await connection.getAccountInfo(swapStatePDA);
             // // ***************************************************************************
             let token1Mint = null;
             let token1Amount = null;
@@ -889,7 +889,7 @@ class mcswap {
                     return transaction;
                 }
                 else{
-                    return {status:"ok",escrow:swapStatePDA.toString(),tx:_tx_};
+                    return {status:"ok",escrow:swapStatePDA.toString(),tx:transaction};
                 }
             }
             // ***************************************************************************
@@ -3659,7 +3659,7 @@ class mcswap {
                 STATE = this.SPL_SWAP_STATE;
                 NAME = "swap-state";
                 const STATE_PDA = new PublicKey(_data_.escrow);
-                const SWAP_STATE=await connection.getAccountInfo(new PublicKey(STATE_PDA));
+                const SWAP_STATE=await connection.getAccountInfo(STATE_PDA);
                 const encoded=SWAP_STATE.data;
                 const decoded=STATE.decode(encoded);
                 _result_.seller=(new PublicKey(decoded.initializer)).toString();
