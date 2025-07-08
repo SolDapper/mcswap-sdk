@@ -981,12 +981,17 @@ class mcswap {
             if(typeof _data_.private=="undefined"||_data_.private!=true){_data_.private=false;}
             const _result_ = {}
             let connection = new Connection(_data_.rpc, "confirmed");
-            const _wallet_ = new PublicKey(_data_.wallet);
-            const wallet = _wallet_.toString();
             const SPL_ProgramId = new PublicKey(this.SPL_MCSWAP_PROGRAM);
             let SPL_SENT = [];
             let accounts = null;
-            accounts = await connection.getProgramAccounts(SPL_ProgramId,{filters:[{dataSize:298,},{memcmp:{offset:9,bytes:wallet,},}],}).catch(function(err){console.log("err",err);});
+            if(_data_.private==false && _data_.wallet==false){
+                accounts = await connection.getProgramAccounts(SPL_ProgramId,{filters:[{dataSize:298,}],}).catch(function(err){console.log("err",err);});
+            }
+            else{
+                const _wallet_ = new PublicKey(_data_.wallet);
+                const wallet = _wallet_.toString();
+                accounts = await connection.getProgramAccounts(SPL_ProgramId,{filters:[{dataSize:298,},{memcmp:{offset:9,bytes:wallet,},}],}).catch(function(err){console.log("err",err);});
+            }
             if(accounts != null && accounts.length > 0){for(let i=0;i<accounts.length;i++){
                 const account = accounts[i];
                 const record = {};

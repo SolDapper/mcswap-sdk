@@ -190,6 +190,18 @@ const splSent = await mcswap.splSent({
 console.log(splSent);
 ```
 
+### all public spl escrows
+warning, this can be rpc intensive
+```javascript
+const splPublic = await mcswap.splSent({
+    rpc: rpc,
+    display: true,
+    private: false,
+    wallet: false
+});
+console.log(splPublic);
+```
+
 ## mcswap-nft
 ### nftCreate, pnftCreate, cnftCreate, coreCreate
 ```javascript
