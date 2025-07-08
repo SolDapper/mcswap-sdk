@@ -985,7 +985,7 @@ class mcswap {
             let SPL_SENT = [];
             let accounts = null;
             if(_data_.private==false && _data_.wallet==false){
-                accounts = await connection.getProgramAccounts(SPL_ProgramId,{filters:[{dataSize:298,}],}).catch(function(err){console.log("err",err);});
+                accounts = await connection.getProgramAccounts(SPL_ProgramId,{filters:[{dataSize:298,},{memcmp:{offset:9,bytes:"11111111111111111111111111111111",},}],}).catch(function(err){console.log("err",err);});
             }
             else{
                 const _wallet_ = new PublicKey(_data_.wallet);
