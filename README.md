@@ -108,7 +108,7 @@ const tx = await mcswap.splCreate({
     token4Mint: false,
     token4Amount: false,
     physical: 0, // 0 = Digital, 1 = Phygital + Shipping, 2 = Phygital Pick-Up, 
-    sellerEmail: "me@mysite.com", // add if physical > 0
+    memo: "", // optional title or reference number
 });
 if(tx.tx){
     tx.tx.sign([signer]);
