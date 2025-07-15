@@ -154,6 +154,7 @@ class mcswap {
     async splCreate(_data_){
         try{
             // ***************************************************************************
+            if(typeof _data_.memo=="undefined"){_data_.memo=false;}
             if(typeof _data_.sellerEmail=="undefined"||_data_.sellerEmail==false){_data_.sellerEmail="";}
             if(typeof _data_.physical=="undefined"||_data_.physical==false){_data_.physical=0;}else{_data_.physical=parseInt(_data_.physical);}
             if(typeof _data_.builder!="undefined"&&_data_.builder==false){_data_.builder=false;}else{_data_.builder=true;}
@@ -525,7 +526,6 @@ class mcswap {
             _tx_.signers = signers;
             _tx_.table = lookupTableAccount;                   
             _tx_.priority = _data_.priority;
-            if(_data_.sellerEmail!=""){_tx_.memo = _data_.sellerEmail;}
             if(_data_.builder==false){
                 return {status:"ok",message:"builder disabled",ix:instructions,table:lookupTableAccount,signers:signers,escrow:tempToken1};
             }
