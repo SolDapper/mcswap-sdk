@@ -520,6 +520,9 @@ class mcswap {
             else{
                 signers = [tempToken1Account];
             }
+            if(_data_.memo!=false){
+                _tx_.memo = _data_.memo; 
+            }
             _tx_.rpc = _data_.rpc;                     
             _tx_.account = _data_.seller;       
             _tx_.instructions = instructions;
