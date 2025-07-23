@@ -3636,32 +3636,6 @@ class mcswap {
     }
     }
     // helpers
-    async sns(connection, _data_){
-        try {
-            if(_data_.seller.includes(".sol")){
-                const { pubkey } = getDomainKeySync(_data_.seller);
-                const { registry, nftOwner } = await NameRegistryState.retrieve(connection, pubkey);
-                if(nftOwner){
-                    _data_.seller = nftOwner.toBase58();
-                } 
-                else{
-                    _data_.seller = registry.owner.toBase58();
-                }
-            }
-            if(_data_.buyer.includes(".sol")){
-                const { pubkey } = getDomainKeySync(_data_.buyer);
-                const { registry, nftOwner } = await NameRegistryState.retrieve(connection, pubkey);
-                if(nftOwner){
-                    _data_.buyer = nftOwner.toBase58();
-                } 
-                else{
-                    _data_.buyer = registry.owner.toBase58();
-                }
-            }
-            return _data_;
-        } 
-        catch(error){return;}
-    }
     async find(_data_){
         const _result_={}
         if(typeof _data_.rpc=="undefined"){_result_.status="error";_result_.message="no rpc provided";return;}
@@ -3894,6 +3868,32 @@ class mcswap {
             if(typeof _data_.display!="undefined" && _data_.display===true){return Number.parseFloat(lamports/1000000000).toFixed(9);}else{return lamports;}
     }
     // utilities
+    async sns(connection, _data_){
+        try {
+            if(_data_.seller.includes(".")){
+                const { pubkey } = getDomainKeySync(_data_.seller);
+                const { registry, nftOwner } = await NameRegistryState.retrieve(connection, pubkey);
+                if(nftOwner){
+                    _data_.seller = nftOwner.toBase58();
+                } 
+                else{
+                    _data_.seller = registry.owner.toBase58();
+                }
+            }
+            if(_data_.buyer.includes(".")){
+                const { pubkey } = getDomainKeySync(_data_.buyer);
+                const { registry, nftOwner } = await NameRegistryState.retrieve(connection, pubkey);
+                if(nftOwner){
+                    _data_.buyer = nftOwner.toBase58();
+                } 
+                else{
+                    _data_.buyer = registry.owner.toBase58();
+                }
+            }
+            return _data_;
+        } 
+        catch(error){return;}
+    }
     async convert(_data_){
         try{
             let decimals;
