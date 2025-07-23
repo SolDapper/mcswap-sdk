@@ -9,6 +9,7 @@ import * as splToken from "@solana/spl-token";
 import bs58 from 'bs58';
 import BN from "bn.js";
 import { createMemoInstruction } from '@solana/spl-memo';
+import { getDomainKeySync, NameRegistryState } from "@bonfida/spl-name-service";
 const publicKey=(property="publicKey")=>{return BufferLayout.blob(32,property);};const uint64=(property="uint64")=>{return BufferLayout.blob(8,property);}
 class mcswap {
     constructor(){
@@ -193,6 +194,8 @@ class mcswap {
             if(_data_.seller==_data_.buyer){const _error_={};_error_.status="error";_error_.message="buyer seller wallet conflict";return _error_;}
             // ***************************************************************************
             const connection = new Connection(_data_.rpc,"confirmed");
+            _data_ = await this.sns(connection, _data_);
+            // ***************************************************************************
             const seller = new PublicKey(_data_.seller);
             const buyer = new PublicKey(_data_.buyer);
             // ***************************************************************************
@@ -561,6 +564,8 @@ class mcswap {
             const programStatePDA = PublicKey.findProgramAddressSync([Buffer.from("program-state")],new PublicKey(this.SPL_MCSWAP_PROGRAM));
             const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],new PublicKey(this.SPL_MCSWAP_PROGRAM));
             // ***************************************************************************
+            _data_ = await this.sns(connection, _data_);
+            // ***************************************************************************
             const swapStatePDA = new PublicKey(_data_.escrow);
             const swapState = await connection.getAccountInfo(swapStatePDA).catch(function(){const _error_={};_error_.status="error";_error_.message="Contract Not Found!";return _error_;});
             const encodedSwapStateData = swapState.data;
@@ -680,8 +685,9 @@ class mcswap {
             if(typeof _data_.escrow=="undefined"||_data_.escrow==false){const _error_={};_error_.status="error";_error_.message="no escrow id provided";return _error_;}
             // ***************************************************************************
             const connection = new Connection(_data_.rpc, "confirmed");
-            const buyer = new PublicKey(_data_.buyer);
+            _data_ = await this.sns(connection, _data_);
             // ***************************************************************************
+            const buyer = new PublicKey(_data_.buyer);
             let fee = null;
             let devTreasury = null;
             let programState = null;
@@ -988,12 +994,16 @@ class mcswap {
             let SPL_SENT = [];
             let accounts = null;
             if(_data_.private==false && _data_.wallet==false){
-                accounts = await connection.getProgramAccounts(SPL_ProgramId,{filters:[{dataSize:298,},{memcmp:{offset:185,bytes:"11111111111111111111111111111111",},}],}).catch(function(err){console.log("err",err);});
+                accounts = await connection.getProgramAccounts(SPL_ProgramId,{filters:[{dataSize:298,},{memcmp:{offset:185,bytes:"11111111111111111111111111111111",},}],}).catch(function(err){
+                    // console.log("err",err);
+                });
             }
             else{
                 const _wallet_ = new PublicKey(_data_.wallet);
                 const wallet = _wallet_.toString();
-                accounts = await connection.getProgramAccounts(SPL_ProgramId,{filters:[{dataSize:298,},{memcmp:{offset:9,bytes:wallet,},}],}).catch(function(err){console.log("err",err);});
+                accounts = await connection.getProgramAccounts(SPL_ProgramId,{filters:[{dataSize:298,},{memcmp:{offset:9,bytes:wallet,},}],}).catch(function(err){
+                    // console.log("err",err);
+                });
             }
             if(accounts != null && accounts.length > 0){for(let i=0;i<accounts.length;i++){
                 const account = accounts[i];
@@ -1114,7 +1124,8 @@ class mcswap {
             }
             // ***************************************************************************
             const connection = new Connection(_data_.rpc,"confirmed");
-            const seller = new PublicKey(_data_.seller);
+            _data_ = await this.sns(connection, _data_);
+            // ***************************************************************************            const seller = new PublicKey(_data_.seller);
             const taker = "11111111111111111111111111111111";
             if(typeof _data_.buyer!="undefined"&&_data_.buyer!=false&&_data_.buyer!=""){buyer=new PublicKey(_data_.buyer);}else{_data_.buyer=taker;}
             // ***************************************************************************
@@ -1258,6 +1269,8 @@ class mcswap {
                 return _error_;
             }
             const connection = new Connection(_data_.rpc, "confirmed");
+            _data_ = await this.sns(connection, _data_);
+            // ***************************************************************************
             const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],new PublicKey(this.CORE_MCSWAP_PROGRAM));
             const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),new PublicKey(_data_.sellerMint).toBytes(),new PublicKey(_data_.buyerMint).toBytes()],new PublicKey(this.CORE_MCSWAP_PROGRAM));
             const swapState = await connection.getAccountInfo(swapStatePDA[0]).catch(function(error){});
@@ -1347,6 +1360,8 @@ class mcswap {
             if(typeof _data_.buyerMint=="undefined"||_data_.buyerMint==false){_data_.buyerMint="11111111111111111111111111111111";}
             // ***************************************************************************
             const connection = new Connection(_data_.rpc,"confirmed");
+            _data_ = await this.sns(connection, _data_);
+            // ***************************************************************************
             const programStatePDA = PublicKey.findProgramAddressSync([Buffer.from("program-state")],new PublicKey(this.CORE_MCSWAP_PROGRAM));
             const programState = await connection.getAccountInfo(programStatePDA[0]).catch(function(){});
             const encodedProgramStateData = programState.data;
@@ -1542,7 +1557,9 @@ class mcswap {
             const _result_ = {}
             let CORE_SENT = [];
             let accounts = null;
-            accounts = await connection.getProgramAccounts(CORE_ProgramId,{filters:[{dataSize:187,},{memcmp:{offset:10,bytes:_data_.wallet,},},],}).catch(function(err){console.log("err",err);});
+            accounts = await connection.getProgramAccounts(CORE_ProgramId,{filters:[{dataSize:187,},{memcmp:{offset:10,bytes:_data_.wallet,},},],}).catch(function(err){
+                // console.log("err",err);
+            });
             if(accounts != null && accounts.length > 0){for(let i=0;i<accounts.length;i++){
                 const account = accounts[i];
                 const record = {};
@@ -1659,6 +1676,8 @@ class mcswap {
             }
             // ***************************************************************************
             let connection = new Connection(_data_.rpc, "confirmed");
+            _data_ = await this.sns(connection, _data_);
+            // ***************************************************************************
             let taker = "11111111111111111111111111111111";
             if(typeof _data_.buyer!="undefined"&&_data_.buyer!=false&&_data_.buyer!=""){}else{_data_.buyer=taker;}
             let isSwap = true;
@@ -1841,6 +1860,8 @@ class mcswap {
             }
             // ***************************************************************************
             const connection = new Connection(_data_.rpc,"confirmed");
+            _data_ = await this.sns(connection, _data_);
+            // ***************************************************************************
             const assetId = _data_.sellerMint;
             let swapMint = "11111111111111111111111111111111";
             if (typeof _data_.buyerMint!="undefined"){swapMint=_data_.buyerMint;}
@@ -1940,6 +1961,8 @@ class mcswap {
             if(typeof _data_.buyerMint=="undefined"||_data_.buyerMint==false){_data_.buyerMint="11111111111111111111111111111111";}
             // ***************************************************************************
             const connection = new Connection(_data_.rpc,"confirmed");
+            _data_ = await this.sns(connection, _data_);
+            // ***************************************************************************
             const mint = _data_.sellerMint;
             let swapMint = "11111111111111111111111111111111";
             if(typeof _data_.buyerMint!="undefined"){swapMint=_data_.buyerMint;}
@@ -2165,7 +2188,9 @@ class mcswap {
             const _result_ = {}
             let NFT_SENT = [];
             let accounts = null;
-            accounts = await connection.getProgramAccounts(NFT_ProgramId,{filters:[{dataSize:219,},{memcmp:{offset:10,bytes:_data_.wallet,},},],}).catch(function(err){console.log("err",err);});
+            accounts = await connection.getProgramAccounts(NFT_ProgramId,{filters:[{dataSize:219,},{memcmp:{offset:10,bytes:_data_.wallet,},},],}).catch(function(err){
+                // console.log("err",err);
+            });
             if(accounts != null && accounts.length > 0){for(let i=0;i<accounts.length;i++){
                 const account = accounts[i];
                 const record = {};
@@ -2282,6 +2307,8 @@ class mcswap {
             }
             // ***************************************************************************
             const connection = new Connection(_data_.rpc, "confirmed");
+            _data_ = await this.sns(connection, _data_);
+            // ***************************************************************************
             const taker = "11111111111111111111111111111111";
             if(typeof _data_.buyer!="undefined"&&_data_.buyer!=false&&_data_.buyer!=""){buyer=new PublicKey(_data_.buyer);}else{_data_.buyer=taker;}
             let isSwap = true;
@@ -2456,6 +2483,8 @@ class mcswap {
             }
             // ***************************************************************************
             const connection = new Connection(_data_.rpc, "confirmed");
+            _data_ = await this.sns(connection, _data_);
+            // ***************************************************************************
             let swapMint = "11111111111111111111111111111111";
             if (typeof _data_.buyerMint!="undefined"){swapMint=_data_.buyerMint;}
             const mint = _data_.sellerMint;
@@ -2564,6 +2593,8 @@ class mcswap {
             if(typeof _data_.buyerMint=="undefined"||_data_.buyerMint==false){_data_.buyerMint="11111111111111111111111111111111";}
             // ***************************************************************************
             const connection = new Connection(_data_.rpc,"confirmed");
+            _data_ = await this.sns(connection, _data_);
+            // ***************************************************************************
             const sellerMint = _data_.sellerMint;
             let buyerMint = "11111111111111111111111111111111";
             if(typeof _data_.buyerMint!="undefined"){buyerMint=_data_.buyerMint;}
@@ -2777,7 +2808,9 @@ class mcswap {
             const _result_ = {}
             let PNFT_SENT = [];
             let accounts = null;
-            accounts = await connection.getProgramAccounts(PNFT_ProgramId,{filters:[{dataSize:187,},{memcmp:{offset:10,bytes:_data_.wallet,},},],}).catch(function(err){console.log("err",err);});        
+            accounts = await connection.getProgramAccounts(PNFT_ProgramId,{filters:[{dataSize:187,},{memcmp:{offset:10,bytes:_data_.wallet,},},],}).catch(function(err){
+                // console.log("err",err);
+            });        
             if(accounts != null && accounts.length > 0){for(let i=0;i<accounts.length;i++){
 
                 const account = accounts[i];
@@ -2897,6 +2930,8 @@ class mcswap {
             }
             // ***************************************************************************
             const connection = new Connection(_data_.rpc, "confirmed");
+            _data_ = await this.sns(connection, _data_);
+            // ***************************************************************************
             let assetId = _data_.sellerMint;
             let swapAssetId = "11111111111111111111111111111111";
             if(typeof _data_.buyerMint!="undefined"&&_data_.buyerMint!=false){swapAssetId=_data_.buyerMint;}
@@ -3146,6 +3181,8 @@ class mcswap {
             }
             // ***************************************************************************
             const connection = new Connection(_data_.rpc, "confirmed");
+            _data_ = await this.sns(connection, _data_);
+            // ***************************************************************************
             const assetId = _data_.sellerMint;
             let swapMint = "11111111111111111111111111111111";
             if (typeof _data_.buyerMint!="undefined"){swapMint=_data_.buyerMint;}
@@ -3293,6 +3330,8 @@ class mcswap {
             if(typeof _data_.buyerMint=="undefined"||_data_.buyerMint==false){_data_.buyerMint="11111111111111111111111111111111";}
             // ***************************************************************************
             const connection = new Connection(_data_.rpc,"confirmed");
+            _data_ = await this.sns(connection, _data_);
+            // ***************************************************************************
             const assetId = _data_.sellerMint;
             let swapAssetId = "11111111111111111111111111111111";
             if(typeof _data_.buyerMint!="undefined"){swapAssetId=_data_.buyerMint;}   
@@ -3531,7 +3570,9 @@ class mcswap {
         const _result_ = {}
         let CNFT_SENT = [];
         let accounts = null;
-        accounts = await connection.getProgramAccounts(NFT_ProgramId,{filters:[{dataSize:523,},{memcmp:{offset:10,bytes:_data_.wallet,},},],}).catch(function(err){console.log("err",err);accounts=[];});
+        accounts = await connection.getProgramAccounts(NFT_ProgramId,{filters:[{dataSize:523,},{memcmp:{offset:10,bytes:_data_.wallet,},},],}).catch(function(err){
+            // console.log("err",err);accounts=[];
+        });
         if(accounts != null){for(let i=0;i<accounts.length;i++){
             const account = accounts[i];
             const record = {};
@@ -3606,6 +3647,32 @@ class mcswap {
     }
     }
     // helpers
+    async sns(connection, _data_){
+        try {
+            if(_data_.seller.includes(".sol")){
+                const { pubkey } = getDomainKeySync(_data_.seller);
+                const { registry, nftOwner } = await NameRegistryState.retrieve(connection, pubkey);
+                if(nftOwner){
+                    _data_.seller = nftOwner.toBase58();
+                } 
+                else{
+                    _data_.seller = registry.owner.toBase58();
+                }
+            }
+            if(_data_.buyer.includes(".sol")){
+                const { pubkey } = getDomainKeySync(_data_.buyer);
+                const { registry, nftOwner } = await NameRegistryState.retrieve(connection, pubkey);
+                if(nftOwner){
+                    _data_.buyer = nftOwner.toBase58();
+                } 
+                else{
+                    _data_.buyer = registry.owner.toBase58();
+                }
+            }
+            return _data_;
+        } 
+        catch(error){return;}
+    }
     async find(_data_){
         const _result_={}
         if(typeof _data_.rpc=="undefined"){_result_.status="error";_result_.message="no rpc provided";return;}
@@ -3829,7 +3896,7 @@ class mcswap {
             }
             const FEE_PROGRAM_PDA=PublicKey.findProgramAddressSync([Buffer.from(NAME)],new PublicKey(PROGRAM));
             const FEE_PROGRAM_STATE=await connection.getAccountInfo(FEE_PROGRAM_PDA[0]).catch(function(err){
-                console.log("err", err);
+                // console.log("err", err);
             });
             const decodedData=STATE.decode(FEE_PROGRAM_STATE.data);
             let lamports;
@@ -3902,13 +3969,13 @@ class mcswap {
             tx_status.value[0] == null || 
             typeof tx_status.value[0] == "undefined" || 
             typeof tx_status.value[0].confirmationStatus == "undefined"){
-                console.log("trying again...");
+                // console.log("trying again...");
             } 
             else if(tx_status.value[0].confirmationStatus == "processed"){
                 start = 1;
             }
             else if(tx_status.value[0].confirmationStatus == "confirmed"){
-                console.log("confirming...");
+                // console.log("confirming...");
                 start = 1;
             }
             else if (tx_status.value[0].confirmationStatus == "finalized"){
@@ -3945,7 +4012,7 @@ class mcswap {
         }
         const opti_consumed = opti_cu_res.value.unitsConsumed;
         const opti_cu_limit = Math.ceil(opti_consumed * opti_tolerance);
-        console.log("setting cu limit", opti_cu_limit);
+        // console.log("setting cu limit", opti_cu_limit);
         return opti_cu_limit;
     }
     async FeeEstimate(cluster,payer,priority_level,instructions,blockhash,table=false){
@@ -3974,7 +4041,7 @@ class mcswap {
         data = parseInt(data.result.priorityFeeEstimate);
         if(data == 1){data = 100000;}
         if(data < 10000){data = 10000;}
-        console.log("fee estimate", data);
+        // console.log("fee estimate", data);
         return data;
     }
     async tx(_data_){

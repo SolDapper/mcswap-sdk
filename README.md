@@ -306,6 +306,13 @@ console.log(nftSent);
 
 # Helpers
 
+### sns
+accepts the data object passed to the parent method
+returns the object with seller and buyer .sol addresses converted
+```javascript
+_data_ = await mcswap.sns(connection, _data_);
+```
+
 ### find escrow id
 returns an escrow id or false
 ```javascript

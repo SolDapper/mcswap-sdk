@@ -26,6 +26,7 @@
   },
   "homepage": "https://mcswap.xyz",
   "dependencies": {
+    "@bonfida/spl-name-service": "^3.0.12",
     "@solana/spl-account-compression": "^0.2.1",
     "@solana/spl-memo": "^0.2.5",
     "@solana/spl-token": "^0.3.11",
