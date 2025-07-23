@@ -564,8 +564,6 @@ class mcswap {
             const programStatePDA = PublicKey.findProgramAddressSync([Buffer.from("program-state")],new PublicKey(this.SPL_MCSWAP_PROGRAM));
             const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],new PublicKey(this.SPL_MCSWAP_PROGRAM));
             // ***************************************************************************
-            _data_ = await this.sns(connection, _data_);
-            // ***************************************************************************
             const swapStatePDA = new PublicKey(_data_.escrow);
             const swapState = await connection.getAccountInfo(swapStatePDA).catch(function(){const _error_={};_error_.status="error";_error_.message="Contract Not Found!";return _error_;});
             const encodedSwapStateData = swapState.data;
@@ -685,7 +683,6 @@ class mcswap {
             if(typeof _data_.escrow=="undefined"||_data_.escrow==false){const _error_={};_error_.status="error";_error_.message="no escrow id provided";return _error_;}
             // ***************************************************************************
             const connection = new Connection(_data_.rpc, "confirmed");
-            _data_ = await this.sns(connection, _data_);
             // ***************************************************************************
             const buyer = new PublicKey(_data_.buyer);
             let fee = null;
@@ -1269,7 +1266,6 @@ class mcswap {
                 return _error_;
             }
             const connection = new Connection(_data_.rpc, "confirmed");
-            _data_ = await this.sns(connection, _data_);
             // ***************************************************************************
             const swapVaultPDA = PublicKey.findProgramAddressSync([Buffer.from("swap-vault")],new PublicKey(this.CORE_MCSWAP_PROGRAM));
             const swapStatePDA = PublicKey.findProgramAddressSync([Buffer.from("swap-state"),new PublicKey(_data_.sellerMint).toBytes(),new PublicKey(_data_.buyerMint).toBytes()],new PublicKey(this.CORE_MCSWAP_PROGRAM));
@@ -1360,7 +1356,6 @@ class mcswap {
             if(typeof _data_.buyerMint=="undefined"||_data_.buyerMint==false){_data_.buyerMint="11111111111111111111111111111111";}
             // ***************************************************************************
             const connection = new Connection(_data_.rpc,"confirmed");
-            _data_ = await this.sns(connection, _data_);
             // ***************************************************************************
             const programStatePDA = PublicKey.findProgramAddressSync([Buffer.from("program-state")],new PublicKey(this.CORE_MCSWAP_PROGRAM));
             const programState = await connection.getAccountInfo(programStatePDA[0]).catch(function(){});
@@ -1860,7 +1855,6 @@ class mcswap {
             }
             // ***************************************************************************
             const connection = new Connection(_data_.rpc,"confirmed");
-            _data_ = await this.sns(connection, _data_);
             // ***************************************************************************
             const assetId = _data_.sellerMint;
             let swapMint = "11111111111111111111111111111111";
@@ -1961,7 +1955,6 @@ class mcswap {
             if(typeof _data_.buyerMint=="undefined"||_data_.buyerMint==false){_data_.buyerMint="11111111111111111111111111111111";}
             // ***************************************************************************
             const connection = new Connection(_data_.rpc,"confirmed");
-            _data_ = await this.sns(connection, _data_);
             // ***************************************************************************
             const mint = _data_.sellerMint;
             let swapMint = "11111111111111111111111111111111";
@@ -2483,7 +2476,6 @@ class mcswap {
             }
             // ***************************************************************************
             const connection = new Connection(_data_.rpc, "confirmed");
-            _data_ = await this.sns(connection, _data_);
             // ***************************************************************************
             let swapMint = "11111111111111111111111111111111";
             if (typeof _data_.buyerMint!="undefined"){swapMint=_data_.buyerMint;}
@@ -2593,7 +2585,6 @@ class mcswap {
             if(typeof _data_.buyerMint=="undefined"||_data_.buyerMint==false){_data_.buyerMint="11111111111111111111111111111111";}
             // ***************************************************************************
             const connection = new Connection(_data_.rpc,"confirmed");
-            _data_ = await this.sns(connection, _data_);
             // ***************************************************************************
             const sellerMint = _data_.sellerMint;
             let buyerMint = "11111111111111111111111111111111";
@@ -3181,7 +3172,6 @@ class mcswap {
             }
             // ***************************************************************************
             const connection = new Connection(_data_.rpc, "confirmed");
-            _data_ = await this.sns(connection, _data_);
             // ***************************************************************************
             const assetId = _data_.sellerMint;
             let swapMint = "11111111111111111111111111111111";
@@ -3330,7 +3320,6 @@ class mcswap {
             if(typeof _data_.buyerMint=="undefined"||_data_.buyerMint==false){_data_.buyerMint="11111111111111111111111111111111";}
             // ***************************************************************************
             const connection = new Connection(_data_.rpc,"confirmed");
-            _data_ = await this.sns(connection, _data_);
             // ***************************************************************************
             const assetId = _data_.sellerMint;
             let swapAssetId = "11111111111111111111111111111111";
